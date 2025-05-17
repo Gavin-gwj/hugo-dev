@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Categories on Gavin-歌未竟</title>
+        <link>https://gavin-gwj.github.io/hugo-dev/categories/</link>
+        <description>Recent content in Categories on Gavin-歌未竟</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>zh-cn</language>
+        <copyright>歌未竟的个人博客</copyright>
+        <lastBuildDate>Sat, 17 May 2025 21:33:41 +0800</lastBuildDate><atom:link href="https://gavin-gwj.github.io/hugo-dev/categories/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>I/O流</title>
+        <link>https://gavin-gwj.github.io/hugo-dev/categories/i/o%E6%B5%81/</link>
+        <pubDate>Sat, 17 May 2025 21:33:41 +0800</pubDate>
+        
+        <guid>https://gavin-gwj.github.io/hugo-dev/categories/i/o%E6%B5%81/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>笔记</title>
+        <link>https://gavin-gwj.github.io/hugo-dev/categories/%E7%AC%94%E8%AE%B0/</link>
+        <pubDate>Sat, 17 May 2025 21:33:41 +0800</pubDate>
+        
+        <guid>https://gavin-gwj.github.io/hugo-dev/categories/%E7%AC%94%E8%AE%B0/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>上传文件</title>
+        <link>https://gavin-gwj.github.io/hugo-dev/categories/%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6/</link>
+        <pubDate>Sat, 17 May 2025 21:33:41 +0800</pubDate>
+        
+        <guid>https://gavin-gwj.github.io/hugo-dev/categories/%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Springboot</title>
+        <link>https://gavin-gwj.github.io/hugo-dev/categories/springboot/</link>
+        <pubDate>Sat, 17 May 2025 17:16:37 +0800</pubDate>
+        
+        <guid>https://gavin-gwj.github.io/hugo-dev/categories/springboot/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>MyBatis</title>
+        <link>https://gavin-gwj.github.io/hugo-dev/categories/mybatis/</link>
+        <pubDate>Fri, 16 May 2025 16:01:17 +0800</pubDate>
+        
+        <guid>https://gavin-gwj.github.io/hugo-dev/categories/mybatis/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>面试题</title>
+        <link>https://gavin-gwj.github.io/hugo-dev/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/</link>
+        <pubDate>Fri, 16 May 2025 16:01:17 +0800</pubDate>
+        
+        <guid>https://gavin-gwj.github.io/hugo-dev/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Java</title>
+        <link>https://gavin-gwj.github.io/hugo-dev/categories/java/</link>
+        <pubDate>Fri, 16 May 2025 13:07:17 +0800</pubDate>
+        
+        <guid>https://gavin-gwj.github.io/hugo-dev/categories/java/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>JVM</title>
+        <link>https://gavin-gwj.github.io/hugo-dev/categories/jvm/</link>
+        <pubDate>Fri, 16 May 2025 13:07:17 +0800</pubDate>
+        
+        <guid>https://gavin-gwj.github.io/hugo-dev/categories/jvm/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>E-R图</title>
+        <link>https://gavin-gwj.github.io/hugo-dev/categories/e-r%E5%9B%BE/</link>
+        <pubDate>Wed, 14 May 2025 13:20:57 +0800</pubDate>
+        
+        <guid>https://gavin-gwj.github.io/hugo-dev/categories/e-r%E5%9B%BE/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>测试</title>
+        <link>https://gavin-gwj.github.io/hugo-dev/categories/%E6%B5%8B%E8%AF%95/</link>
+        <pubDate>Mon, 12 May 2025 00:00:00 +0000</pubDate>
+        
+        <guid>https://gavin-gwj.github.io/hugo-dev/categories/%E6%B5%8B%E8%AF%95/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>日记</title>
+        <link>https://gavin-gwj.github.io/hugo-dev/categories/%E6%97%A5%E8%AE%B0/</link>
+        <pubDate>Mon, 12 May 2025 00:00:00 +0000</pubDate>
+        
+        <guid>https://gavin-gwj.github.io/hugo-dev/categories/%E6%97%A5%E8%AE%B0/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Test</title>
+        <link>https://gavin-gwj.github.io/hugo-dev/categories/test/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        
+        <guid>https://gavin-gwj.github.io/hugo-dev/categories/test/</guid>
+        <description>&lt;img src="https://gavin-gwj.github.io/hugo-dev/categories/test/hutomo-abrianto-l2jk-uxb1BY-unsplash.jpg" alt="Featured image of post Test" /&gt;</description>
+        </item>
+        
+    </channel>
+</rss>

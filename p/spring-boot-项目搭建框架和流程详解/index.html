@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="以员工管理为例">
+<title>Spring Boot 项目搭建框架和流程详解</title>
+
+<link rel='canonical' href='https://gavin-gwj.github.io/hugo-dev/p/spring-boot-%E9%A1%B9%E7%9B%AE%E6%90%AD%E5%BB%BA%E6%A1%86%E6%9E%B6%E5%92%8C%E6%B5%81%E7%A8%8B%E8%AF%A6%E8%A7%A3/'>
+
+<link rel="stylesheet" href="/hugo-dev/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="Spring Boot 项目搭建框架和流程详解">
+<meta property='og:description' content="以员工管理为例">
+<meta property='og:url' content='https://gavin-gwj.github.io/hugo-dev/p/spring-boot-%E9%A1%B9%E7%9B%AE%E6%90%AD%E5%BB%BA%E6%A1%86%E6%9E%B6%E5%92%8C%E6%B5%81%E7%A8%8B%E8%AF%A6%E8%A7%A3/'>
+<meta property='og:site_name' content='Gavin-歌未竟'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='笔记' /><meta property='article:tag' content='Java' /><meta property='article:tag' content='MyBatis' /><meta property='article:tag' content='springboot' /><meta property='article:published_time' content='2025-05-15T16:13:33&#43;08:00'/><meta property='article:modified_time' content='2025-05-15T16:13:33&#43;08:00'/>
+<meta name="twitter:title" content="Spring Boot 项目搭建框架和流程详解">
+<meta name="twitter:description" content="以员工管理为例">
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/hugo-dev/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/hugo-dev/img/avatar_hu_cf5ff899d804496e.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">😅</span>
+                
+            </figure>
+            
+        
+
+
+
+
+
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/hugo-dev">Gavin-歌未竟</a></h1>
+            <h2 class="site-description">探索技术的无限可能！</h2>
+        </div>
+    </header>
+
+    
+
+<div>
+    
+    <span style="color: #707070;">
+        <span id="busuanzi_container_page_pv">
+            总访问量: <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+    </span>
+</div>
+<ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/2123131391'
+                        target="_blank"
+                        title="Bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/Gavin-gwj'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/hugo-dev/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1-pojo-层-plain-old-java-object--entity-层">1. POJO 层 (Plain Old Java Object) / Entity 层</a>
+      <ol>
+        <li><a href="#目的">目的</a></li>
+        <li><a href="#具体实现">具体实现</a></li>
+        <li><a href="#关键点">关键点</a></li>
+      </ol>
+    </li>
+    <li><a href="#2-mapper-层-dao---data-access-object">2. Mapper 层 (DAO - Data Access Object)</a>
+      <ol>
+        <li><a href="#目的-1">目的</a></li>
+        <li><a href="#具体实现-1">具体实现</a></li>
+        <li><a href="#关键点-1">关键点</a></li>
+      </ol>
+    </li>
+    <li><a href="#3-service-层">3. Service 层</a>
+      <ol>
+        <li><a href="#目的-2">目的</a></li>
+        <li><a href="#分为两部分接口和实现类">分为两部分：接口和实现类</a>
+          <ol>
+            <li><a href="#31-service-接口-empservicejava">3.1 Service 接口 (<code>EmpService.java</code>)</a></li>
+            <li><a href="#32-service-实现类-empserviceimpljava">3.2 Service 实现类 (<code>EmpServiceImpl.java</code>)</a></li>
+          </ol>
+        </li>
+        <li><a href="#关键点-2">关键点</a></li>
+      </ol>
+    </li>
+    <li><a href="#4-controller-层">4. Controller 层</a>
+      <ol>
+        <li><a href="#目的-3">目的</a></li>
+        <li><a href="#具体实现-2">具体实现</a></li>
+        <li><a href="#关键点-3">关键点</a></li>
+      </ol>
+    </li>
+    <li><a href="#总结与强调">总结与强调</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/hugo-dev/categories/%E7%AC%94%E8%AE%B0/" >
+                笔记
+            </a>
+        
+            <a href="/hugo-dev/categories/java/" >
+                Java
+            </a>
+        
+            <a href="/hugo-dev/categories/mybatis/" >
+                MyBatis
+            </a>
+        
+            <a href="/hugo-dev/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/" >
+                面试题
+            </a>
+        
+            <a href="/hugo-dev/categories/springboot/" >
+                Springboot
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/hugo-dev/p/spring-boot-%E9%A1%B9%E7%9B%AE%E6%90%AD%E5%BB%BA%E6%A1%86%E6%9E%B6%E5%92%8C%E6%B5%81%E7%A8%8B%E8%AF%A6%E8%A7%A3/">Spring Boot 项目搭建框架和流程详解</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            以员工管理为例
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-05-15</time>
+            </div>
+        
+
+    
+    <div class="time-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+  <path d="M5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zM5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1H5z"/>
+  <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/>
+</svg>
+        <span class="article-wordcount">
+            3688字
+        </span>
+    </div>
+
+     
+
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 8 分钟
+                </time>
+            </div>
+        
+
+        
+
+
+        
+    </footer>
+    
+
+
+
+    
+
+  
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="spring-boot-项目开发流程详解-以员工管理为例">Spring Boot 项目开发流程详解 (以员工管理为例)
+</h1><p>这个案例开发流程是一个典型的基于 Spring Boot 的分层架构实现。下面我将详细阐述每个步骤及其核心思想，希望能让您对这个流程有一个清晰的理解。</p>
+<hr>
+<p><strong>核心目标：</strong> 实现模块化、高内聚、低耦合，使得代码易于理解、维护、测试和扩展。</p>
+<p><strong>流程总览：</strong><br>
+<code>请求 (Request)</code> → <code>Controller 层</code> → <code>Service 层 (接口+实现)</code> → <code>Mapper 层 (DAO)</code> → <code>数据库 (Database)</code> → <code>Mapper 层</code> → <code>Service 层</code> → <code>Controller 层</code> → <code>响应 (Response)</code></p>
+<h2 id="1-pojo-层-plain-old-java-object--entity-层">1. POJO 层 (Plain Old Java Object) / Entity 层
+</h2><h3 id="目的">目的
+</h3><p>定义数据模型，用于封装业务数据。这些类通常与数据库表结构相对应。</p>
+<h3 id="具体实现">具体实现
+</h3><p>创建 <code>Emp.java</code> (员工信息实体类) 和 <code>Empr.java</code> (员工工作经历实体类)。</p>
+<p><strong><code>Emp.java</code> 示例</strong>：</p>
+<p>java</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">package</span><span class="w"> </span><span class="nn">com.example.pojo</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.List</span><span class="p">;</span><span class="w"> </span><span class="c1">// 如果需要在Emp中直接持有Empr列表</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// import lombok.Data; // 使用Lombok简化代码，可选</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// @Data // Lombok注解，自动生成getter/setter/toString/equals/hashCode</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Emp</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Integer</span><span class="w"> </span><span class="n">empId</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">empName</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">department</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Double</span><span class="w"> </span><span class="n">salary</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// private List&lt;Empr&gt; workExperiences; // 可选，用于一对多关系</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// Standard getters and setters, constructor, toString, etc.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// 如果不用Lombok，需要手动添加</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Integer</span><span class="w"> </span><span class="nf">getEmpId</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">empId</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setEmpId</span><span class="p">(</span><span class="n">Integer</span><span class="w"> </span><span class="n">empId</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">empId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">empId</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// ... 其他属性的getter/setter</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong><code>Empr.java</code> 示例</strong>：</p>
+<p>java</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">package</span><span class="w"> </span><span class="nn">com.example.pojo</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.Date</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// import lombok.Data;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// @Data</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Empr</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// Employee Experience Record</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Integer</span><span class="w"> </span><span class="n">emprId</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Integer</span><span class="w"> </span><span class="n">empId</span><span class="p">;</span><span class="w"> </span><span class="c1">// 外键，关联到Emp表的empId</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">companyName</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">position</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Date</span><span class="w"> </span><span class="n">startDate</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Date</span><span class="w"> </span><span class="n">endDate</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">description</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// Standard getters and setters, constructor, toString, etc.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="关键点">关键点
+</h3><ul>
+<li><strong>属性</strong>：与数据库表字段一一对应，或根据业务需求定义。</li>
+<li><strong>注解（可选，但常用）</strong>：
+<ul>
+<li><strong>Lombok</strong>: <code>@Data</code>, <code>@Getter</code>, <code>@Setter</code>, <code>@ToString</code>, <code>@EqualsAndHashCode</code>, <code>@NoArgsConstructor</code>, <code>@AllArgsConstructor</code> 等注解可以极大简化代码，避免手动编写样板代码。</li>
+<li><strong>JPA/MyBatis-Plus</strong>: 如果使用 JPA 或 MyBatis-Plus 等 ORM 框架，还会用到 <code>@Entity</code>, <code>@Table</code>, <code>@Id</code>, <code>@Column</code>, <code>@TableId</code>, <code>@TableName</code> 等注解来映射数据库表和字段。</li>
+</ul>
+</li>
+<li><strong>封装性</strong>：属性通常声明为 <code>private</code>，通过 <code>public</code> 的 <code>getter</code> 和 <code>setter</code> 方法访问。</li>
+</ul>
+<h2 id="2-mapper-层-dao---data-access-object">2. Mapper 层 (DAO - Data Access Object)
+</h2><h3 id="目的-1">目的
+</h3><p>定义数据访问接口，负责与数据库进行直接交互，执行 SQL 语句（增删改查）。</p>
+<h3 id="具体实现-1">具体实现
+</h3><p>创建 <code>EmpMapper.java</code> 和 <code>EmpEmprMapper.java</code> 接口，并在接口上添加 <strong><code>@Mapper</code></strong> 注解。</p>
+<p><strong><code>@Mapper</code> 注解作用</strong>：</p>
+<ul>
+<li>这是 MyBatis 的注解 (或者是 MyBatis-Plus 提供的，效果类似)。</li>
+<li>Spring Boot 在启动时会扫描带有 <code>@Mapper</code> 注解的接口，并为它们创建代理实现类，然后将这些代理实例注册到 Spring IOC 容器中。这样，在 Service 层就可以通过 <code>@Autowired</code> 自动注入这些 Mapper 接口的实例。</li>
+</ul>
+<p><strong><code>EmpMapper.java</code> 示例</strong>：</p>
+<p>java</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">package</span><span class="w"> </span><span class="nn">com.example.mapper</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">com.example.pojo.Emp</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.ibatis.annotations.Mapper</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.ibatis.annotations.Param</span><span class="p">;</span><span class="w"> </span><span class="c1">// 多个参数时建议使用</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.List</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@Mapper</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">EmpMapper</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Emp</span><span class="w"> </span><span class="nf">findById</span><span class="p">(</span><span class="nd">@Param</span><span class="p">(</span><span class="s">&#34;empId&#34;</span><span class="p">)</span><span class="w"> </span><span class="n">Integer</span><span class="w"> </span><span class="n">empId</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Emp</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">findAll</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">insertEmp</span><span class="p">(</span><span class="n">Emp</span><span class="w"> </span><span class="n">emp</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">updateEmp</span><span class="p">(</span><span class="n">Emp</span><span class="w"> </span><span class="n">emp</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">deleteEmp</span><span class="p">(</span><span class="nd">@Param</span><span class="p">(</span><span class="s">&#34;empId&#34;</span><span class="p">)</span><span class="w"> </span><span class="n">Integer</span><span class="w"> </span><span class="n">empId</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong><code>EmpEmprMapper.java</code> 示例</strong>：</p>
+<p>java</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">package</span><span class="w"> </span><span class="nn">com.example.mapper</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">com.example.pojo.Empr</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.ibatis.annotations.Mapper</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.ibatis.annotations.Param</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.List</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@Mapper</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">EmpEmprMapper</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Empr</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">findByEmpId</span><span class="p">(</span><span class="nd">@Param</span><span class="p">(</span><span class="s">&#34;empId&#34;</span><span class="p">)</span><span class="w"> </span><span class="n">Integer</span><span class="w"> </span><span class="n">empId</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">insertEmpr</span><span class="p">(</span><span class="n">Empr</span><span class="w"> </span><span class="n">empr</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// ... 其他CRUD方法</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="关键点-1">关键点
+</h3><ul>
+<li><strong>接口定义</strong>：只定义方法签名，不包含具体实现。</li>
+<li><strong>SQL 实现</strong>：
+<ul>
+<li><strong>XML 文件</strong>：通常与 Mapper 接口同路径或在 <code>resources</code> 目录下创建对应的 XML 文件 (如 <code>EmpMapper.xml</code>) 来编写 SQL 语句。</li>
+<li><strong>注解方式</strong>：对于简单 SQL，也可以直接使用 <code>@Select</code>, <code>@Insert</code>, <code>@Update</code>, <code>@Delete</code> 等注解直接在接口方法上编写 SQL。</li>
+</ul>
+</li>
+<li><strong>方法命名</strong>：通常遵循一定的规范，如 <code>findByXXX</code>, <code>insertXXX</code>, <code>updateXXX</code>, <code>deleteXXX</code>。</li>
+<li><strong>参数与返回</strong>：方法的参数对应 SQL 中的条件，返回值对应查询结果。</li>
+</ul>
+<h2 id="3-service-层">3. Service 层
+</h2><h3 id="目的-2">目的
+</h3><p>处理核心业务逻辑，对一个或多个 Mapper 操作进行编排和封装，形成一个完整的业务功能。它起到承上启下的作用，隔离 Controller 层和 Mapper 层。</p>
+<h3 id="分为两部分接口和实现类">分为两部分：接口和实现类
+</h3><h4 id="31-service-接口-empservicejava">3.1 Service 接口 (<code>EmpService.java</code>)
+</h4><p><strong>目的</strong>：定义业务契约，声明业务方法。这样做的好处是面向接口编程，提高代码的灵活性和可测试性 (方便 Mock)。</p>
+<p><strong>具体实现</strong>：</p>
+<p>java</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">package</span><span class="w"> </span><span class="nn">com.example.service</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">com.example.pojo.Emp</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// import com.example.dto.EmpDetailDTO; // 可能需要DTO</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.List</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">EmpService</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Emp</span><span class="w"> </span><span class="nf">getEmployeeById</span><span class="p">(</span><span class="n">Integer</span><span class="w"> </span><span class="n">empId</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// EmpDetailDTO getEmployeeWithExperience(Integer empId); // 示例：返回包含经历的员工信息</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Emp</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">getAllEmployees</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">addNewEmployee</span><span class="p">(</span><span class="n">Emp</span><span class="w"> </span><span class="n">emp</span><span class="w"> </span><span class="cm">/*, List&lt;Empr&gt; experiences*/</span><span class="p">);</span><span class="w"> </span><span class="c1">// 可能同时添加员工和经历</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">updateEmployeeInfo</span><span class="p">(</span><span class="n">Emp</span><span class="w"> </span><span class="n">emp</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">removeEmployee</span><span class="p">(</span><span class="n">Integer</span><span class="w"> </span><span class="n">empId</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="32-service-实现类-empserviceimpljava">3.2 Service 实现类 (<code>EmpServiceImpl.java</code>)
+</h4><p><strong>目的</strong>：具体实现 Service 接口中定义的业务逻辑。</p>
+<p><strong>具体实现</strong>：</p>
+<ul>
+<li>创建 <code>impl</code> 包 (约定俗成)，在包内创建 <code>EmpServiceImpl.java</code> 类。</li>
+<li>实现 <code>EmpService</code> 接口 (<code>implements EmpService</code>)。</li>
+<li>添加 <strong><code>@Service</code></strong> 注解。</li>
+</ul>
+<p><strong><code>@Service</code> 注解作用</strong>：</p>
+<ul>
+<li>这是 Spring 框架的 stereotype (构造型) 注解之一，用于标识这是一个业务逻辑层组件。</li>
+<li>Spring Boot 启动时会扫描带有 <code>@Service</code> 注解的类，并创建其实例注册到 Spring IOC 容器中，使其成为一个 Bean。这样，在 Controller 层就可以通过 <code>@Autowired</code> 自动注入 <code>EmpService</code> 接口的实例 (Spring 会自动找到其实现类 <code>EmpServiceImpl</code> 的实例)。</li>
+</ul>
+<p><strong><code>EmpServiceImpl.java</code> 示例</strong>：</p>
+<p>java</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">package</span><span class="w"> </span><span class="nn">com.example.service.impl</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">com.example.mapper.EmpEmprMapper</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">com.example.mapper.EmpMapper</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">com.example.pojo.Emp</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">com.example.pojo.Empr</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">com.example.service.EmpService</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.springframework.beans.factory.annotation.Autowired</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.springframework.stereotype.Service</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.springframework.transaction.annotation.Transactional</span><span class="p">;</span><span class="w"> </span><span class="c1">// 引入事务注解</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.List</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@Service</span><span class="w"> </span><span class="c1">// 声明为Spring IOC容器的Bean</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">EmpServiceImpl</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">EmpService</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Autowired</span><span class="w"> </span><span class="c1">// 自动注入EmpMapper实例</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">EmpMapper</span><span class="w"> </span><span class="n">empMapper</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Autowired</span><span class="w"> </span><span class="c1">// 自动注入EmpEmprMapper实例</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">EmpEmprMapper</span><span class="w"> </span><span class="n">empEmprMapper</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Emp</span><span class="w"> </span><span class="nf">getEmployeeById</span><span class="p">(</span><span class="n">Integer</span><span class="w"> </span><span class="n">empId</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 简单示例：直接调用mapper</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">empMapper</span><span class="p">.</span><span class="na">findById</span><span class="p">(</span><span class="n">empId</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">    // 复杂业务示例：获取员工及其工作经历
+</span></span></span><span class="line"><span class="cl"><span class="cm">    @Override
+</span></span></span><span class="line"><span class="cl"><span class="cm">    public EmpDetailDTO getEmployeeWithExperience(Integer empId) {
+</span></span></span><span class="line"><span class="cl"><span class="cm">        Emp emp = empMapper.findById(empId);
+</span></span></span><span class="line"><span class="cl"><span class="cm">        if (emp == null) {
+</span></span></span><span class="line"><span class="cl"><span class="cm">            return null;
+</span></span></span><span class="line"><span class="cl"><span class="cm">        }
+</span></span></span><span class="line"><span class="cl"><span class="cm">        List&lt;Empr&gt; experiences = empEmprMapper.findByEmpId(empId);
+</span></span></span><span class="line"><span class="cl"><span class="cm">        // 假设EmpDetailDTO是专门用于封装员工和其经历的类
+</span></span></span><span class="line"><span class="cl"><span class="cm">        EmpDetailDTO dto = new EmpDetailDTO();
+</span></span></span><span class="line"><span class="cl"><span class="cm">        dto.setEmpId(emp.getEmpId());
+</span></span></span><span class="line"><span class="cl"><span class="cm">        dto.setEmpName(emp.getEmpName());
+</span></span></span><span class="line"><span class="cl"><span class="cm">        // ... 其他emp属性
+</span></span></span><span class="line"><span class="cl"><span class="cm">        dto.setWorkExperiences(experiences);
+</span></span></span><span class="line"><span class="cl"><span class="cm">        return dto;
+</span></span></span><span class="line"><span class="cl"><span class="cm">    }
+</span></span></span><span class="line"><span class="cl"><span class="cm">    */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Emp</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">getAllEmployees</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">empMapper</span><span class="p">.</span><span class="na">findAll</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Transactional</span><span class="w"> </span><span class="c1">// 声明式事务：保证方法内多个数据库操作的原子性</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">addNewEmployee</span><span class="p">(</span><span class="n">Emp</span><span class="w"> </span><span class="n">emp</span><span class="w"> </span><span class="cm">/*, List&lt;Empr&gt; experiences*/</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">empMapper</span><span class="p">.</span><span class="na">insertEmp</span><span class="p">(</span><span class="n">emp</span><span class="p">);</span><span class="w"> </span><span class="c1">// 插入员工信息，emp对象通常会配置返回自增主键</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// if (experiences != null &amp;&amp; !experiences.isEmpty()) {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//     for (Empr expr : experiences) {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//         expr.setEmpId(emp.getEmpId()); // 设置外键</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//         empEmprMapper.insertEmpr(expr);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//     }</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// }</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 如果在插入经历时发生错误，整个操作会回滚</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Transactional</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">updateEmployeeInfo</span><span class="p">(</span><span class="n">Emp</span><span class="w"> </span><span class="n">emp</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">empMapper</span><span class="p">.</span><span class="na">updateEmp</span><span class="p">(</span><span class="n">emp</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 可能还需要更新相关的工作经历等</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Transactional</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">removeEmployee</span><span class="p">(</span><span class="n">Integer</span><span class="w"> </span><span class="n">empId</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 实际业务中可能需要先删除关联的工作经历，或有其他逻辑检查</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// empEmprMapper.deleteByEmpId(empId); // 假设有此方法</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">empMapper</span><span class="p">.</span><span class="na">deleteEmp</span><span class="p">(</span><span class="n">empId</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="关键点-2">关键点
+</h3><ul>
+<li><strong>依赖注入 (<code>@Autowired</code>)</strong>：通过 <code>@Autowired</code> 注解将 Mapper 层的实例注入到 Service 实现类中。</li>
+<li><strong>业务逻辑封装</strong>：包含条件判断、数据转换、多个 DAO 操作的组合等。</li>
+<li><strong>事务管理 (<code>@Transactional</code>)</strong>：对于涉及多个写操作（增、删、改）的业务方法，通常会使用 <code>@Transactional</code> 注解来保证操作的原子性。如果方法中任意一个数据库操作失败，整个事务会回滚，保证数据一致性。</li>
+</ul>
+<h2 id="4-controller-层">4. Controller 层
+</h2><h3 id="目的-3">目的
+</h3><p>接收前端 HTTP 请求，调用 Service 层处理业务逻辑，并将处理结果返回给前端。它是应用的入口点。</p>
+<h3 id="具体实现-2">具体实现
+</h3><p>创建 <code>EmpController.java</code> 类，并添加 <strong><code>@RestController</code></strong> 注解。</p>
+<p><strong><code>@RestController</code> 注解作用</strong>：</p>
+<ul>
+<li>这是一个组合注解，相当于 <code>@Controller</code> + <code>@ResponseBody</code>。</li>
+<li><code>@Controller</code>：将类标识为一个控制器组件，Spring IOC 容器会管理它。</li>
+<li><code>@ResponseBody</code>：表示该控制器中所有方法的返回值都会直接作为 HTTP 响应体的内容（通常是 JSON 或 XML 格式），而不是视图名称。</li>
+</ul>
+<p><strong><code>@Slf4j</code> (可选)</strong>：</p>
+<ul>
+<li>这是 Lombok 提供的注解，用于快速集成 SLF4J 日志框架。它会在编译时自动为类添加一个 <code>log</code> 字段 ( <code>private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(EmpController.class);</code> )。</li>
+<li><strong>作用</strong>：方便记录日志，用于调试、追踪问题和监控应用运行状态。</li>
+</ul>
+<p><strong><code>EmpController.java</code> 示例</strong>：</p>
+<p>java</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">package</span><span class="w"> </span><span class="nn">com.example.controller</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">com.example.pojo.Emp</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// import com.example.dto.EmpDetailDTO;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">com.example.service.EmpService</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">lombok.extern.slf4j.Slf4j</span><span class="p">;</span><span class="w"> </span><span class="c1">// 如果使用@Slf4j</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.springframework.beans.factory.annotation.Autowired</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.springframework.http.HttpStatus</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.springframework.http.ResponseEntity</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.springframework.web.bind.annotation.*</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.List</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@RestController</span><span class="w"> </span><span class="c1">// 声明为RESTful风格的控制器，方法返回JSON/XML</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@RequestMapping</span><span class="p">(</span><span class="s">&#34;/api/employees&#34;</span><span class="p">)</span><span class="w"> </span><span class="c1">// 类级别的请求路径映射，所有方法都在此基础路径下</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@Slf4j</span><span class="w"> </span><span class="c1">// 可选，用于日志记录</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">EmpController</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Autowired</span><span class="w"> </span><span class="c1">// 自动注入EmpService实例</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">EmpService</span><span class="w"> </span><span class="n">empService</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// GET /api/employees/{id} - 获取指定ID的员工信息</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@GetMapping</span><span class="p">(</span><span class="s">&#34;/{id}&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">ResponseEntity</span><span class="o">&lt;?&gt;</span><span class="w"> </span><span class="n">getEmployeeById</span><span class="p">(</span><span class="nd">@PathVariable</span><span class="w"> </span><span class="n">Integer</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">log</span><span class="p">.</span><span class="na">info</span><span class="p">(</span><span class="s">&#34;Request to get employee with ID: {}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">id</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// EmpDetailDTO empDetail = empService.getEmployeeWithExperience(id);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Emp</span><span class="w"> </span><span class="n">employee</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">empService</span><span class="p">.</span><span class="na">getEmployeeById</span><span class="p">(</span><span class="n">id</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">employee</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">log</span><span class="p">.</span><span class="na">info</span><span class="p">(</span><span class="s">&#34;Found employee: {}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">employee</span><span class="p">.</span><span class="na">getEmpName</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">ResponseEntity</span><span class="p">.</span><span class="na">ok</span><span class="p">(</span><span class="n">employee</span><span class="p">);</span><span class="w"> </span><span class="c1">// 返回200 OK 和员工数据</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">log</span><span class="p">.</span><span class="na">warn</span><span class="p">(</span><span class="s">&#34;Employee with ID: {} not found.&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">id</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">ResponseEntity</span><span class="p">.</span><span class="na">status</span><span class="p">(</span><span class="n">HttpStatus</span><span class="p">.</span><span class="na">NOT_FOUND</span><span class="p">).</span><span class="na">body</span><span class="p">(</span><span class="s">&#34;Employee not found&#34;</span><span class="p">);</span><span class="w"> </span><span class="c1">// 返回404 Not Found</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// GET /api/employees - 获取所有员工信息</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@GetMapping</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">ResponseEntity</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Emp</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="nf">getAllEmployees</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">log</span><span class="p">.</span><span class="na">info</span><span class="p">(</span><span class="s">&#34;Request to get all employees&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Emp</span><span class="o">&gt;</span><span class="w"> </span><span class="n">employees</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">empService</span><span class="p">.</span><span class="na">getAllEmployees</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">ResponseEntity</span><span class="p">.</span><span class="na">ok</span><span class="p">(</span><span class="n">employees</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// POST /api/employees - 新增员工</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@PostMapping</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">ResponseEntity</span><span class="o">&lt;</span><span class="n">Emp</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">createEmployee</span><span class="p">(</span><span class="nd">@RequestBody</span><span class="w"> </span><span class="n">Emp</span><span class="w"> </span><span class="n">emp</span><span class="w"> </span><span class="cm">/*, @RequestBody List&lt;Empr&gt; experiences (更复杂场景)*/</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">log</span><span class="p">.</span><span class="na">info</span><span class="p">(</span><span class="s">&#34;Request to create new employee: {}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">emp</span><span class="p">.</span><span class="na">getEmpName</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">empService</span><span class="p">.</span><span class="na">addNewEmployee</span><span class="p">(</span><span class="n">emp</span><span class="w"> </span><span class="cm">/*, experiences*/</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 通常在emp对象中会包含数据库生成的ID，如果配置了MyBatis返回主键</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">ResponseEntity</span><span class="p">.</span><span class="na">status</span><span class="p">(</span><span class="n">HttpStatus</span><span class="p">.</span><span class="na">CREATED</span><span class="p">).</span><span class="na">body</span><span class="p">(</span><span class="n">emp</span><span class="p">);</span><span class="w"> </span><span class="c1">// 返回201 Created 和创建的员工数据</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// PUT /api/employees/{id} - 更新指定ID的员工信息</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@PutMapping</span><span class="p">(</span><span class="s">&#34;/{id}&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">ResponseEntity</span><span class="o">&lt;?&gt;</span><span class="w"> </span><span class="n">updateEmployee</span><span class="p">(</span><span class="nd">@PathVariable</span><span class="w"> </span><span class="n">Integer</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="nd">@RequestBody</span><span class="w"> </span><span class="n">Emp</span><span class="w"> </span><span class="n">emp</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">log</span><span class="p">.</span><span class="na">info</span><span class="p">(</span><span class="s">&#34;Request to update employee with ID: {}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">id</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 确保emp对象的id与路径变量id一致，或以路径变量为准</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">emp</span><span class="p">.</span><span class="na">setEmpId</span><span class="p">(</span><span class="n">id</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">empService</span><span class="p">.</span><span class="na">updateEmployeeInfo</span><span class="p">(</span><span class="n">emp</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">ResponseEntity</span><span class="p">.</span><span class="na">ok</span><span class="p">(</span><span class="s">&#34;Employee updated successfully&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// DELETE /api/employees/{id} - 删除指定ID的员工</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@DeleteMapping</span><span class="p">(</span><span class="s">&#34;/{id}&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">ResponseEntity</span><span class="o">&lt;</span><span class="n">Void</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">deleteEmployee</span><span class="p">(</span><span class="nd">@PathVariable</span><span class="w"> </span><span class="n">Integer</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">log</span><span class="p">.</span><span class="na">info</span><span class="p">(</span><span class="s">&#34;Request to delete employee with ID: {}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">id</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">empService</span><span class="p">.</span><span class="na">removeEmployee</span><span class="p">(</span><span class="n">id</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">ResponseEntity</span><span class="p">.</span><span class="na">noContent</span><span class="p">().</span><span class="na">build</span><span class="p">();</span><span class="w"> </span><span class="c1">// 返回204 No Content</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="关键点-3">关键点
+</h3><ul>
+<li><strong>依赖注入 (<code>@Autowired</code>)</strong>：注入 <code>EmpService</code> 实例。</li>
+<li><strong>请求映射注解</strong>：
+<ul>
+<li><code>@RequestMapping(&quot;/api/employees&quot;)</code>: 定义类级别的基础 URL 路径。</li>
+<li><code>@GetMapping</code>, <code>@PostMapping</code>, <code>@PutMapping</code>, <code>@DeleteMapping</code>: 分别对应 HTTP 的 GET, POST, PUT, DELETE 请求方法，并可指定具体的子路径 (如 <code>/{id}</code>)。</li>
+</ul>
+</li>
+<li><strong>参数绑定注解</strong>：
+<ul>
+<li><code>@PathVariable</code>: 从 URL 路径中提取参数 (如 <code>/{id}</code> 中的 <code>id</code>)。</li>
+<li><code>@RequestBody</code>: 将 HTTP 请求体中的 JSON/XML 数据自动转换为 Java 对象 (如 <code>Emp</code> 对象)。</li>
+<li><code>@RequestParam</code>: 从 URL 查询参数中提取值 (如 <code>?name=John</code>)。</li>
+</ul>
+</li>
+<li><strong>响应处理 (<code>ResponseEntity</code>)</strong>：
+<ul>
+<li>使用 <code>ResponseEntity</code> 可以更精细地控制 HTTP 响应，包括状态码、头部信息和响应体。</li>
+<li>可以直接返回 POJO 对象，Spring MVC 会自动通过 <code>HttpMessageConverter</code> (如 <code>JacksonHttpMessageConverter</code>) 将其序列化为 JSON (默认) 或 XML。</li>
+</ul>
+</li>
+<li><strong>RESTful API 设计</strong>：通常遵循 RESTful 风格来设计 API 接口。</li>
+</ul>
+<h2 id="总结与强调">总结与强调
+</h2><ul>
+<li><strong>分层解耦</strong>：每一层都有明确的职责，Controller 负责调度和 HTTP 交互，Service 负责业务逻辑，Mapper 负责数据持久化。这种分离使得各层可以独立开发、测试和修改，降低了模块间的耦合度。</li>
+<li><strong>Spring IOC (Inversion of Control)</strong>：通过 <code>@Mapper</code>, <code>@Service</code>, <code>@RestController</code> 等注解，我们将对象的创建和管理的权力交给了 Spring 容器。我们需要使用某个组件时，通过 <code>@Autowired</code> 进行依赖注入即可，无需手动 <code>new</code> 对象，这简化了对象管理和依赖关系。</li>
+<li><strong>面向接口编程</strong>：尤其是在 Service 层，通过定义接口和实现类，可以提高系统的灵活性和可扩展性。例如，未来如果需要更换 <code>EmpServiceImpl</code> 的实现，只要新的实现类也实现了 <code>EmpService</code> 接口，Controller 层的代码基本无需改动。</li>
+<li><strong>声明式事务</strong>：通过在 Service 层方法上使用 <code>@Transactional</code> 注解，可以优雅地实现事务管理，而无需编写冗余的事务控制代码。</li>
+<li><strong>Lombok (可选但推荐)</strong>：通过 <code>@Data</code>, <code>@Slf4j</code> 等注解，可以减少大量的样板代码，使代码更简洁易读。</li>
+</ul>
+<p>这个流程是 Spring Boot Web 应用开发中非常经典和常用的一种实践。它清晰地划分了不同组件的职责，使得项目结构更加规范，易于团队协作和长期维护。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/hugo-dev/tags/%E7%AC%94%E8%AE%B0/">笔记</a>
+        
+            <a href="/hugo-dev/tags/java/">Java</a>
+        
+            <a href="/hugo-dev/tags/mybatis/">MyBatis</a>
+        
+            <a href="/hugo-dev/tags/springboot/">Springboot</a>
+        
+    </section>
+
+
+    </footer>
+
+
+    
+</article>
+
+
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/spring-boot-%E7%AE%80%E5%8D%95%E7%9A%84%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5%E5%8A%9F%E8%83%BD%E7%9A%84%E5%AE%9E%E7%8E%B0/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring Boot 简单的增删改查功能的实现</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/hugo-dev/p/mybatis%E7%AF%87-%E5%88%86%E9%A1%B5%E6%9F%A5%E8%AF%A2/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="https://wp-cdn.4ce.cn/v2/7GHIYWk.png" loading="lazy" data-key="" data-hash="https://wp-cdn.4ce.cn/v2/7GHIYWk.png"/>
+                
+            </div>
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">MyBatis篇-分页查询</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/jvm%E7%AF%87-%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6%E4%B8%8E%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%9C%BA%E5%88%B6/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">JVM篇-类加载机制与双亲委派机制</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/java-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B8%B8%E9%87%8F%E6%B1%A0%E4%B8%8E-final-%E5%85%B3%E9%94%AE%E5%AD%97%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java 字符串常量池与 final 关键字深度解析</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/hugo-dev/p/%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="https://wp-cdn.4ce.cn/v2/nNDeTLC.png" loading="lazy" data-key="" data-hash="https://wp-cdn.4ce.cn/v2/nNDeTLC.png"/>
+                
+            </div>
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">事务管理的学习笔记</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 歌未竟的个人博客
+    </section>
+    
+    <section class="powerby">
+        
+            <a href="https://icp.gov.moe/?keyword=20250899" target="_blank">萌ICP备20250899号</a> <br/>
+        
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        
+    </section>
+</footer>
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/hugo-dev/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<style>
+  body {
+    background: url(https://gavin-gwj.github.io/hugo-dev/background/bg1.jpg) no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+    background-color: rgba(255, 255, 255, 0.75);
+    background-blend-mode: lighten;
+  }
+
+   
+  .main-content {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 2rem;
+    border-radius: 8px;
+    margin: 2rem auto;
+    max-width: 1200px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+   
+  [data-scheme="dark"] body {
+    background-color: rgba(0, 0, 0, 0.7);
+    background-blend-mode: darken;
+  }
+</style>
+
+
+<script defer src="https://cn.vercount.one/js"></script>
+
+<script>
+    function showHideView() {
+        
+        let viewCounts = document.querySelectorAll("#viewCount");
+        if (viewCounts) {
+            
+            let article =  document.querySelector(".article-page");
+            if (!article) {
+                viewCounts.forEach(ele => {
+                    ele.style.display = 'none';
+                });
+            }
+        }
+    }
+    
+    showHideView();
+</script>
+
+
+
+    </body>
+</html>
