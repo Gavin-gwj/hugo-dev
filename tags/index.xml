@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Tags on Gavin-歌未竟</title>
+        <link>https://gavin-gwj.github.io/hugo-dev/tags/</link>
+        <description>Recent content in Tags on Gavin-歌未竟</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>zh-cn</language>
+        <copyright>歌未竟的个人博客</copyright>
+        <lastBuildDate>Fri, 16 May 2025 16:01:17 +0800</lastBuildDate><atom:link href="https://gavin-gwj.github.io/hugo-dev/tags/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>MyBatis</title>
+        <link>https://gavin-gwj.github.io/hugo-dev/tags/mybatis/</link>
+        <pubDate>Fri, 16 May 2025 16:01:17 +0800</pubDate>
+        
+        <guid>https://gavin-gwj.github.io/hugo-dev/tags/mybatis/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>笔记</title>
+        <link>https://gavin-gwj.github.io/hugo-dev/tags/%E7%AC%94%E8%AE%B0/</link>
+        <pubDate>Fri, 16 May 2025 16:01:17 +0800</pubDate>
+        
+        <guid>https://gavin-gwj.github.io/hugo-dev/tags/%E7%AC%94%E8%AE%B0/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>面试题</title>
+        <link>https://gavin-gwj.github.io/hugo-dev/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/</link>
+        <pubDate>Fri, 16 May 2025 16:01:17 +0800</pubDate>
+        
+        <guid>https://gavin-gwj.github.io/hugo-dev/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Java</title>
+        <link>https://gavin-gwj.github.io/hugo-dev/tags/java/</link>
+        <pubDate>Thu, 15 May 2025 16:13:33 +0800</pubDate>
+        
+        <guid>https://gavin-gwj.github.io/hugo-dev/tags/java/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Springboot</title>
+        <link>https://gavin-gwj.github.io/hugo-dev/tags/springboot/</link>
+        <pubDate>Thu, 15 May 2025 16:13:33 +0800</pubDate>
+        
+        <guid>https://gavin-gwj.github.io/hugo-dev/tags/springboot/</guid>
+        <description></description>
+        </item>
+        
+    </channel>
+</rss>
