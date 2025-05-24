@@ -2,17 +2,18 @@
 <html lang="zh-cn" dir="ltr">
     <head><script src="/hugo-dev/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=hugo-dev/livereload" data-no-instant defer></script><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Spring拦截器(Interceptor)学习笔记 一、拦截器概述 1.1 什么是拦截器？ 拦截器是Spring框架提供的一种动态拦截方法调用的机制，类似于Servlet中的过滤器(Filter)。主要特点包括：\n动态拦截控制器方法的执行 在指定方法调用前后执行预设代码 用于处理通用性的业务逻辑（如登录校验、权限检查、日志记录等） 1.2 拦截器 vs 过滤器 特性 拦截器(Interceptor) 过滤器(Filter) 所属框架 Spring MVC Servlet规范 拦截范围 只拦截Spring环境中的资源 拦截所有资源 依赖 依赖Spring容器 不依赖任何框架 执行时机 Controller方法前后 Servlet处理前后 实现接口 HandlerInterceptor Filter 二、拦截器快速入门 2.1 实现步骤 定义拦截器：实现HandlerInterceptor接口 注册配置：通过WebMvcConfigurer配置 2.2 代码实现 1) 自定义拦截器 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 @Component public class DemoInterceptor implements HandlerInterceptor { // 目标方法执行前调用 @Override public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception { System.out.println(&#34;preHandle执行...&#34;); return true; // true放行，false拦截 } // 目标方法执行后调用（视图渲染前） @Override public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception { System.out.println(&#34;postHandle执行...&#34;); } // 整个请求完成后调用（视图渲染后） @Override public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception { System.out.println(&#34;afterCompletion执行...&#34;); } } 2) 注册拦截器 1 2 3 4 5 6 7 8 9 10 11 12 @Configuration public class WebConfig implements WebMvcConfigurer { @Autowired private DemoInterceptor demoInterceptor; @Override public void addInterceptors(InterceptorRegistry registry) { registry.addInterceptor(demoInterceptor) .addPathPatterns(&#34;/**&#34;); // 拦截所有路径 } } 2.3 执行顺序验证 当访问一个Controller方法时，控制台输出：\n">
-<title>标题</title>
+<title>Spring拦截器(Interceptor)</title>
 
-<link rel='canonical' href='http://localhost:1313/hugo-dev/p/%E6%A0%87%E9%A2%98/'>
+<link rel='canonical' href='http://localhost:1313/hugo-dev/p/spring%E6%8B%A6%E6%88%AA%E5%99%A8interceptor/'>
 
-<link rel="stylesheet" href="/hugo-dev/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="标题">
+<link rel="stylesheet" href="/hugo-dev/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="Spring拦截器(Interceptor)">
 <meta property='og:description' content="Spring拦截器(Interceptor)学习笔记 一、拦截器概述 1.1 什么是拦截器？ 拦截器是Spring框架提供的一种动态拦截方法调用的机制，类似于Servlet中的过滤器(Filter)。主要特点包括：\n动态拦截控制器方法的执行 在指定方法调用前后执行预设代码 用于处理通用性的业务逻辑（如登录校验、权限检查、日志记录等） 1.2 拦截器 vs 过滤器 特性 拦截器(Interceptor) 过滤器(Filter) 所属框架 Spring MVC Servlet规范 拦截范围 只拦截Spring环境中的资源 拦截所有资源 依赖 依赖Spring容器 不依赖任何框架 执行时机 Controller方法前后 Servlet处理前后 实现接口 HandlerInterceptor Filter 二、拦截器快速入门 2.1 实现步骤 定义拦截器：实现HandlerInterceptor接口 注册配置：通过WebMvcConfigurer配置 2.2 代码实现 1) 自定义拦截器 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 @Component public class DemoInterceptor implements HandlerInterceptor { // 目标方法执行前调用 @Override public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception { System.out.println(&#34;preHandle执行...&#34;); return true; // true放行，false拦截 } // 目标方法执行后调用（视图渲染前） @Override public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception { System.out.println(&#34;postHandle执行...&#34;); } // 整个请求完成后调用（视图渲染后） @Override public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception { System.out.println(&#34;afterCompletion执行...&#34;); } } 2) 注册拦截器 1 2 3 4 5 6 7 8 9 10 11 12 @Configuration public class WebConfig implements WebMvcConfigurer { @Autowired private DemoInterceptor demoInterceptor; @Override public void addInterceptors(InterceptorRegistry registry) { registry.addInterceptor(demoInterceptor) .addPathPatterns(&#34;/**&#34;); // 拦截所有路径 } } 2.3 执行顺序验证 当访问一个Controller方法时，控制台输出：\n">
-<meta property='og:url' content='http://localhost:1313/hugo-dev/p/%E6%A0%87%E9%A2%98/'>
+<meta property='og:url' content='http://localhost:1313/hugo-dev/p/spring%E6%8B%A6%E6%88%AA%E5%99%A8interceptor/'>
 <meta property='og:site_name' content='Gavin-歌未竟'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-05-24T13:33:57&#43;08:00'/><meta property='article:modified_time' content='2025-05-24T13:33:57&#43;08:00'/>
-<meta name="twitter:title" content="标题">
-<meta name="twitter:description" content="Spring拦截器(Interceptor)学习笔记 一、拦截器概述 1.1 什么是拦截器？ 拦截器是Spring框架提供的一种动态拦截方法调用的机制，类似于Servlet中的过滤器(Filter)。主要特点包括：\n动态拦截控制器方法的执行 在指定方法调用前后执行预设代码 用于处理通用性的业务逻辑（如登录校验、权限检查、日志记录等） 1.2 拦截器 vs 过滤器 特性 拦截器(Interceptor) 过滤器(Filter) 所属框架 Spring MVC Servlet规范 拦截范围 只拦截Spring环境中的资源 拦截所有资源 依赖 依赖Spring容器 不依赖任何框架 执行时机 Controller方法前后 Servlet处理前后 实现接口 HandlerInterceptor Filter 二、拦截器快速入门 2.1 实现步骤 定义拦截器：实现HandlerInterceptor接口 注册配置：通过WebMvcConfigurer配置 2.2 代码实现 1) 自定义拦截器 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 @Component public class DemoInterceptor implements HandlerInterceptor { // 目标方法执行前调用 @Override public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception { System.out.println(&#34;preHandle执行...&#34;); return true; // true放行，false拦截 } // 目标方法执行后调用（视图渲染前） @Override public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception { System.out.println(&#34;postHandle执行...&#34;); } // 整个请求完成后调用（视图渲染后） @Override public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception { System.out.println(&#34;afterCompletion执行...&#34;); } } 2) 注册拦截器 1 2 3 4 5 6 7 8 9 10 11 12 @Configuration public class WebConfig implements WebMvcConfigurer { @Autowired private DemoInterceptor demoInterceptor; @Override public void addInterceptors(InterceptorRegistry registry) { registry.addInterceptor(demoInterceptor) .addPathPatterns(&#34;/**&#34;); // 拦截所有路径 } } 2.3 执行顺序验证 当访问一个Controller方法时，控制台输出：\n">
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-05-24T13:33:57&#43;08:00'/><meta property='article:modified_time' content='2025-05-24T13:33:57&#43;08:00'/><meta property='og:image' content='https://wp-cdn.4ce.cn/v2/i7r99m2.png' />
+<meta name="twitter:title" content="Spring拦截器(Interceptor)">
+<meta name="twitter:description" content="Spring拦截器(Interceptor)学习笔记 一、拦截器概述 1.1 什么是拦截器？ 拦截器是Spring框架提供的一种动态拦截方法调用的机制，类似于Servlet中的过滤器(Filter)。主要特点包括：\n动态拦截控制器方法的执行 在指定方法调用前后执行预设代码 用于处理通用性的业务逻辑（如登录校验、权限检查、日志记录等） 1.2 拦截器 vs 过滤器 特性 拦截器(Interceptor) 过滤器(Filter) 所属框架 Spring MVC Servlet规范 拦截范围 只拦截Spring环境中的资源 拦截所有资源 依赖 依赖Spring容器 不依赖任何框架 执行时机 Controller方法前后 Servlet处理前后 实现接口 HandlerInterceptor Filter 二、拦截器快速入门 2.1 实现步骤 定义拦截器：实现HandlerInterceptor接口 注册配置：通过WebMvcConfigurer配置 2.2 代码实现 1) 自定义拦截器 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 @Component public class DemoInterceptor implements HandlerInterceptor { // 目标方法执行前调用 @Override public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception { System.out.println(&#34;preHandle执行...&#34;); return true; // true放行，false拦截 } // 目标方法执行后调用（视图渲染前） @Override public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception { System.out.println(&#34;postHandle执行...&#34;); } // 整个请求完成后调用（视图渲染后） @Override public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception { System.out.println(&#34;afterCompletion执行...&#34;); } } 2) 注册拦截器 1 2 3 4 5 6 7 8 9 10 11 12 @Configuration public class WebConfig implements WebMvcConfigurer { @Autowired private DemoInterceptor demoInterceptor; @Override public void addInterceptors(InterceptorRegistry registry) { registry.addInterceptor(demoInterceptor) .addPathPatterns(&#34;/**&#34;); // 拦截所有路径 } } 2.3 执行顺序验证 当访问一个Controller方法时，控制台输出：\n"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://wp-cdn.4ce.cn/v2/i7r99m2.png' />
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
     </head>
@@ -331,15 +332,39 @@
 
 
             <main class="main full-width">
-    <article class="main-article">
+    <article class="has-image main-article">
     <header class="article-header">
+        <div class="article-image">
+            <a href="/hugo-dev/p/spring%E6%8B%A6%E6%88%AA%E5%99%A8interceptor/">
+                
+                    <img src="https://wp-cdn.4ce.cn/v2/i7r99m2.png" loading="lazy" alt="Featured image of post Spring拦截器(Interceptor)" />
+                
+            </a>
+        </div>
+    
 
     <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/hugo-dev/categories/%E7%AC%94%E8%AE%B0/" >
+                笔记
+            </a>
+        
+            <a href="/hugo-dev/categories/springboot/" >
+                Springboot
+            </a>
+        
+            <a href="/hugo-dev/categories/spring/" >
+                Spring
+            </a>
+        
+    </header>
     
 
     <div class="article-title-wrapper">
         <h2 class="article-title">
-            <a href="/hugo-dev/p/%E6%A0%87%E9%A2%98/">标题</a>
+            <a href="/hugo-dev/p/spring%E6%8B%A6%E6%88%AA%E5%99%A8interceptor/">Spring拦截器(Interceptor)</a>
         </h2>
     
         
@@ -372,7 +397,7 @@
   <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/>
 </svg>
         <span class="article-wordcount">
-            1909字
+            1797字
         </span>
     </div>
 
@@ -748,55 +773,17 @@
 <li><strong>过滤器</strong>后置处理</li>
 </ol>
 <h4 id="执行流程图">执行流程图
-</h4><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">sequenceDiagram
-</span></span><span class="line"><span class="cl">    participant Client
-</span></span><span class="line"><span class="cl">    participant Filter
-</span></span><span class="line"><span class="cl">    participant DispatcherServlet
-</span></span><span class="line"><span class="cl">    participant Interceptor
-</span></span><span class="line"><span class="cl">    participant Controller
-</span></span><span class="line"><span class="cl">    
-</span></span><span class="line"><span class="cl">    Client-&gt;&gt;Filter: 发起请求
-</span></span><span class="line"><span class="cl">    Filter-&gt;&gt;DispatcherServlet: 过滤处理
-</span></span><span class="line"><span class="cl">    DispatcherServlet-&gt;&gt;Interceptor: preHandle
-</span></span><span class="line"><span class="cl">    alt preHandle返回true
-</span></span><span class="line"><span class="cl">        Interceptor-&gt;&gt;Controller: 执行方法
-</span></span><span class="line"><span class="cl">        Controller-&gt;&gt;Interceptor: postHandle
-</span></span><span class="line"><span class="cl">        Interceptor-&gt;&gt;DispatcherServlet: 视图渲染
-</span></span><span class="line"><span class="cl">        DispatcherServlet-&gt;&gt;Interceptor: afterCompletion
-</span></span><span class="line"><span class="cl">        Interceptor-&gt;&gt;Filter: 返回响应
-</span></span><span class="line"><span class="cl">        Filter-&gt;&gt;Client: 最终响应
-</span></span><span class="line"><span class="cl">    else preHandle返回false
-</span></span><span class="line"><span class="cl">        Interceptor-&gt;&gt;Filter: 直接返回
-</span></span><span class="line"><span class="cl">        Filter-&gt;&gt;Client: 错误响应
-</span></span><span class="line"><span class="cl">    end
-</span></span></code></pre></td></tr></table>
-</div>
-</div><h2 id="五最佳实践建议">五、最佳实践建议
+</h4><p><img src="https://wp-cdn.4ce.cn/v2/yfJNK5j.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+></p>
+<h2 id="五最佳实践建议">五、最佳实践建议
 </h2><ol>
 <li>
 <p><strong>登录校验</strong>：推荐使用拦截器而非过滤器</p>
@@ -904,6 +891,101 @@
     
 
     
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/spirng%E7%AF%87-spring%E4%B8%AD%E4%BA%8B%E5%8A%A1%E5%A4%B1%E6%95%88%E7%9A%84%E5%9C%BA%E6%99%AF/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spirng篇-Spring中事务失效的场景</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/springboot-mybatis-%E7%99%BB%E5%BD%95%E8%AE%A4%E8%AF%81%E5%8A%9F%E8%83%BD%E5%AE%9E%E7%8E%B0/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">SpringBoot&#43;Mybatis 登录认证功能实现</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/spirng%E7%AF%87-aop-%E4%B8%8E-spring-%E4%BA%8B%E5%8A%A1/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spirng篇-AOP 与 Spring 事务</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/spring%E7%AF%87-spring-%E5%AE%B9%E5%99%A8%E4%B8%AD%E5%8D%95%E4%BE%8Bbean%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E5%88%86%E6%9E%90/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring篇-Spring 容器中单例Bean的线程安全分析</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/hugo-dev/p/java-%E4%B8%AD-bean%E5%8D%95%E4%BE%8B%E5%8F%8A%E5%8D%95%E4%BE%8B-bean-%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="https://wp-cdn.4ce.cn/v2/hjEyjjL.png" loading="lazy" data-key="" data-hash="https://wp-cdn.4ce.cn/v2/hjEyjjL.png"/>
+                
+            </div>
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java 中 Bean、单例及单例 Bean 的学习笔记</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
 
      
     
