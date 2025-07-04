@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Redis 是一个开源的内存数据结构存储，可以用作数据库、缓存和消息中间件。与传统的关系型数据库不同，Redis 将数据存储在内存中，这使得它的读写速度非常快。它支持多种数据结构，这让它在处理各种场景时都非常灵活。\n">
+<title>Redis五种常用数据类型</title>
+
+<link rel='canonical' href='https://gavin-gwj.github.io/hugo-dev/p/redis%E4%BA%94%E7%A7%8D%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/'>
+
+<link rel="stylesheet" href="/hugo-dev/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="Redis五种常用数据类型">
+<meta property='og:description' content="Redis 是一个开源的内存数据结构存储，可以用作数据库、缓存和消息中间件。与传统的关系型数据库不同，Redis 将数据存储在内存中，这使得它的读写速度非常快。它支持多种数据结构，这让它在处理各种场景时都非常灵活。\n">
+<meta property='og:url' content='https://gavin-gwj.github.io/hugo-dev/p/redis%E4%BA%94%E7%A7%8D%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/'>
+<meta property='og:site_name' content='Gavin-歌未竟'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-06-19T22:26:09&#43;08:00'/><meta property='article:modified_time' content='2025-06-19T22:26:09&#43;08:00'/>
+<meta name="twitter:title" content="Redis五种常用数据类型">
+<meta name="twitter:description" content="Redis 是一个开源的内存数据结构存储，可以用作数据库、缓存和消息中间件。与传统的关系型数据库不同，Redis 将数据存储在内存中，这使得它的读写速度非常快。它支持多种数据结构，这让它在处理各种场景时都非常灵活。\n">
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/hugo-dev/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/hugo-dev/img/avatar_hu_cf5ff899d804496e.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">😅</span>
+                
+            </figure>
+            
+        
+
+
+
+
+
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/hugo-dev">Gavin-歌未竟</a></h1>
+            <h2 class="site-description">探索技术的无限可能！</h2>
+        </div>
+    </header>
+
+    
+
+<div>
+    
+    <span style="color: #707070;">
+        <span id="busuanzi_container_page_pv">
+            总访问量: <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+    </span>
+</div>
+<ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/2123131391'
+                        target="_blank"
+                        title="Bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/Gavin-gwj'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/hugo-dev/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#1-字符串-string">1. 字符串 (String)</a></li>
+        <li><a href="#2-哈希-hash">2. 哈希 (Hash)</a></li>
+        <li><a href="#3-列表-list">3. 列表 (List)</a></li>
+        <li><a href="#4-集合-set">4. 集合 (Set)</a></li>
+        <li><a href="#5-有序集合-sorted-set--zset">5. 有序集合 (Sorted Set / ZSet)</a></li>
+        <li><a href="#如何在-spring-boot-中使用-redis">如何在 Spring Boot 中使用 Redis？</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/hugo-dev/categories/%E7%AC%94%E8%AE%B0/" >
+                笔记
+            </a>
+        
+            <a href="/hugo-dev/categories/redis/" >
+                Redis
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/hugo-dev/p/redis%E4%BA%94%E7%A7%8D%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">Redis五种常用数据类型</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-06-19</time>
+            </div>
+        
+
+    
+    <div class="time-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+  <path d="M5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zM5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1H5z"/>
+  <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/>
+</svg>
+        <span class="article-wordcount">
+            2376字
+        </span>
+    </div>
+
+     
+
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 5 分钟
+                </time>
+            </div>
+        
+
+        
+
+
+        
+    </footer>
+    
+
+
+
+    
+
+  
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>Redis 是一个开源的内存数据结构存储，可以用作数据库、缓存和消息中间件。与传统的关系型数据库不同，Redis 将数据存储在内存中，这使得它的读写速度非常快。它支持多种数据结构，这让它在处理各种场景时都非常灵活。</p>
+<p>下面我们来深入了解 Redis 最常用的五种数据类型：</p>
+<h3 id="1-字符串-string">1. 字符串 (String)
+</h3><p>Redis 中最基本的数据类型就是 <strong>字符串 (String)</strong>。它不仅仅能存储普通的文本字符串，还能存储二进制数据（比如图片、视频、序列化的 Java 对象），最大可以达到 512MB。</p>
+<p><strong>理解：</strong> 你可以把 Redis 的 String 类型想象成 Java 中的 <code>String</code> 类型，但它还能存储更广泛的数据。</p>
+<p><strong>常用场景：</strong></p>
+<ul>
+<li><strong>缓存：</strong> 存储用户的 Session 信息、热门文章的标题等。</li>
+<li><strong>计数器：</strong> 记录网站的访问量、商品的点赞数等。</li>
+<li><strong>简单键值对：</strong> 存储配置信息、用户信息等。</li>
+</ul>
+<p><strong>常用命令：</strong></p>
+<ul>
+<li><code>SET key value</code>：设置键值对。</li>
+<li><code>GET key</code>：获取键的值。</li>
+<li><code>INCR key</code>：将键的值加 1（如果值为数字）。</li>
+<li><code>DECR key</code>：将键的值减 1。</li>
+<li><code>EXPIRE key seconds</code>：设置键的过期时间。</li>
+</ul>
+<p><strong>示例：</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">SET username &#34;zhangsan&#34;
+</span></span><span class="line"><span class="cl">GET username  // 返回 &#34;zhangsan&#34;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">SET page_views 0
+</span></span><span class="line"><span class="cl">INCR page_views // 返回 1
+</span></span><span class="line"><span class="cl">INCR page_views // 返回 2
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">SET product:1001:name &#34;MacBook Pro&#34; EXPIRE 60 // 设置键值并使其在60秒后过期
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="2-哈希-hash">2. 哈希 (Hash)
+</h3><p><strong>哈希 (Hash)</strong> 类型用于存储对象。它是一个键值对的集合，其中每个键都关联一个值。你可以把它理解为 Java 中的 <code>HashMap&lt;String, String&gt;</code>，在一个 Redis 的 key 下，又可以存储多个字段和值。</p>
+<p><strong>理解：</strong> 如果你需要在 Redis 中存储一个 Java 对象（比如用户信息），那么 Hash 类型是最好的选择。</p>
+<p><strong>常用场景：</strong></p>
+<ul>
+<li><strong>存储对象：</strong> 存储用户信息（姓名、年龄、邮箱等）、商品信息等。</li>
+<li><strong>购物车：</strong> 存储用户购物车中的商品及其数量。</li>
+</ul>
+<p><strong>常用命令：</strong></p>
+<ul>
+<li><code>HSET key field value</code>：设置哈希表中指定字段的值。</li>
+<li><code>HGET key field</code>：获取哈希表中指定字段的值。</li>
+<li><code>HGETALL key</code>：获取哈希表中所有字段和值。</li>
+<li><code>HDEL key field1 [field2...]</code>：删除哈希表中的一个或多个字段。</li>
+</ul>
+<p><strong>示例：</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">HSET user:1001 name &#34;lisi&#34; age 30 email &#34;lisi@example.com&#34;
+</span></span><span class="line"><span class="cl">HGET user:1001 name  // 返回 &#34;lisi&#34;
+</span></span><span class="line"><span class="cl">HGETALL user:1001 // 返回 name &#34;lisi&#34; age &#34;30&#34; email &#34;lisi@example.com&#34;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">HSET product:laptop brand &#34;Dell&#34; model &#34;XPS 15&#34; price 12000
+</span></span><span class="line"><span class="cl">HGET product:laptop price // 返回 &#34;12000&#34;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="3-列表-list">3. 列表 (List)
+</h3><p><strong>列表 (List)</strong> 类型是一个有序的字符串集合，可以从列表的两端添加或删除元素。你可以把它想象成一个双向链表，或者 Java 中的 <code>LinkedList</code>。</p>
+<p><strong>理解：</strong> List 非常适合用来实现队列、栈这样的数据结构。</p>
+<p><strong>常用场景：</strong></p>
+<ul>
+<li><strong>消息队列：</strong> 实现生产者-消费者模式。</li>
+<li><strong>最新文章列表：</strong> 存储网站的最新发布的文章 ID。</li>
+<li><strong>朋友圈时间线：</strong> 存储用户发布的朋友圈内容。</li>
+</ul>
+<p><strong>常用命令：</strong></p>
+<ul>
+<li>
+<p><code>LPUSH key value1 [value2...]</code>：将一个或多个值插入到列表的头部。</p>
+</li>
+<li>
+<p><code>RPUSH key value1 [value2...]</code>：将一个或多个值插入到列表的尾部。</p>
+</li>
+<li>
+<p><code>LPOP key</code>：移除并返回列表的第一个元素。</p>
+</li>
+<li>
+<p><code>RPOP key</code>：移除并返回列表的最后一个元素。</p>
+</li>
+<li>
+<p><code>LRANGE key start stop</code>：获取列表中指定范围内的元素。</p>
+</li>
+<li>
+<p><code>LLEN key</code>：获取列表的长度。</p>
+</li>
+</ul>
+<p><strong>示例：</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">LPUSH mylist &#34;apple&#34; &#34;banana&#34; &#34;orange&#34;
+</span></span><span class="line"><span class="cl">LRANGE mylist 0 -1 // 返回 &#34;orange&#34;, &#34;banana&#34;, &#34;apple&#34; (从左到右)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">RPUSH tasks &#34;task1&#34; &#34;task2&#34;
+</span></span><span class="line"><span class="cl">LPOP tasks // 返回 &#34;task1&#34; (模拟队列消费)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="4-集合-set">4. 集合 (Set)
+</h3><p><strong>集合 (Set)</strong> 类型是一个无序的字符串集合，每个元素都是唯一的，不允许重复。它类似于 Java 中的 <code>HashSet</code>。</p>
+<p><strong>理解：</strong> Set 主要用于存储不重复的数据，并能进行集合间的运算（交集、并集、差集）。</p>
+<p><strong>常用场景：</strong></p>
+<ul>
+<li><strong>标签系统：</strong> 存储文章的标签。</li>
+<li><strong>共同关注/共同好友：</strong> 计算两个用户之间的共同关注。</li>
+<li><strong>抽奖活动：</strong> 存储参与抽奖的用户 ID，确保不重复。</li>
+</ul>
+<p><strong>常用命令：</strong></p>
+<ul>
+<li><code>SADD key member1 [member2...]</code>：向集合中添加一个或多个成员。</li>
+<li><code>SMEMBERS key</code>：获取集合中的所有成员。</li>
+<li><code>SISMEMBER key member</code>：判断成员是否是集合的成员。</li>
+<li><code>SREM key member1 [member2...]</code>：移除集合中的一个或多个成员。</li>
+<li><code>SINTER key1 [key2...]</code>：返回给定所有集合的交集。</li>
+<li><code>SUNION key1 [key2...]</code>：返回给定所有集合的并集。</li>
+<li><code>SDIFF key1 [key2...]</code>：返回给定所有集合的差集。</li>
+</ul>
+<p><strong>示例：</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">SADD tags &#34;Java&#34; &#34;Spring&#34; &#34;Redis&#34;
+</span></span><span class="line"><span class="cl">SMEMBERS tags // 返回 &#34;Java&#34;, &#34;Spring&#34;, &#34;Redis&#34; (无序)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">SADD user:1:friends &#34;user2&#34; &#34;user3&#34; &#34;user4&#34;
+</span></span><span class="line"><span class="cl">SADD user:2:friends &#34;user3&#34; &#34;user4&#34; &#34;user5&#34;
+</span></span><span class="line"><span class="cl">SINTER user:1:friends user:2:friends // 返回 &#34;user3&#34;, &#34;user4&#34; (共同好友)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="5-有序集合-sorted-set--zset">5. 有序集合 (Sorted Set / ZSet)
+</h3><p><strong>有序集合 (Sorted Set / ZSet)</strong> 类型和 Set 类似，也是字符串的集合，且每个元素都是唯一的。不同之处在于，有序集合的每个成员都会关联一个 <strong>分数 (score)</strong>，Redis 会根据分数对集合中的成员进行排序。分数可以是小数。</p>
+<p><strong>理解：</strong> ZSet 可以看作是 Set 和 Hash 的结合，既保证元素的唯一性，又能根据分数进行排序。</p>
+<p><strong>常用场景：</strong></p>
+<ul>
+<li><strong>排行榜：</strong> 游戏积分排行榜、销售排行榜等。</li>
+<li><strong>最新热点：</strong> 根据时间戳或热度分数排序。</li>
+<li><strong>带有权重的任务队列：</strong> 根据任务的优先级进行处理。</li>
+</ul>
+<p><strong>常用命令：</strong></p>
+<ul>
+<li><code>ZADD key score member1 [score member2...]</code>：向有序集合中添加一个或多个成员，或者更新已存在成员的分数。</li>
+<li><code>ZRANGE key start stop [WITHSCORES]</code>：通过索引区间返回有序集合指定区间内的成员。</li>
+<li><code>ZREVRANGE key start stop [WITHSCORES]</code>：通过索引区间返回有序集合中指定区间内的成员，分数从大到小。</li>
+<li><code>ZSCORE key member</code>：获取有序集合中指定成员的分数。</li>
+<li><code>ZREM key member1 [member2...]</code>：移除有序集合中的一个或多个成员。</li>
+</ul>
+<p><strong>示例：</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ZADD leaderboard 95 &#34;Alice&#34; 88 &#34;Bob&#34; 92 &#34;Charlie&#34;
+</span></span><span class="line"><span class="cl">ZRANGE leaderboard 0 -1 WITHSCORES // 返回 &#34;Bob&#34; 88, &#34;Charlie&#34; 92, &#34;Alice&#34; 95 (分数从小到大)
+</span></span><span class="line"><span class="cl">ZREVRANGE leaderboard 0 1 WITHSCORES // 返回 &#34;Alice&#34; 95, &#34;Charlie&#34; 92 (分数从大到小，取前两名)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">ZADD product:sales 1000 &#34;iPhone&#34; 800 &#34;iPad&#34; 1200 &#34;MacBook&#34;
+</span></span><span class="line"><span class="cl">ZREVRANGE product:sales 0 0 WITHSCORES // 返回 &#34;MacBook&#34; 1200 (销量最高的产品)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><hr>
+<h3 id="如何在-spring-boot-中使用-redis">如何在 Spring Boot 中使用 Redis？
+</h3><p>在 Spring Boot 中集成 Redis 非常方便，通常会使用 <code>spring-boot-starter-data-redis</code> 依赖。它提供了对 Jedis 或 Lettuce 客户端的自动配置。</p>
+<p><strong>1. 添加依赖：</strong></p>
+<p>在 <code>pom.xml</code> 中添加如下依赖：</p>
+<p>XML</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&lt;dependency&gt;
+</span></span><span class="line"><span class="cl">    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+</span></span><span class="line"><span class="cl">    &lt;artifactId&gt;spring-boot-starter-data-redis&lt;/artifactId&gt;
+</span></span><span class="line"><span class="cl">&lt;/dependency&gt;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>2. 配置 Redis 连接：</strong></p>
+<p>在 <code>application.properties</code> 或 <code>application.yml</code> 中配置 Redis 连接信息：</p>
+<p>Properties</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># application.properties
+</span></span><span class="line"><span class="cl">spring.data.redis.host=localhost
+</span></span><span class="line"><span class="cl">spring.data.redis.port=6379
+</span></span><span class="line"><span class="cl"># spring.data.redis.password=your_password (如果有密码的话)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>3. 使用 <code>RedisTemplate</code> 或 <code>StringRedisTemplate</code>：</strong></p>
+<p>Spring Boot 会自动配置 <code>RedisTemplate</code> 和 <code>StringRedisTemplate</code>。你可以直接在你的服务类中注入它们来操作 Redis。</p>
+<ul>
+<li><strong><code>RedisTemplate&lt;K, V&gt;</code>：</strong> 默认使用 JDK 序列化，可以操作各种 Java 对象。</li>
+<li><strong><code>StringRedisTemplate</code>：</strong> <code>RedisTemplate</code> 的子类，专门用于操作字符串类型，键和值都使用 <code>StringRedisSerializer</code> 进行序列化。</li>
+</ul>
+<p><strong>示例：</strong></p>
+<p>Java</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">import org.springframework.beans.factory.annotation.Autowired;
+</span></span><span class="line"><span class="cl">import org.springframework.data.redis.core.RedisTemplate;
+</span></span><span class="line"><span class="cl">import org.springframework.data.redis.core.StringRedisTemplate;
+</span></span><span class="line"><span class="cl">import org.springframework.stereotype.Service;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">@Service
+</span></span><span class="line"><span class="cl">public class UserService {
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    @Autowired
+</span></span><span class="line"><span class="cl">    private StringRedisTemplate stringRedisTemplate; // 用于操作字符串
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    @Autowired
+</span></span><span class="line"><span class="cl">    private RedisTemplate&lt;Object, Object&gt; redisTemplate; // 用于操作Java对象
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    public void saveUser(String userId, String username) {
+</span></span><span class="line"><span class="cl">        stringRedisTemplate.opsForValue().set(&#34;user:&#34; + userId + &#34;:name&#34;, username);
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    public String getUserName(String userId) {
+</span></span><span class="line"><span class="cl">        return stringRedisTemplate.opsForValue().get(&#34;user:&#34; + userId + &#34;:name&#34;);
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    public void incrementPageViews(String articleId) {
+</span></span><span class="line"><span class="cl">        stringRedisTemplate.opsForValue().increment(&#34;article:&#34; + articleId + &#34;:views&#34;);
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    public void addUserToRanking(String username, double score) {
+</span></span><span class="line"><span class="cl">        redisTemplate.opsForZSet().add(&#34;game:ranking&#34;, username, score);
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/spring-cache-%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring Cache 入门笔记</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/spring%E7%AF%87-@component-%E4%B8%8E-@bean-%E7%9A%84%E5%8C%BA%E5%88%AB/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring篇-@Component 与 @Bean 的区别</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/%E4%BB%80%E4%B9%88%E6%98%AF%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%B1%9E%E6%80%A7%E6%8B%B7%E8%B4%9D/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">什么是对象的属性拷贝</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/%E5%85%AD%E7%BA%A7%E7%BF%BB%E8%AF%91%E9%AB%98%E9%A2%91%E8%AF%8D%E6%B1%87/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">六级翻译高频词汇</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/%E5%85%AD%E7%BA%A7%E7%BF%BB%E8%AF%91%E4%BA%8C/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">六级翻译（二）</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 歌未竟的个人博客
+    </section>
+
+     
+    <section class="icp-link">
+        <a href="https://icp.gov.moe/?keyword=20256333" target="_blank" >萌ICP备20256333号</a>
+        <a href="https://travel.moe/go.html" target="_blank"  height＝15px>
+    <img src="https://travel.moe/images/logo/pink.png" style="width:auto;height:13px" title="异次元之旅-跃迁-我们一起去萌站成员的星球旅行吧！">
+</a>
+    </section>
+
+
+    
+    <section class="powerby">
+        
+            如对内容有异议，请联系关邮箱2285786274@qq.com修改 <br/>
+        
+
+        
+        
+        
+    </section>
+</footer>
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/hugo-dev/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<style>
+  body {
+    background: url(https://gavin-gwj.github.io/hugo-dev/background/bg1.jpg) no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+    background-color: rgba(255, 255, 255, 0.75);
+    background-blend-mode: lighten;
+  }
+
+   
+  .main-content {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 2rem;
+    border-radius: 8px;
+    margin: 2rem auto;
+    max-width: 1200px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+   
+  [data-scheme="dark"] body {
+    background-color: rgba(0, 0, 0, 0.7);
+    background-blend-mode: darken;
+  }
+</style>
+
+
+<script defer src="https://cn.vercount.one/js"></script>
+
+<script>
+    function showHideView() {
+        
+        let viewCounts = document.querySelectorAll("#viewCount");
+        if (viewCounts) {
+            
+            let article =  document.querySelector(".article-page");
+            if (!article) {
+                viewCounts.forEach(ele => {
+                    ele.style.display = 'none';
+                });
+            }
+        }
+    }
+    
+    showHideView();
+</script>
+
+
+
+    </body>
+</html>
