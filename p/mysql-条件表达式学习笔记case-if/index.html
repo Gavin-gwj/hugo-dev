@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="MySQL 条件表达式学习笔记（CASE &amp; IF） 一、CASE 表达式 1. 基础语法 1 2 3 4 5 6 CASE WHEN condition1 THEN result1 -- 当满足条件1时返回结果1 WHEN condition2 THEN result2 -- 当满足条件2时返回结果2 ... ELSE default_result -- 默认返回值（可选） END 2. 典型应用场景 (1) 状态码转文字描述（数据可视化） 1 2 3 4 5 6 7 8 9 10 SELECT order_id, -- 将数字状态码转换为可读文本 CASE status WHEN 1 THEN &#39;未支付&#39; -- 状态码1对应未支付 WHEN 2 THEN &#39;已支付&#39; -- 状态码2对应已支付 WHEN 3 THEN &#39;已取消&#39; -- 状态码3对应已取消 ELSE &#39;未知状态&#39; -- 兜底处理异常数据 END AS status_text FROM orders; (2) 数据分组统计（报表分析） 1 2 3 4 5 6 7 8 9 10 11 SELECT -- 按年龄区间分组 CASE WHEN age &lt; 18 THEN &#39;未成年&#39; -- 18岁以下分组 WHEN age BETWEEN 18 AND 35 THEN &#39;青年&#39; -- 18-35岁分组 WHEN age &gt; 35 THEN &#39;中年及以上&#39; -- 35岁以上分组 ELSE &#39;未填写年龄&#39; -- 处理NULL值 END AS age_group, COUNT(*) AS user_count -- 统计每组的用户数 FROM users GROUP BY age_group; -- 按分组字段聚合 (3) 多条件商品分类（业务规则实现） 1 2 3 4 5 6 7 8 9 10 11 SELECT product_id, price, -- 根据价格、库存等条件动态分类商品 CASE WHEN price &gt; 1000 THEN &#39;高价商品&#39; -- 单价&gt;1000归为高价 WHEN price &gt; 500 AND stock &lt; 10 THEN &#39;需补货商品&#39; -- 同时满足两个条件 WHEN discount_rate &gt; 0.3 THEN &#39;促销商品&#39; -- 折扣率&gt;30%算促销 ELSE &#39;普通商品&#39; -- 默认分类 END AS product_category FROM products; 二、IF 函数 1. 基础语法 1 2 -- 三目运算符形式：condition ? true_value : false_value IF(condition, true_value, false_value) 2. 典型应用场景 (1) 用户类型标记（二元判断） 1 2 3 4 5 SELECT username, -- 根据is_vip字段返回不同类型文本 IF(is_vip = 1, &#39;VIP用户&#39;, &#39;普通用户&#39;) AS user_type FROM users; (2) 空值处理（数据清洗） 1 2 3 4 5 SELECT order_id, -- 如果address为NULL则显示默认提示 IF(address IS NULL, &#39;未填写地址&#39;, address) AS shipping_address FROM orders; (3) 库存状态预警（业务监控） 1 2 3 4 5 6 7 8 SELECT product_id, -- 库存≤5时标记为紧张状态 IF(stock &lt;= 5, &#39;库存紧张&#39;, &#39;库存充足&#39;) AS stock_status, -- 嵌套IF示例：多级库存预警 IF(stock = 0, &#39;已售罄&#39;, IF(stock &lt;= 3, &#39;紧急补货&#39;, &#39;正常库存&#39;)) AS stock_level FROM products; 三、对比总结表 特性 CASE IF 条件分支 支持多分支（WHEN&hellip;THEN） 仅支持真 / 假两个分支 可读性 复杂逻辑更清晰 简单判断更简洁 返回值类型 所有分支必须类型一致 真假值类型需兼容 典型场景 多状态映射、复杂业务规则 二元判断、NULL 值处理 性能 多分支时解析稍慢 简单判断效率更高 四、高级用法示例 1. 动态更新数据（批量业务处理） 1 2 3 4 5 6 7 8 9 10 UPDATE products SET price = CASE -- 电子产品类打8折 WHEN category_id = 3 THEN price * 0.8 -- 高库存商品打9折 WHEN stock &gt; 100 THEN price * 0.9 -- 其他商品保持原价 ELSE price END WHERE is_on_sale = 1; -- 只处理促销商品 2. 自定义排序（业务优先级） 1 2 3 4 5 6 7 8 9 SELECT * FROM tasks ORDER BY -- 按任务优先级自定义排序权重 CASE priority WHEN &#39;High&#39; THEN 1 -- 高优先级排最前 WHEN &#39;Medium&#39; THEN 2 -- 中优先级 WHEN &#39;Low&#39; THEN 3 -- 低优先级排最后 ELSE 4 -- 无优先级标识的排最后 END ASC; 3. 嵌套混合使用（复杂业务逻辑） 1 2 3 4 5 6 7 8 9 10 11 12 SELECT user_id, -- 先判断是否及格，再细分优良等级 IF(score &gt;= 60, CASE WHEN score &gt;= 90 THEN &#39;优秀&#39; -- ≥90为优秀 WHEN score &gt;= 80 THEN &#39;良好&#39; -- 80-89为良好 ELSE &#39;及格&#39; -- 60-79为及格 END, &#39;不及格&#39; -- &lt;60为不及格 ) AS evaluation FROM exam_results; 五、注意事项 类型安全 1 2 3 4 5 -- 错误示例：混合返回文本和数字 CASE WHEN score &gt; 90 THEN &#39;优秀&#39; WHEN score &gt; 60 THEN 1 -- 会导致类型错误 END NULL 处理 1 2 3 4 5 -- 显式处理NULL情况 CASE WHEN field IS NULL THEN &#39;空值&#39; WHEN field = 0 THEN &#39;零值&#39; END 性能优化 1 2 3 4 5 -- 把高概率条件放在前面 CASE WHEN status = &#39;paid&#39; THEN 1 -- 已支付状态最常见 WHEN status = &#39;unpaid&#39; THEN 2 END 索引失效 1 2 3 -- 避免在WHERE中对索引字段使用函数 SELECT * FROM users WHERE IF(age&gt;18,1,0) = 1 -- 导致age索引失效 六、实战练习 场景：电商订单分析报表\n">
+<title>MySQL 条件表达式学习笔记（CASE &amp; IF）</title>
+
+<link rel='canonical' href='https://gavin-gwj.github.io/hugo-dev/p/mysql-%E6%9D%A1%E4%BB%B6%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0case-if/'>
+
+<link rel="stylesheet" href="/hugo-dev/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="MySQL 条件表达式学习笔记（CASE & IF）">
+<meta property='og:description' content="MySQL 条件表达式学习笔记（CASE &amp; IF） 一、CASE 表达式 1. 基础语法 1 2 3 4 5 6 CASE WHEN condition1 THEN result1 -- 当满足条件1时返回结果1 WHEN condition2 THEN result2 -- 当满足条件2时返回结果2 ... ELSE default_result -- 默认返回值（可选） END 2. 典型应用场景 (1) 状态码转文字描述（数据可视化） 1 2 3 4 5 6 7 8 9 10 SELECT order_id, -- 将数字状态码转换为可读文本 CASE status WHEN 1 THEN &#39;未支付&#39; -- 状态码1对应未支付 WHEN 2 THEN &#39;已支付&#39; -- 状态码2对应已支付 WHEN 3 THEN &#39;已取消&#39; -- 状态码3对应已取消 ELSE &#39;未知状态&#39; -- 兜底处理异常数据 END AS status_text FROM orders; (2) 数据分组统计（报表分析） 1 2 3 4 5 6 7 8 9 10 11 SELECT -- 按年龄区间分组 CASE WHEN age &lt; 18 THEN &#39;未成年&#39; -- 18岁以下分组 WHEN age BETWEEN 18 AND 35 THEN &#39;青年&#39; -- 18-35岁分组 WHEN age &gt; 35 THEN &#39;中年及以上&#39; -- 35岁以上分组 ELSE &#39;未填写年龄&#39; -- 处理NULL值 END AS age_group, COUNT(*) AS user_count -- 统计每组的用户数 FROM users GROUP BY age_group; -- 按分组字段聚合 (3) 多条件商品分类（业务规则实现） 1 2 3 4 5 6 7 8 9 10 11 SELECT product_id, price, -- 根据价格、库存等条件动态分类商品 CASE WHEN price &gt; 1000 THEN &#39;高价商品&#39; -- 单价&gt;1000归为高价 WHEN price &gt; 500 AND stock &lt; 10 THEN &#39;需补货商品&#39; -- 同时满足两个条件 WHEN discount_rate &gt; 0.3 THEN &#39;促销商品&#39; -- 折扣率&gt;30%算促销 ELSE &#39;普通商品&#39; -- 默认分类 END AS product_category FROM products; 二、IF 函数 1. 基础语法 1 2 -- 三目运算符形式：condition ? true_value : false_value IF(condition, true_value, false_value) 2. 典型应用场景 (1) 用户类型标记（二元判断） 1 2 3 4 5 SELECT username, -- 根据is_vip字段返回不同类型文本 IF(is_vip = 1, &#39;VIP用户&#39;, &#39;普通用户&#39;) AS user_type FROM users; (2) 空值处理（数据清洗） 1 2 3 4 5 SELECT order_id, -- 如果address为NULL则显示默认提示 IF(address IS NULL, &#39;未填写地址&#39;, address) AS shipping_address FROM orders; (3) 库存状态预警（业务监控） 1 2 3 4 5 6 7 8 SELECT product_id, -- 库存≤5时标记为紧张状态 IF(stock &lt;= 5, &#39;库存紧张&#39;, &#39;库存充足&#39;) AS stock_status, -- 嵌套IF示例：多级库存预警 IF(stock = 0, &#39;已售罄&#39;, IF(stock &lt;= 3, &#39;紧急补货&#39;, &#39;正常库存&#39;)) AS stock_level FROM products; 三、对比总结表 特性 CASE IF 条件分支 支持多分支（WHEN&hellip;THEN） 仅支持真 / 假两个分支 可读性 复杂逻辑更清晰 简单判断更简洁 返回值类型 所有分支必须类型一致 真假值类型需兼容 典型场景 多状态映射、复杂业务规则 二元判断、NULL 值处理 性能 多分支时解析稍慢 简单判断效率更高 四、高级用法示例 1. 动态更新数据（批量业务处理） 1 2 3 4 5 6 7 8 9 10 UPDATE products SET price = CASE -- 电子产品类打8折 WHEN category_id = 3 THEN price * 0.8 -- 高库存商品打9折 WHEN stock &gt; 100 THEN price * 0.9 -- 其他商品保持原价 ELSE price END WHERE is_on_sale = 1; -- 只处理促销商品 2. 自定义排序（业务优先级） 1 2 3 4 5 6 7 8 9 SELECT * FROM tasks ORDER BY -- 按任务优先级自定义排序权重 CASE priority WHEN &#39;High&#39; THEN 1 -- 高优先级排最前 WHEN &#39;Medium&#39; THEN 2 -- 中优先级 WHEN &#39;Low&#39; THEN 3 -- 低优先级排最后 ELSE 4 -- 无优先级标识的排最后 END ASC; 3. 嵌套混合使用（复杂业务逻辑） 1 2 3 4 5 6 7 8 9 10 11 12 SELECT user_id, -- 先判断是否及格，再细分优良等级 IF(score &gt;= 60, CASE WHEN score &gt;= 90 THEN &#39;优秀&#39; -- ≥90为优秀 WHEN score &gt;= 80 THEN &#39;良好&#39; -- 80-89为良好 ELSE &#39;及格&#39; -- 60-79为及格 END, &#39;不及格&#39; -- &lt;60为不及格 ) AS evaluation FROM exam_results; 五、注意事项 类型安全 1 2 3 4 5 -- 错误示例：混合返回文本和数字 CASE WHEN score &gt; 90 THEN &#39;优秀&#39; WHEN score &gt; 60 THEN 1 -- 会导致类型错误 END NULL 处理 1 2 3 4 5 -- 显式处理NULL情况 CASE WHEN field IS NULL THEN &#39;空值&#39; WHEN field = 0 THEN &#39;零值&#39; END 性能优化 1 2 3 4 5 -- 把高概率条件放在前面 CASE WHEN status = &#39;paid&#39; THEN 1 -- 已支付状态最常见 WHEN status = &#39;unpaid&#39; THEN 2 END 索引失效 1 2 3 -- 避免在WHERE中对索引字段使用函数 SELECT * FROM users WHERE IF(age&gt;18,1,0) = 1 -- 导致age索引失效 六、实战练习 场景：电商订单分析报表\n">
+<meta property='og:url' content='https://gavin-gwj.github.io/hugo-dev/p/mysql-%E6%9D%A1%E4%BB%B6%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0case-if/'>
+<meta property='og:site_name' content='Gavin-歌未竟'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-05-20T16:14:34&#43;08:00'/><meta property='article:modified_time' content='2025-05-20T16:14:34&#43;08:00'/>
+<meta name="twitter:title" content="MySQL 条件表达式学习笔记（CASE & IF）">
+<meta name="twitter:description" content="MySQL 条件表达式学习笔记（CASE &amp; IF） 一、CASE 表达式 1. 基础语法 1 2 3 4 5 6 CASE WHEN condition1 THEN result1 -- 当满足条件1时返回结果1 WHEN condition2 THEN result2 -- 当满足条件2时返回结果2 ... ELSE default_result -- 默认返回值（可选） END 2. 典型应用场景 (1) 状态码转文字描述（数据可视化） 1 2 3 4 5 6 7 8 9 10 SELECT order_id, -- 将数字状态码转换为可读文本 CASE status WHEN 1 THEN &#39;未支付&#39; -- 状态码1对应未支付 WHEN 2 THEN &#39;已支付&#39; -- 状态码2对应已支付 WHEN 3 THEN &#39;已取消&#39; -- 状态码3对应已取消 ELSE &#39;未知状态&#39; -- 兜底处理异常数据 END AS status_text FROM orders; (2) 数据分组统计（报表分析） 1 2 3 4 5 6 7 8 9 10 11 SELECT -- 按年龄区间分组 CASE WHEN age &lt; 18 THEN &#39;未成年&#39; -- 18岁以下分组 WHEN age BETWEEN 18 AND 35 THEN &#39;青年&#39; -- 18-35岁分组 WHEN age &gt; 35 THEN &#39;中年及以上&#39; -- 35岁以上分组 ELSE &#39;未填写年龄&#39; -- 处理NULL值 END AS age_group, COUNT(*) AS user_count -- 统计每组的用户数 FROM users GROUP BY age_group; -- 按分组字段聚合 (3) 多条件商品分类（业务规则实现） 1 2 3 4 5 6 7 8 9 10 11 SELECT product_id, price, -- 根据价格、库存等条件动态分类商品 CASE WHEN price &gt; 1000 THEN &#39;高价商品&#39; -- 单价&gt;1000归为高价 WHEN price &gt; 500 AND stock &lt; 10 THEN &#39;需补货商品&#39; -- 同时满足两个条件 WHEN discount_rate &gt; 0.3 THEN &#39;促销商品&#39; -- 折扣率&gt;30%算促销 ELSE &#39;普通商品&#39; -- 默认分类 END AS product_category FROM products; 二、IF 函数 1. 基础语法 1 2 -- 三目运算符形式：condition ? true_value : false_value IF(condition, true_value, false_value) 2. 典型应用场景 (1) 用户类型标记（二元判断） 1 2 3 4 5 SELECT username, -- 根据is_vip字段返回不同类型文本 IF(is_vip = 1, &#39;VIP用户&#39;, &#39;普通用户&#39;) AS user_type FROM users; (2) 空值处理（数据清洗） 1 2 3 4 5 SELECT order_id, -- 如果address为NULL则显示默认提示 IF(address IS NULL, &#39;未填写地址&#39;, address) AS shipping_address FROM orders; (3) 库存状态预警（业务监控） 1 2 3 4 5 6 7 8 SELECT product_id, -- 库存≤5时标记为紧张状态 IF(stock &lt;= 5, &#39;库存紧张&#39;, &#39;库存充足&#39;) AS stock_status, -- 嵌套IF示例：多级库存预警 IF(stock = 0, &#39;已售罄&#39;, IF(stock &lt;= 3, &#39;紧急补货&#39;, &#39;正常库存&#39;)) AS stock_level FROM products; 三、对比总结表 特性 CASE IF 条件分支 支持多分支（WHEN&hellip;THEN） 仅支持真 / 假两个分支 可读性 复杂逻辑更清晰 简单判断更简洁 返回值类型 所有分支必须类型一致 真假值类型需兼容 典型场景 多状态映射、复杂业务规则 二元判断、NULL 值处理 性能 多分支时解析稍慢 简单判断效率更高 四、高级用法示例 1. 动态更新数据（批量业务处理） 1 2 3 4 5 6 7 8 9 10 UPDATE products SET price = CASE -- 电子产品类打8折 WHEN category_id = 3 THEN price * 0.8 -- 高库存商品打9折 WHEN stock &gt; 100 THEN price * 0.9 -- 其他商品保持原价 ELSE price END WHERE is_on_sale = 1; -- 只处理促销商品 2. 自定义排序（业务优先级） 1 2 3 4 5 6 7 8 9 SELECT * FROM tasks ORDER BY -- 按任务优先级自定义排序权重 CASE priority WHEN &#39;High&#39; THEN 1 -- 高优先级排最前 WHEN &#39;Medium&#39; THEN 2 -- 中优先级 WHEN &#39;Low&#39; THEN 3 -- 低优先级排最后 ELSE 4 -- 无优先级标识的排最后 END ASC; 3. 嵌套混合使用（复杂业务逻辑） 1 2 3 4 5 6 7 8 9 10 11 12 SELECT user_id, -- 先判断是否及格，再细分优良等级 IF(score &gt;= 60, CASE WHEN score &gt;= 90 THEN &#39;优秀&#39; -- ≥90为优秀 WHEN score &gt;= 80 THEN &#39;良好&#39; -- 80-89为良好 ELSE &#39;及格&#39; -- 60-79为及格 END, &#39;不及格&#39; -- &lt;60为不及格 ) AS evaluation FROM exam_results; 五、注意事项 类型安全 1 2 3 4 5 -- 错误示例：混合返回文本和数字 CASE WHEN score &gt; 90 THEN &#39;优秀&#39; WHEN score &gt; 60 THEN 1 -- 会导致类型错误 END NULL 处理 1 2 3 4 5 -- 显式处理NULL情况 CASE WHEN field IS NULL THEN &#39;空值&#39; WHEN field = 0 THEN &#39;零值&#39; END 性能优化 1 2 3 4 5 -- 把高概率条件放在前面 CASE WHEN status = &#39;paid&#39; THEN 1 -- 已支付状态最常见 WHEN status = &#39;unpaid&#39; THEN 2 END 索引失效 1 2 3 -- 避免在WHERE中对索引字段使用函数 SELECT * FROM users WHERE IF(age&gt;18,1,0) = 1 -- 导致age索引失效 六、实战练习 场景：电商订单分析报表\n">
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/hugo-dev/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/hugo-dev/img/avatar_hu_cf5ff899d804496e.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">😅</span>
+                
+            </figure>
+            
+        
+
+
+
+
+
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/hugo-dev">Gavin-歌未竟</a></h1>
+            <h2 class="site-description">探索技术的无限可能！</h2>
+        </div>
+    </header>
+
+    
+
+<div>
+    
+    <span style="color: #707070;">
+        <span id="busuanzi_container_page_pv">
+            总访问量: <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+    </span>
+</div>
+<ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/2123131391'
+                        target="_blank"
+                        title="Bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/Gavin-gwj'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/hugo-dev/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#一case-表达式">一、CASE 表达式</a>
+      <ol>
+        <li><a href="#1-基础语法">1. 基础语法</a></li>
+        <li><a href="#2-典型应用场景">2. 典型应用场景</a>
+          <ol>
+            <li><a href="#1-状态码转文字描述数据可视化">(1) 状态码转文字描述（数据可视化）</a></li>
+            <li><a href="#2-数据分组统计报表分析">(2) 数据分组统计（报表分析）</a></li>
+            <li><a href="#3-多条件商品分类业务规则实现">(3) 多条件商品分类（业务规则实现）</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#二if-函数">二、IF 函数</a>
+      <ol>
+        <li><a href="#1-基础语法-1">1. 基础语法</a></li>
+        <li><a href="#2-典型应用场景-1">2. 典型应用场景</a>
+          <ol>
+            <li><a href="#1-用户类型标记二元判断">(1) 用户类型标记（二元判断）</a></li>
+            <li><a href="#2-空值处理数据清洗">(2) 空值处理（数据清洗）</a></li>
+            <li><a href="#3-库存状态预警业务监控">(3) 库存状态预警（业务监控）</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#三对比总结表">三、对比总结表</a></li>
+    <li><a href="#四高级用法示例">四、高级用法示例</a>
+      <ol>
+        <li><a href="#1-动态更新数据批量业务处理">1. 动态更新数据（批量业务处理）</a></li>
+        <li><a href="#2-自定义排序业务优先级">2. 自定义排序（业务优先级）</a></li>
+        <li><a href="#3-嵌套混合使用复杂业务逻辑">3. 嵌套混合使用（复杂业务逻辑）</a></li>
+      </ol>
+    </li>
+    <li><a href="#五注意事项">五、注意事项</a>
+      <ol>
+        <li><a href="#类型安全"><strong>类型安全</strong></a></li>
+        <li><a href="#null-处理"><strong>NULL 处理</strong></a></li>
+        <li><a href="#性能优化"><strong>性能优化</strong></a></li>
+        <li><a href="#索引失效"><strong>索引失效</strong></a></li>
+      </ol>
+    </li>
+    <li><a href="#六实战练习">六、实战练习</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/hugo-dev/categories/%E7%AC%94%E8%AE%B0/" >
+                笔记
+            </a>
+        
+            <a href="/hugo-dev/categories/mybatis/" >
+                MyBatis
+            </a>
+        
+            <a href="/hugo-dev/categories/mysql%E6%95%B0%E6%8D%AE%E5%BA%93/" >
+                MySQL数据库
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/hugo-dev/p/mysql-%E6%9D%A1%E4%BB%B6%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0case-if/">MySQL 条件表达式学习笔记（CASE &amp; IF）</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-05-20</time>
+            </div>
+        
+
+    
+    <div class="time-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+  <path d="M5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zM5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1H5z"/>
+  <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/>
+</svg>
+        <span class="article-wordcount">
+            1925字
+        </span>
+    </div>
+
+     
+
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 4 分钟
+                </time>
+            </div>
+        
+
+        
+
+
+        
+    </footer>
+    
+
+
+
+    
+
+  
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="mysql-条件表达式学习笔记case--if">MySQL 条件表达式学习笔记（CASE &amp; IF）
+</h1><h2 id="一case-表达式">一、CASE 表达式
+</h2><h3 id="1-基础语法">1. 基础语法
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">CASE</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">WHEN</span><span class="w"> </span><span class="n">condition1</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="n">result1</span><span class="w">  </span><span class="c1">-- 当满足条件1时返回结果1
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="k">WHEN</span><span class="w"> </span><span class="n">condition2</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="n">result2</span><span class="w">  </span><span class="c1">-- 当满足条件2时返回结果2
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="p">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">ELSE</span><span class="w"> </span><span class="n">default_result</span><span class="w">           </span><span class="c1">-- 默认返回值（可选）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">END</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="2-典型应用场景">2. 典型应用场景
+</h3><h4 id="1-状态码转文字描述数据可视化">(1) 状态码转文字描述（数据可视化）
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">order_id</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">-- 将数字状态码转换为可读文本
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="k">CASE</span><span class="w"> </span><span class="n">status</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">WHEN</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="s1">&#39;未支付&#39;</span><span class="w">    </span><span class="c1">-- 状态码1对应未支付
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">        </span><span class="k">WHEN</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="s1">&#39;已支付&#39;</span><span class="w">    </span><span class="c1">-- 状态码2对应已支付
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">        </span><span class="k">WHEN</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="s1">&#39;已取消&#39;</span><span class="w">    </span><span class="c1">-- 状态码3对应已取消
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">        </span><span class="k">ELSE</span><span class="w"> </span><span class="s1">&#39;未知状态&#39;</span><span class="w">         </span><span class="c1">-- 兜底处理异常数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="k">END</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">status_text</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">FROM</span><span class="w"> </span><span class="n">orders</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="2-数据分组统计报表分析">(2) 数据分组统计（报表分析）
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">-- 按年龄区间分组
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="k">CASE</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">WHEN</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">18</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="s1">&#39;未成年&#39;</span><span class="w">             </span><span class="c1">-- 18岁以下分组
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">        </span><span class="k">WHEN</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="mi">18</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="mi">35</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="s1">&#39;青年&#39;</span><span class="w">  </span><span class="c1">-- 18-35岁分组
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">        </span><span class="k">WHEN</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">35</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="s1">&#39;中年及以上&#39;</span><span class="w">        </span><span class="c1">-- 35岁以上分组
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">        </span><span class="k">ELSE</span><span class="w"> </span><span class="s1">&#39;未填写年龄&#39;</span><span class="w">                      </span><span class="c1">-- 处理NULL值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="k">END</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">age_group</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">user_count</span><span class="w">  </span><span class="c1">-- 统计每组的用户数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">FROM</span><span class="w"> </span><span class="n">users</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">age_group</span><span class="p">;</span><span class="w">         </span><span class="c1">-- 按分组字段聚合
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="3-多条件商品分类业务规则实现">(3) 多条件商品分类（业务规则实现）
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">product_id</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">price</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">-- 根据价格、库存等条件动态分类商品
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="k">CASE</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">WHEN</span><span class="w"> </span><span class="n">price</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1000</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="s1">&#39;高价商品&#39;</span><span class="w">               </span><span class="c1">-- 单价&gt;1000归为高价
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">        </span><span class="k">WHEN</span><span class="w"> </span><span class="n">price</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">500</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">stock</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="s1">&#39;需补货商品&#39;</span><span class="w"> </span><span class="c1">-- 同时满足两个条件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">        </span><span class="k">WHEN</span><span class="w"> </span><span class="n">discount_rate</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">3</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="s1">&#39;促销商品&#39;</span><span class="w">        </span><span class="c1">-- 折扣率&gt;30%算促销
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">        </span><span class="k">ELSE</span><span class="w"> </span><span class="s1">&#39;普通商品&#39;</span><span class="w">                               </span><span class="c1">-- 默认分类
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="k">END</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">product_category</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">FROM</span><span class="w"> </span><span class="n">products</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="二if-函数">二、IF 函数
+</h2><h3 id="1-基础语法-1">1. 基础语法
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- 三目运算符形式：condition ? true_value : false_value
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">IF</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span><span class="w"> </span><span class="n">true_value</span><span class="p">,</span><span class="w"> </span><span class="n">false_value</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="2-典型应用场景-1">2. 典型应用场景
+</h3><h4 id="1-用户类型标记二元判断">(1) 用户类型标记（二元判断）
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">username</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">-- 根据is_vip字段返回不同类型文本
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="k">IF</span><span class="p">(</span><span class="n">is_vip</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;VIP用户&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;普通用户&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">user_type</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">FROM</span><span class="w"> </span><span class="n">users</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="2-空值处理数据清洗">(2) 空值处理（数据清洗）
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">order_id</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">-- 如果address为NULL则显示默认提示
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="k">IF</span><span class="p">(</span><span class="n">address</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;未填写地址&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">address</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">shipping_address</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">FROM</span><span class="w"> </span><span class="n">orders</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="3-库存状态预警业务监控">(3) 库存状态预警（业务监控）
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">product_id</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">-- 库存≤5时标记为紧张状态
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="k">IF</span><span class="p">(</span><span class="n">stock</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;库存紧张&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;库存充足&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">stock_status</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">-- 嵌套IF示例：多级库存预警
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="k">IF</span><span class="p">(</span><span class="n">stock</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;已售罄&#39;</span><span class="p">,</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="k">IF</span><span class="p">(</span><span class="n">stock</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;紧急补货&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;正常库存&#39;</span><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">stock_level</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">FROM</span><span class="w"> </span><span class="n">products</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="三对比总结表">三、对比总结表
+</h2><div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>特性</th>
+          <th>CASE</th>
+          <th>IF</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>条件分支</strong></td>
+          <td>支持多分支（WHEN&hellip;THEN）</td>
+          <td>仅支持真 / 假两个分支</td>
+      </tr>
+      <tr>
+          <td><strong>可读性</strong></td>
+          <td>复杂逻辑更清晰</td>
+          <td>简单判断更简洁</td>
+      </tr>
+      <tr>
+          <td><strong>返回值类型</strong></td>
+          <td>所有分支必须类型一致</td>
+          <td>真假值类型需兼容</td>
+      </tr>
+      <tr>
+          <td><strong>典型场景</strong></td>
+          <td>多状态映射、复杂业务规则</td>
+          <td>二元判断、NULL 值处理</td>
+      </tr>
+      <tr>
+          <td><strong>性能</strong></td>
+          <td>多分支时解析稍慢</td>
+          <td>简单判断效率更高</td>
+      </tr>
+  </tbody>
+</table></div>
+<h2 id="四高级用法示例">四、高级用法示例
+</h2><h3 id="1-动态更新数据批量业务处理">1. 动态更新数据（批量业务处理）
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">UPDATE</span><span class="w"> </span><span class="n">products</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">SET</span><span class="w"> </span><span class="n">price</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">CASE</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">-- 电子产品类打8折
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="k">WHEN</span><span class="w"> </span><span class="n">category_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="n">price</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">8</span><span class="w">  
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">-- 高库存商品打9折
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="k">WHEN</span><span class="w"> </span><span class="n">stock</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="n">price</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">9</span><span class="w">     
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">-- 其他商品保持原价
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="k">ELSE</span><span class="w"> </span><span class="n">price</span><span class="w">                             
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">END</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">WHERE</span><span class="w"> </span><span class="n">is_on_sale</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w">  </span><span class="c1">-- 只处理促销商品
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="2-自定义排序业务优先级">2. 自定义排序（业务优先级）
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">tasks</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">-- 按任务优先级自定义排序权重
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="k">CASE</span><span class="w"> </span><span class="n">priority</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">WHEN</span><span class="w"> </span><span class="s1">&#39;High&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w">     </span><span class="c1">-- 高优先级排最前
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">        </span><span class="k">WHEN</span><span class="w"> </span><span class="s1">&#39;Medium&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">2</span><span class="w">   </span><span class="c1">-- 中优先级
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">        </span><span class="k">WHEN</span><span class="w"> </span><span class="s1">&#39;Low&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">3</span><span class="w">      </span><span class="c1">-- 低优先级排最后
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">        </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">4</span><span class="w">                 </span><span class="c1">-- 无优先级标识的排最后
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="k">END</span><span class="w"> </span><span class="k">ASC</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="3-嵌套混合使用复杂业务逻辑">3. 嵌套混合使用（复杂业务逻辑）
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">user_id</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">-- 先判断是否及格，再细分优良等级
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="k">IF</span><span class="p">(</span><span class="n">score</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">CASE</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">WHEN</span><span class="w"> </span><span class="n">score</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">90</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="s1">&#39;优秀&#39;</span><span class="w">     </span><span class="c1">-- ≥90为优秀
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">            </span><span class="k">WHEN</span><span class="w"> </span><span class="n">score</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">80</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="s1">&#39;良好&#39;</span><span class="w">     </span><span class="c1">-- 80-89为良好
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">            </span><span class="k">ELSE</span><span class="w"> </span><span class="s1">&#39;及格&#39;</span><span class="w">                     </span><span class="c1">-- 60-79为及格
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">        </span><span class="k">END</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="s1">&#39;不及格&#39;</span><span class="w">                           </span><span class="c1">-- &lt;60为不及格
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">evaluation</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">FROM</span><span class="w"> </span><span class="n">exam_results</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="五注意事项">五、注意事项
+</h2><h3 id="类型安全"><strong>类型安全</strong>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- 错误示例：混合返回文本和数字
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">CASE</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">WHEN</span><span class="w"> </span><span class="n">score</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">90</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="s1">&#39;优秀&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">WHEN</span><span class="w"> </span><span class="n">score</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">60</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w">  </span><span class="c1">-- 会导致类型错误
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">END</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="null-处理"><strong>NULL 处理</strong>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- 显式处理NULL情况
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">CASE</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">WHEN</span><span class="w"> </span><span class="n">field</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="s1">&#39;空值&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">WHEN</span><span class="w"> </span><span class="n">field</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="s1">&#39;零值&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">END</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="性能优化"><strong>性能优化</strong>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- 把高概率条件放在前面
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">CASE</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;paid&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">1</span><span class="w">  </span><span class="c1">-- 已支付状态最常见
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="k">WHEN</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;unpaid&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="mi">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">END</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="索引失效"><strong>索引失效</strong>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- 避免在WHERE中对索引字段使用函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">users</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">WHERE</span><span class="w"> </span><span class="k">IF</span><span class="p">(</span><span class="n">age</span><span class="o">&gt;</span><span class="mi">18</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w">  </span><span class="c1">-- 导致age索引失效
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="六实战练习">六、实战练习
+</h2><p><strong>场景：电商订单分析报表</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">order_id</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">-- 金额分级
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="k">CASE</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">WHEN</span><span class="w"> </span><span class="n">amount</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="s1">&#39;小额订单(&lt;50)&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">WHEN</span><span class="w"> </span><span class="n">amount</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="mi">200</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="s1">&#39;中额订单(50-200)&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">ELSE</span><span class="w"> </span><span class="s1">&#39;大额订单(&gt;200)&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">END</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">order_level</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">-- 支付方式处理
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="k">IF</span><span class="p">(</span><span class="n">payment_method</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="s1">&#39;在线支付&#39;</span><span class="p">,</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="s1">&#39;其他支付&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">payment_type</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">-- 物流状态
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="k">CASE</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">WHEN</span><span class="w"> </span><span class="n">shipping_status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="s1">&#39;待发货&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">WHEN</span><span class="w"> </span><span class="n">shipping_status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">receive_time</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="s1">&#39;运输中&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">WHEN</span><span class="w"> </span><span class="n">receive_time</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="s1">&#39;已签收&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">ELSE</span><span class="w"> </span><span class="s1">&#39;状态异常&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">END</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">logistics_status</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">FROM</span><span class="w"> </span><span class="n">orders</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">WHERE</span><span class="w"> </span><span class="n">create_time</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="s1">&#39;2023-01-01&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>通过注释和实际场景示例，可以更清晰地理解 CASE 和 IF 在复杂业务逻辑处理中的应用技巧。建议在数据库管理工具中实际执行这些示例，观察输出结果加深理解。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/springboot-mybatis-%E7%99%BB%E5%BD%95%E8%AE%A4%E8%AF%81%E5%8A%9F%E8%83%BD%E5%AE%9E%E7%8E%B0/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">SpringBoot&#43;Mybatis 登录认证功能实现</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/hugo-dev/p/mybatis%E7%AF%87-%E5%88%86%E9%A1%B5%E6%9F%A5%E8%AF%A2/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="https://wp-cdn.4ce.cn/v2/7GHIYWk.png" loading="lazy" data-key="" data-hash="https://wp-cdn.4ce.cn/v2/7GHIYWk.png"/>
+                
+            </div>
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">MyBatis篇-分页查询</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/spring-boot-%E9%A1%B9%E7%9B%AE%E6%90%AD%E5%BB%BA%E6%A1%86%E6%9E%B6%E5%92%8C%E6%B5%81%E7%A8%8B%E8%AF%A6%E8%A7%A3/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring Boot 项目搭建框架和流程详解</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/spring-boot-%E7%AE%80%E5%8D%95%E7%9A%84%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5%E5%8A%9F%E8%83%BD%E7%9A%84%E5%AE%9E%E7%8E%B0/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring Boot 简单的增删改查功能的实现</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/docker-%E5%85%A5%E9%97%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E5%B0%8F%E7%99%BD%E4%B9%9F%E8%83%BD%E7%9C%8B%E6%87%82/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Docker 入门学习笔记（小白也能看懂！）</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 歌未竟的个人博客
+    </section>
+
+     
+    <section class="icp-link">
+        <a href="https://icp.gov.moe/?keyword=20256333" target="_blank" >萌ICP备20256333号</a>
+        <a href="https://travel.moe/go.html" target="_blank"  height＝15px>
+    <img src="https://travel.moe/images/logo/pink.png" style="width:auto;height:13px" title="异次元之旅-跃迁-我们一起去萌站成员的星球旅行吧！">
+</a>
+    </section>
+
+
+    
+    <section class="powerby">
+        
+            如对内容有异议，请联系关邮箱2285786274@qq.com修改 <br/>
+        
+
+        
+        
+        
+    </section>
+</footer>
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/hugo-dev/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<style>
+  body {
+    background: url(https://gavin-gwj.github.io/hugo-dev/background/bg1.jpg) no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+    background-color: rgba(255, 255, 255, 0.75);
+    background-blend-mode: lighten;
+  }
+
+   
+  .main-content {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 2rem;
+    border-radius: 8px;
+    margin: 2rem auto;
+    max-width: 1200px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+   
+  [data-scheme="dark"] body {
+    background-color: rgba(0, 0, 0, 0.7);
+    background-blend-mode: darken;
+  }
+</style>
+
+
+<script defer src="https://cn.vercount.one/js"></script>
+
+<script>
+    function showHideView() {
+        
+        let viewCounts = document.querySelectorAll("#viewCount");
+        if (viewCounts) {
+            
+            let article =  document.querySelector(".article-page");
+            if (!article) {
+                viewCounts.forEach(ele => {
+                    ele.style.display = 'none';
+                });
+            }
+        }
+    }
+    
+    showHideView();
+</script>
+
+
+
+    </body>
+</html>

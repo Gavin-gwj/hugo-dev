@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="事务管理 一、什么是事务 在计算机系统中，特别是数据库系统中，事务是一系列严谨执行的逻辑操作单元。这些操作要么全部成功执行，要么全部不执行。它是一个不可分割的工作单位，即使这系列操作由多个独立的步骤组成，从外部看来，这一系列操作也如同一个单一的操作。\n">
+<title>事务管理的学习笔记</title>
+
+<link rel='canonical' href='https://gavin-gwj.github.io/hugo-dev/p/%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/'>
+
+<link rel="stylesheet" href="/hugo-dev/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="事务管理的学习笔记">
+<meta property='og:description' content="事务管理 一、什么是事务 在计算机系统中，特别是数据库系统中，事务是一系列严谨执行的逻辑操作单元。这些操作要么全部成功执行，要么全部不执行。它是一个不可分割的工作单位，即使这系列操作由多个独立的步骤组成，从外部看来，这一系列操作也如同一个单一的操作。\n">
+<meta property='og:url' content='https://gavin-gwj.github.io/hugo-dev/p/%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/'>
+<meta property='og:site_name' content='Gavin-歌未竟'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-05-17T17:16:37&#43;08:00'/><meta property='article:modified_time' content='2025-05-17T17:16:37&#43;08:00'/><meta property='og:image' content='https://wp-cdn.4ce.cn/v2/nNDeTLC.png' />
+<meta name="twitter:title" content="事务管理的学习笔记">
+<meta name="twitter:description" content="事务管理 一、什么是事务 在计算机系统中，特别是数据库系统中，事务是一系列严谨执行的逻辑操作单元。这些操作要么全部成功执行，要么全部不执行。它是一个不可分割的工作单位，即使这系列操作由多个独立的步骤组成，从外部看来，这一系列操作也如同一个单一的操作。\n"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://wp-cdn.4ce.cn/v2/nNDeTLC.png' />
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/hugo-dev/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/hugo-dev/img/avatar_hu_cf5ff899d804496e.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">😅</span>
+                
+            </figure>
+            
+        
+
+
+
+
+
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/hugo-dev">Gavin-歌未竟</a></h1>
+            <h2 class="site-description">探索技术的无限可能！</h2>
+        </div>
+    </header>
+
+    
+
+<div>
+    
+    <span style="color: #707070;">
+        <span id="busuanzi_container_page_pv">
+            总访问量: <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+    </span>
+</div>
+<ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/2123131391'
+                        target="_blank"
+                        title="Bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/Gavin-gwj'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/hugo-dev/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#一什么是事务">一、什么是事务</a></li>
+    <li><a href="#二为什么需要事务管理">二、为什么需要事务管理</a></li>
+    <li><a href="#三事务的四大特征acid特性">三、事务的四大特征/ACID特性</a></li>
+    <li><a href="#四事务的具体操作">四、事务的具体操作</a></li>
+    <li><a href="#五事务的隔离级别">五、事务的隔离级别</a></li>
+    <li><a href="#六transactional注释">六、@Transactional注释</a>
+      <ol>
+        <li><a href="#transactional-的用法">@Transactional 的用法</a></li>
+        <li><a href="#spring-事务传播行为-propagation-behavior-举例">Spring 事务传播行为 (Propagation Behavior) 举例：</a></li>
+      </ol>
+    </li>
+    <li><a href="#七分布式事务---进阶">七、分布式事务 - 进阶</a></li>
+    <li><a href="#总结">总结</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/hugo-dev/p/%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+                
+                    <img src="https://wp-cdn.4ce.cn/v2/nNDeTLC.png" loading="lazy" alt="Featured image of post 事务管理的学习笔记" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/hugo-dev/categories/%E7%AC%94%E8%AE%B0/" >
+                笔记
+            </a>
+        
+            <a href="/hugo-dev/categories/springboot/" >
+                Springboot
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/hugo-dev/p/%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">事务管理的学习笔记</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-05-17</time>
+            </div>
+        
+
+    
+    <div class="time-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+  <path d="M5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zM5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1H5z"/>
+  <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/>
+</svg>
+        <span class="article-wordcount">
+            4402字
+        </span>
+    </div>
+
+     
+
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 9 分钟
+                </time>
+            </div>
+        
+
+        
+
+
+        
+    </footer>
+    
+
+
+
+    
+
+  
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="事务管理">事务管理
+</h1><h2 id="一什么是事务">一、什么是事务
+</h2><p>在计算机系统中，特别是数据库系统中，<strong>事务</strong>是一系列严谨执行的逻辑操作单元。这些操作要么<strong>全部成功执行</strong>，要么<strong>全部不执行</strong>。它是一个不可分割的工作单位，即使这系列操作由多个独立的步骤组成，从外部看来，这一系列操作也如同一个单一的操作。</p>
+<p><strong>举个生活中的例子：</strong></p>
+<p>银行转账是一个典型的事务。假设A要转100元给B：</p>
+<ol>
+<li>从A账户扣除100元。</li>
+<li>向B账户增加100元。</li>
+</ol>
+<p>这两个操作必须<strong>要么都成功，要么都失败</strong>。</p>
+<ul>
+<li><strong>都成功：</strong> A账户减少100元，B账户增加100元，转账完成。</li>
+<li><strong>都失败：</strong> 如果在扣除A账户的钱后，系统崩溃导致无法给B账户增加钱，那么A账户扣除的100元必须回滚（退回到A账户），确保账户总金额不变，转账失败。</li>
+</ul>
+<p>绝不能出现A账户扣了钱，B账户没收到钱，或者A账户没扣钱，B账户却收到了钱的情况。</p>
+<h2 id="二为什么需要事务管理">二、为什么需要事务管理
+</h2><p>事务管理的主要目的是为了确保数据的<strong>一致性 (Consistency)</strong> 和 <strong>完整性 (Integrity)</strong>，尤其是在并发环境（多个用户或程序同时访问和修改数据）和可能发生系统故障的情况下。</p>
+<ul>
+<li><strong>数据一致性：</strong> 保证数据从一个一致的状态转变到另一个一致的状态。例如，在转账操作中，无论成功与否，银行系统的总资金应该保持不变。</li>
+<li><strong>并发控制：</strong> 当多个事务同时操作同一份数据时，事务管理可以防止数据混乱和错误，例如“脏读”、“不可重复读”、“幻读”等问题。</li>
+<li><strong>故障恢复：</strong> 当系统发生断电、崩溃等意外情况时，事务管理能够确保未完成的事务对数据的修改被撤销，已完成的事务对数据的修改被持久化，从而将数据恢复到一个一致的状态。</li>
+</ul>
+<h2 id="三事务的四大特征acid特性">三、事务的四大特征/ACID特性
+</h2><p><img src="https://wp-cdn.4ce.cn/v2/3FeBhkw.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="四大特征"
+	
+	
+></p>
+<p>事务具有四个经典的特性，通常被称为 <strong>ACID</strong> 特性，这是衡量一个事务管理系统是否可靠的重要标准：</p>
+<ol>
+<li>
+<p><strong>原子性 (Atomicity):</strong></p>
+<ul>
+<li><strong>含义：</strong> 事务是一个不可分割的最小工作单元。事务中的所有操作要么全部提交成功，要么全部失败回滚。如果任何一个操作失败，整个事务都将回滚到最初状态，就像这个事务从未执行过一样。</li>
+<li><strong>重要性：</strong> 保证了操作的完整性，不会出现部分成功部分失败的中间状态。</li>
+</ul>
+</li>
+<li>
+<p><strong>一致性 (Consistency):</strong></p>
+<ul>
+<li><strong>含义：</strong> 事务执行的结果必须使数据库从一个一致性状态转变到另一个一致性状态。一致性关注的是数据的业务规则和约束不被破坏。</li>
+<li><strong>重要性：</strong> 维护数据的正确性和业务逻辑的完整性。例如，银行转账后，双方账户的总金额应该保持不变（如果只考虑这两个账户）。数据库的约束（如主键、外键、唯一性约束、检查约束等）也必须得到满足。</li>
+</ul>
+</li>
+<li>
+<p><strong>隔离性 (Isolation):</strong></p>
+<ul>
+<li><strong>含义：</strong> 一个事务的执行不能被其他事务干扰。即一个事务内部的操作及使用的数据对并发的其他事务是隔离的，并发执行的各个事务之间不能互相影响。</li>
+<li><strong>重要性：</strong> 在并发环境下，防止多个事务同时操作数据时可能引发的问题，如脏读、不可重复读、幻读。数据库系统通过不同的<strong>隔离级别</strong>来实现不同程度的隔离性。</li>
+</ul>
+</li>
+<li>
+<p><strong>持久性 (Durability):</strong></p>
+<ul>
+<li><strong>含义：</strong> 一旦事务成功提交，则其对数据库数据的修改就是永久性的，即使后续系统发生故障（如断电或系统崩溃）也不会丢失。</li>
+<li><strong>重要性：</strong> 保证了数据的可靠性。通常通过将事务日志（redo log, undo log）持久化到磁盘来实现。</li>
+</ul>
+</li>
+</ol>
+<h2 id="四事务的具体操作">四、事务的具体操作
+</h2><p>事务的具体操作通常涉及到以下几个关键命令或阶段：</p>
+<ol>
+<li>
+<p><strong>开始事务 (Begin Transaction / Start Transaction):</strong></p>
+<ul>
+<li><strong>描述：</strong> 标记一个事务的开始。在此之后的数据库操作都将被视为该事务的一部分。</li>
+<li><strong>SQL示例：</strong>  <code>START TRANSACTION;</code> (以MySQL)</li>
+</ul>
+</li>
+<li>
+<p><strong>执行事务操作 (Executing Transaction Operations):</strong></p>
+<ul>
+<li><strong>描述：</strong> 在事务开始后，执行一系列的数据库操作，如 <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>, <code>SELECT</code> 等。这些操作在此时可能只是记录在事务日志中，或者在内存中进行修改，并不一定立即写入到物理磁盘。</li>
+</ul>
+</li>
+<li>
+<p><strong>提交事务 (Commit Transaction):</strong></p>
+<ul>
+<li><strong>描述：</strong> 如果事务中的所有操作都成功执行，并且业务逻辑允许，则提交事务。提交后，事务所做的所有数据修改将被永久保存到数据库中（满足持久性）。</li>
+<li><strong>SQL示例：</strong> <code>COMMIT;</code></li>
+</ul>
+</li>
+<li>
+<p><strong>回滚事务 (Rollback Transaction):</strong></p>
+<ul>
+<li><strong>描述：</strong> 如果在事务执行过程中发生任何错误（如SQL执行失败、业务逻辑校验失败、系统异常等），或者业务需要取消该事务，则回滚事务。回滚会将数据库恢复到该事务开始之前的状态，撤销该事务已经进行的所有修改（满足原子性）。</li>
+<li><strong>SQL示例：</strong> <code>ROLLBACK;</code></li>
+</ul>
+</li>
+<li>
+<p><strong>设置保存点 (Savepoint - 可选):</strong></p>
+<ul>
+<li><strong>描述：</strong> 在一个较长的事务中，可以设置一个或多个保存点。如果后续操作出现问题，可以选择回滚到某个指定的保存点，而不是回滚整个事务。这为事务提供了更细粒度的控制。</li>
+<li><strong>SQL示例：</strong>
+<ul>
+<li>设置保存点： <code>SAVEPOINT point_name;</code></li>
+<li>回滚到保存点： <code>ROLLBACK TO SAVEPOINT point_name;</code></li>
+</ul>
+</li>
+<li><strong>注意：</strong> 回滚到保存点后，之前的操作仍然是事务的一部分，可以选择继续执行其他操作后提交整个事务，或者回滚整个事务。</li>
+</ul>
+</li>
+</ol>
+<p><strong>简单流程示例 (SQL):</strong></p>
+<p>SQL</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">-- 开始一个新的事务
+</span></span><span class="line"><span class="cl">START TRANSACTION;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">-- 尝试操作1：从账户X扣款100
+</span></span><span class="line"><span class="cl">UPDATE accounts SET balance = balance - 100 WHERE account_id = &#39;X&#39;;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">-- 尝试操作2：向账户Y存款100
+</span></span><span class="line"><span class="cl">UPDATE accounts SET balance = balance + 100 WHERE account_id = &#39;Y&#39;;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">-- 检查是否发生错误或业务逻辑是否满足
+</span></span><span class="line"><span class="cl">-- IF 发生错误 THEN
+</span></span><span class="line"><span class="cl">--   ROLLBACK; -- 回滚所有操作
+</span></span><span class="line"><span class="cl">-- ELSE
+</span></span><span class="line"><span class="cl">--   COMMIT;   -- 提交所有操作，使其永久生效
+</span></span><span class="line"><span class="cl">-- END IF;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="五事务的隔离级别">五、事务的隔离级别
+</h2><p>为了平衡并发性能和数据一致性的需求，数据库系统定义了不同的事务隔离级别。隔离级别越高，数据一致性越好，但并发性能可能会受到影响。常见的隔离级别从低到高包括：</p>
+<ol>
+<li>
+<p><strong>读未提交 (Read Uncommitted):</strong></p>
+<ul>
+<li><strong>现象：</strong> 允许一个事务读取另一个事务尚未提交的修改（脏数据）。</li>
+<li><strong>问题：</strong> 可能导致<strong>脏读 (Dirty Read)</strong>。</li>
+<li><strong>性能：</strong> 并发性能最高，但数据一致性最差。很少在实际应用中使用。</li>
+</ul>
+</li>
+<li>
+<p><strong>读已提交 (Read Committed):</strong></p>
+<ul>
+<li><strong>现象：</strong> 一个事务只能读取到其他事务已经提交的数据。解决了脏读问题。</li>
+<li><strong>问题：</strong> 在同一个事务内，多次读取同一数据，可能会得到不同的结果，因为其他事务可能在此期间提交了对该数据的修改。这称为<strong>不可重复读 (Non-Repeatable Read)</strong>。</li>
+<li><strong>性能：</strong> 大多数数据库的默认隔离级别（如 Oracle, SQL Server, PostgreSQL）。</li>
+</ul>
+</li>
+<li>
+<p><strong>可重复读 (Repeatable Read):</strong></p>
+<ul>
+<li><strong>现象：</strong> 保证在一个事务中多次读取同一数据时，结果始终一致。解决了不可重复读的问题。</li>
+<li><strong>问题：</strong> 在一个事务中，当多次按照某个范围条件读取数据时，可能会发现其他事务在此期间插入了新的、符合该范围条件的数据，导致后续读取时多出一些“幻影”行。这称为<strong>幻读 (Phantom Read)</strong>。</li>
+<li><strong>性能：</strong> MySQL InnoDB 存储引擎的默认隔离级别。它通过间隙锁 (Gap Lock) 在一定程度上解决了幻读问题。</li>
+</ul>
+</li>
+<li>
+<p><strong>可串行化 (Serializable):</strong></p>
+<ul>
+<li><strong>现象：</strong> 强制事务串行执行，即一个接一个地执行，完全避免了脏读、不可重复读和幻读问题。</li>
+<li><strong>问题：</strong> 并发性能最低，因为事务之间不能并行执行。</li>
+<li><strong>性能：</strong> 数据一致性最高，但并发能力最差。在对数据一致性要求极高且并发量不大的场景下可能使用。</li>
+</ul>
+</li>
+</ol>
+<p><strong>选择哪个隔离级别？</strong></p>
+<p>选择合适的隔离级别需要在数据一致性和系统并发性能之间进行权衡，根据具体的业务场景需求来决定。</p>
+<h2 id="六transactional注释">六、@Transactional注释
+</h2><p>除了数据库层面直接使用SQL命令管理事务外，在应用开发中，我们通常会使用框架或特定的API来管理事务，这样可以更方便地将事务管理逻辑与业务逻辑解耦。</p>
+<h3 id="transactional-的用法">@Transactional 的用法
+</h3><ul>
+<li>
+<p>Spring Framework 提供的一个注解，用于声明性地管理事务。它可以应用在<strong>类级别</strong>或<strong>方法级别</strong>。它会在方法运行之前，开启事务，运行完毕之后，根据运行结果，提交或回滚事务。</p>
+</li>
+<li>
+<p><strong>位置（业务Service层）：</strong></p>
+<ul>
+<li><strong>方法级别：</strong> 推荐使用。适用于一个业务方法多次对数据进行增、删、改等操作。当注解在方法上时，该方法将作为一个事务单元执行。</li>
+<li><strong>类级别：</strong> 当注解在类上时，表示该类中所有 <code>public</code> 方法都将默认应用相同的事务配置。如果方法上也有 <code>@Transactional</code> 注解，则方法级别的配置会覆盖类级别的配置。</li>
+<li><strong>接口级别：</strong> 也可以注解在接口上，但不推荐，因为注解是不能被继承的，Spring 的事务是基于代理的，如果基于接口的代理（JDK动态代理），注解在接口上是有效的。但如果使用基于类的代理（CGLIB），注解在接口上是无效的。为了统一和避免混淆，建议注解在实现类或其方法上。</li>
+</ul>
+</li>
+<li>
+<p>默认出现运行时异常（<code>RunTimeException</code>）才会回滚</p>
+</li>
+</ul>
+<p>前面我们通过spring事务管理注解@Transactional已经控制了业务层方法的事务。接下来我们要来详细的介绍一下@Transactional事务管理注解的使用细节。我们这里主要介绍@Transactional注解当中的两个常见的属性：</p>
+<ul>
+<li>
+<p>异常回滚的属性：<code>rollbackFor</code></p>
+</li>
+<li>
+<p>事务传播行为：<code>propagation</code></p>
+</li>
+</ul>
+<p>我们先来学习下rollbackFor属性。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">@Transactional(rollbackFor = Exception.class)//所有异常都会回滚
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="spring-事务传播行为-propagation-behavior-举例">Spring 事务传播行为 (Propagation Behavior) 举例：
+</h3><p><img src="https://wp-cdn.4ce.cn/v2/sn4qfK4.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="图示"
+	
+	
+></p>
+<p>当一个事务方法调用另一个事务方法时，Spring 的事务传播行为定义了第二个事务方法如何参与到现有事务中，或者如何开启新事务。常见的传播行为有：</p>
+<ul>
+<li><code>REQUIRED</code> (默认): 如果当前存在事务，则加入该事务；如果当前没有事务，则创建一个新的事务。</li>
+<li><code>SUPPORTS</code>: 如果当前存在事务，则加入该事务；如果当前没有事务，则以非事务方式执行。</li>
+<li><code>MANDATORY</code>: 如果当前存在事务，则加入该事务；如果当前没有事务，则抛出异常。</li>
+<li><code>REQUIRES_NEW</code>: 创建一个新的事务，如果当前存在事务，则把当前事务挂起。</li>
+<li><code>NOT_SUPPORTED</code>: 以非事务方式执行操作，如果当前存在事务，则把当前事务挂起。</li>
+<li><code>NEVER</code>: 以非事务方式执行，如果当前存在事务，则抛出异常。</li>
+<li><code>NESTED</code>: 如果当前存在事务，则在嵌套事务内执行。如果当前没有事务，则进行与 <code>REQUIRED</code> 类似的操作。嵌套事务是外部事务的一部分，有自己的保存点，可以独立回滚而不影响外部事务，但外部事务回滚会影响嵌套事务。</li>
+</ul>
+<h2 id="七分布式事务---进阶">七、分布式事务 - 进阶
+</h2><p>当一个业务操作需要跨多个独立的数据库或服务时，就涉及到分布式事务。单个数据库的ACID特性无法直接保证跨多个资源的事务一致性。</p>
+<ul>
+<li><strong>挑战：</strong>
+<ul>
+<li>多个参与者（数据库、消息队列等）的一致性难以保证。</li>
+<li>网络延迟和故障增加了复杂性。</li>
+</ul>
+</li>
+<li><strong>常见解决方案：</strong>
+<ul>
+<li><strong>两阶段提交 (2PC - Two-Phase Commit):</strong>
+<ul>
+<li><strong>准备阶段 (Prepare Phase):</strong> 协调者询问所有参与者是否可以提交事务。参与者执行事务操作，锁定资源，但不实际提交，并向协调者报告准备就绪或失败。</li>
+<li><strong>提交/回滚阶段 (Commit/Rollback Phase):</strong> 如果所有参与者都准备就绪，协调者通知所有参与者提交事务；否则，通知所有参与者回滚事务。</li>
+<li><strong>缺点：</strong> 同步阻塞、单点故障（协调者）、数据不一致（协调者宕机时）。</li>
+</ul>
+</li>
+<li><strong>三阶段提交 (3PC - Three-Phase Commit):</strong> 2PC的改进，引入了超时机制和CanCommit阶段，减少了阻塞时间，但更复杂。</li>
+<li><strong>TCC (Try-Confirm-Cancel):</strong> 补偿型事务。
+<ul>
+<li><strong>Try:</strong> 尝试执行业务，预留资源。</li>
+<li><strong>Confirm:</strong> 如果Try阶段所有参与者都成功，则执行Confirm操作，实际完成业务。</li>
+<li><strong>Cancel:</strong> 如果Try阶段有任何参与者失败，或者Confirm阶段某个参与者失败，则执行Cancel操作，回滚Try阶段预留的资源。</li>
+<li><strong>特点：</strong> 对业务代码侵入性强，需要业务层面实现Try, Confirm, Cancel三个接口。</li>
+</ul>
+</li>
+<li><strong>Saga (Saga Pattern):</strong> 长事务解决方案。将一个大事务拆分成多个本地事务，每个本地事务都有对应的补偿操作。如果某个本地事务失败，则按相反顺序执行前面已成功事务的补偿操作。</li>
+<li><strong>基于消息队列的最终一致性：</strong> 通过消息队列异步通知相关服务执行操作，并通过重试、幂等性、补偿等机制最终达到数据一致性。</li>
+</ul>
+</li>
+</ul>
+<h2 id="总结">总结
+</h2><p>事务管理是确保数据完整性和一致性的核心机制。理解其ACID特性、不同的隔离级别以及如何在应用中进行管理（声明式与编程式）是非常重要的。对于复杂系统，还需要考虑到分布式事务的挑战和解决方案。在实际开发中，我们会根据业务需求、性能要求和系统复杂度来选择合适的事务管理策略和技术。</p>
+<hr>
+<p>希望以上回答能够清晰地解释事务管理的相关知识点。这样的回答结构清晰，内容详尽，应该能够给面试官留下一个好印象。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/spring-cache-%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring Cache 入门笔记</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/springboot%E5%8E%9F%E7%90%86/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">SpringBoot原理</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/hugo-dev/p/web%E5%BC%80%E5%8F%91-interceptor%E6%8B%A6%E6%88%AA%E5%99%A8/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="https://wp-cdn.4ce.cn/v2/i7r99m2.png" loading="lazy" data-key="" data-hash="https://wp-cdn.4ce.cn/v2/i7r99m2.png"/>
+                
+            </div>
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Web开发-Interceptor拦截器</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/springboot-mybatis-%E7%99%BB%E5%BD%95%E8%AE%A4%E8%AF%81%E5%8A%9F%E8%83%BD%E5%AE%9E%E7%8E%B0/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">SpringBoot&#43;Mybatis 登录认证功能实现</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/hugo-dev/p/java-%E4%B8%AD-bean%E5%8D%95%E4%BE%8B%E5%8F%8A%E5%8D%95%E4%BE%8B-bean-%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="https://wp-cdn.4ce.cn/v2/hjEyjjL.png" loading="lazy" data-key="" data-hash="https://wp-cdn.4ce.cn/v2/hjEyjjL.png"/>
+                
+            </div>
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java 中 Bean、单例及单例 Bean 的学习笔记</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 歌未竟的个人博客
+    </section>
+
+     
+    <section class="icp-link">
+        <a href="https://icp.gov.moe/?keyword=20256333" target="_blank" >萌ICP备20256333号</a>
+        <a href="https://travel.moe/go.html" target="_blank"  height＝15px>
+    <img src="https://travel.moe/images/logo/pink.png" style="width:auto;height:13px" title="异次元之旅-跃迁-我们一起去萌站成员的星球旅行吧！">
+</a>
+    </section>
+
+
+    
+    <section class="powerby">
+        
+            如对内容有异议，请联系关邮箱2285786274@qq.com修改 <br/>
+        
+
+        
+        
+        
+    </section>
+</footer>
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/hugo-dev/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<style>
+  body {
+    background: url(https://gavin-gwj.github.io/hugo-dev/background/bg1.jpg) no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+    background-color: rgba(255, 255, 255, 0.75);
+    background-blend-mode: lighten;
+  }
+
+   
+  .main-content {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 2rem;
+    border-radius: 8px;
+    margin: 2rem auto;
+    max-width: 1200px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+   
+  [data-scheme="dark"] body {
+    background-color: rgba(0, 0, 0, 0.7);
+    background-blend-mode: darken;
+  }
+</style>
+
+
+<script defer src="https://cn.vercount.one/js"></script>
+
+<script>
+    function showHideView() {
+        
+        let viewCounts = document.querySelectorAll("#viewCount");
+        if (viewCounts) {
+            
+            let article =  document.querySelector(".article-page");
+            if (!article) {
+                viewCounts.forEach(ele => {
+                    ele.style.display = 'none';
+                });
+            }
+        }
+    }
+    
+    showHideView();
+</script>
+
+
+
+    </body>
+</html>

@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="简单的上传数据案例">
+<title>如何实现简单的文件上传功能</title>
+
+<link rel='canonical' href='https://gavin-gwj.github.io/hugo-dev/p/%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%8A%9F%E8%83%BD/'>
+
+<link rel="stylesheet" href="/hugo-dev/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="如何实现简单的文件上传功能">
+<meta property='og:description' content="简单的上传数据案例">
+<meta property='og:url' content='https://gavin-gwj.github.io/hugo-dev/p/%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%8A%9F%E8%83%BD/'>
+<meta property='og:site_name' content='Gavin-歌未竟'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-05-17T21:33:41&#43;08:00'/><meta property='article:modified_time' content='2025-05-17T21:33:41&#43;08:00'/><meta property='og:image' content='https://wp-cdn.4ce.cn/v2/ClJAL1y.png' />
+<meta name="twitter:title" content="如何实现简单的文件上传功能">
+<meta name="twitter:description" content="简单的上传数据案例"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://wp-cdn.4ce.cn/v2/ClJAL1y.png' />
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/hugo-dev/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/hugo-dev/img/avatar_hu_cf5ff899d804496e.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">😅</span>
+                
+            </figure>
+            
+        
+
+
+
+
+
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/hugo-dev">Gavin-歌未竟</a></h1>
+            <h2 class="site-description">探索技术的无限可能！</h2>
+        </div>
+    </header>
+
+    
+
+<div>
+    
+    <span style="color: #707070;">
+        <span id="busuanzi_container_page_pv">
+            总访问量: <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+    </span>
+</div>
+<ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/2123131391'
+                        target="_blank"
+                        title="Bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/Gavin-gwj'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/hugo-dev/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1-概述">1. 概述</a></li>
+    <li><a href="#2-实现步骤">2. 实现步骤</a>
+      <ol>
+        <li><a href="#21-前端表单">2.1 前端表单</a></li>
+        <li><a href="#22-后端控制器spring-boot">2.2 后端控制器（Spring Boot）</a></li>
+        <li><a href="#restcontroller注解"> <code>@RestController</code> 注解</a></li>
+        <li><a href="#postmapping注解"><code>@PostMapping</code> 注解</a></li>
+        <li><a href="#文件上传参数">文件上传参数</a></li>
+        <li><a href="#文件处理流程">文件处理流程</a></li>
+        <li><a href="#文件存储路径">文件存储路径</a></li>
+      </ol>
+    </li>
+    <li><a href="#3-核心知识点">3. 核心知识点</a>
+      <ol>
+        <li><a href="#31-文件存储方法">3.1 文件存储方法</a></li>
+        <li><a href="#32-文件大小限制配置">3.2 文件大小限制配置</a></li>
+      </ol>
+    </li>
+    <li><a href="#4-注意事项">4. 注意事项</a></li>
+    <li><a href="#5-总结">5. 总结</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/hugo-dev/p/%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%8A%9F%E8%83%BD/">
+                
+                    <img src="https://wp-cdn.4ce.cn/v2/ClJAL1y.png" loading="lazy" alt="Featured image of post 如何实现简单的文件上传功能" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/hugo-dev/categories/%E7%AC%94%E8%AE%B0/" >
+                笔记
+            </a>
+        
+            <a href="/hugo-dev/categories/i/o%E6%B5%81/" >
+                I/O流
+            </a>
+        
+            <a href="/hugo-dev/categories/%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6/" >
+                上传文件
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/hugo-dev/p/%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%8A%9F%E8%83%BD/">如何实现简单的文件上传功能</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            简单的上传数据案例
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-05-17</time>
+            </div>
+        
+
+    
+    <div class="time-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+  <path d="M5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zM5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1H5z"/>
+  <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/>
+</svg>
+        <span class="article-wordcount">
+            1730字
+        </span>
+    </div>
+
+     
+
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 4 分钟
+                </time>
+            </div>
+        
+
+        
+
+
+        
+    </footer>
+    
+
+
+
+    
+
+  
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="简单的文件上传功能的实现">简单的文件上传功能的实现
+</h1><h2 id="1-概述">1. 概述
+</h2><p>文件上传功能允许用户将本地文件（如图片、视频、音频）传输到服务器，常见于微博、微信朋友圈等场景。实现需结合前端表单和后端接口处理。</p>
+<hr>
+<h2 id="2-实现步骤">2. 实现步骤
+</h2><h3 id="21-前端表单">2.1 前端表单
+</h3><p>使用<code>&lt;form&gt;</code>标签提交数据，要注意的三要素：</p>
+<ul>
+<li><code>enctype=&quot;multipart/form-data&quot;</code>以支持文件传输。</li>
+<li><code>method类型</code>必须为<code>POST</code>。</li>
+<li>需要有一个<code>&lt;input type=&quot;file&quot; name=&quot;file&quot;&gt;</code>，才能上传文件。</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">form</span> <span class="na">action</span><span class="o">=</span><span class="s">&#34;/upload&#34;</span> <span class="na">method</span><span class="o">=</span><span class="s">&#34;post&#34;</span> <span class="na">enctype</span><span class="o">=</span><span class="s">&#34;multipart/form-data&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    姓名：<span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;text&#34;</span> <span class="na">name</span><span class="o">=</span><span class="s">&#34;name&#34;</span><span class="p">&gt;</span> <span class="p">&lt;</span><span class="nt">br</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    年龄：<span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;text&#34;</span> <span class="na">name</span><span class="o">=</span><span class="s">&#34;age&#34;</span><span class="p">&gt;</span> <span class="p">&lt;</span><span class="nt">br</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    图像：<span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;file&#34;</span> <span class="na">name</span><span class="o">=</span><span class="s">&#34;file&#34;</span><span class="p">&gt;</span> <span class="p">&lt;</span><span class="nt">br</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;submit&#34;</span> <span class="na">value</span><span class="o">=</span><span class="s">&#34;上传文件&#34;</span> <span class="na">name</span><span class="o">=</span><span class="s">&#34;submit&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="22-后端控制器spring-boot">2.2 后端控制器（Spring Boot）
+</h3><p>通过<code>@PostMapping</code>接收文件，使用<code>MultipartFile</code>处理上传内容。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// 定义一个REST风格的控制器类，用于处理文件上传请求</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@RestController</span><span class="w">  
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">UploadController</span><span class="w"> </span><span class="p">{</span><span class="w">  
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// 处理POST请求，路径为&#34;/upload&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@PostMapping</span><span class="p">(</span><span class="s">&#34;/upload&#34;</span><span class="p">)</span><span class="w">  
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// 方法参数：name（字符串类型），age（整数类型），file（MultipartFile类型）</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Result</span><span class="w"> </span><span class="nf">upload</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">Integer</span><span class="w"> </span><span class="n">age</span><span class="p">,</span><span class="w"> </span><span class="n">MultipartFile</span><span class="w"> </span><span class="n">file</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">IOException</span><span class="w"> </span><span class="p">{</span><span class="w">  
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 打印日志，记录上传的文件信息</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">log</span><span class="p">.</span><span class="na">info</span><span class="p">(</span><span class="s">&#34;文件上传: {}, {}, {}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">age</span><span class="p">,</span><span class="w"> </span><span class="n">file</span><span class="p">);</span><span class="w">  
+</span></span></span><span class="line"><span class="cl"><span class="w">        
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 保存文件到指定目录</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 获取上传文件的原始文件名</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">originalFilename</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">file</span><span class="p">.</span><span class="na">getOriginalFilename</span><span class="p">();</span><span class="w">  
+</span></span></span><span class="line"><span class="cl"><span class="w">        
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 生成新的文件名：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 1. 获取文件扩展名（从最后一个&#34;.&#34;开始截取）</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">originalFilename</span><span class="p">.</span><span class="na">substring</span><span class="p">(</span><span class="n">originalFilename</span><span class="p">.</span><span class="na">lastIndexOf</span><span class="p">(</span><span class="s">&#34;.&#34;</span><span class="p">));</span><span class="w">  
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 2. 使用UUID生成随机文件名，并拼接扩展名</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">newFileName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">UUID</span><span class="p">.</span><span class="na">randomUUID</span><span class="p">().</span><span class="na">toString</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">extension</span><span class="p">;</span><span class="w">  
+</span></span></span><span class="line"><span class="cl"><span class="w">        
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 将文件保存到本地目录（这里是Windows桌面下的images文件夹）</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">file</span><span class="p">.</span><span class="na">transferTo</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">File</span><span class="p">(</span><span class="s">&#34;C:\\Users\\LENOVO\\Desktop\\杂项\\images\\&#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">newFileName</span><span class="p">));</span><span class="w">  
+</span></span></span><span class="line"><span class="cl"><span class="w">        
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 返回成功结果</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Result</span><span class="p">.</span><span class="na">success</span><span class="p">();</span><span class="w">  
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">  
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>这段代码实现了一个基于Spring Boot的文件上传功能，下面我将讲解其中的关键知识点：</p>
+<h3 id="restcontroller注解"> <code>@RestController</code> 注解
+</h3><ul>
+<li>这是一个组合注解，相当于<code>@Controller</code> + <code>@ResponseBody</code></li>
+<li>表示这个类是一个RESTful风格的控制器，所有方法的返回值都会自动转换为JSON格式</li>
+</ul>
+<h3 id="postmapping注解"><code>@PostMapping</code> 注解
+</h3><ul>
+<li>用于映射HTTP POST请求到特定的处理方法</li>
+<li>这里指定了路径为&quot;/upload&quot;，表示处理上传到该路径的POST请求</li>
+</ul>
+<h3 id="文件上传参数">文件上传参数
+</h3><ul>
+<li><code>MultipartFile</code>是Spring提供的接口，用于处理文件上传</li>
+<li>可以获取文件名(<code>getOriginalFilename()</code>)、文件内容、大小等信息</li>
+<li>文件上传时，表单的<code>enctype</code>必须设置为<code>multipart/form-data</code></li>
+</ul>
+<h3 id="文件处理流程">文件处理流程
+</h3><ol>
+<li>​<strong>​获取原始文件名​</strong>​：<code>file.getOriginalFilename()</code></li>
+<li>​<strong>​提取文件扩展名​</strong>​：通过<code>lastIndexOf(&quot;.&quot;)</code>找到最后一个点，然后截取后缀</li>
+<li>​<strong>​生成新文件名​</strong>​：使用<code>UUID.randomUUID()</code>生成唯一ID，避免文件名冲突</li>
+<li>​<strong>​保存文件​</strong>​：<code>transferTo()</code>方法将文件保存到指定路径</li>
+</ol>
+<h3 id="文件存储路径">文件存储路径
+</h3><ul>
+<li>代码中使用的是绝对路径<code>C:\Users\LENOVO\Desktop\杂项\images\</code></li>
+</ul>
+<hr>
+<h2 id="3-核心知识点">3. 核心知识点
+</h2><h3 id="31-文件存储方法">3.1 文件存储方法
+</h3><ul>
+<li><strong>获取文件名</strong>：<code>multipartFile.getOriginalFilename()</code></li>
+<li><strong>保存到本地</strong>：<code>multipartFile.transferTo(File dest)</code></li>
+</ul>
+<h3 id="32-文件大小限制配置">3.2 文件大小限制配置
+</h3><p>默认限制为 <strong>1MB</strong>，超出需在配置文件中调整：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">spring</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">servlet</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">multipart</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">max-file-size</span><span class="p">:</span><span class="w"> </span><span class="l">10MB   </span><span class="w"> </span><span class="c"># 单个文件最大大小</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">max-request-size</span><span class="p">:</span><span class="w"> </span><span class="l">100MB</span><span class="w"> </span><span class="c"># 请求总大小（含所有文件）</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><hr>
+<h2 id="4-注意事项">4. 注意事项
+</h2><ol>
+<li>
+<p><strong>文件大小限制</strong><br>
+默认配置可能导致大文件上传失败，需根据需求调整<code>application.yml</code>。</p>
+</li>
+<li>
+<p><strong>安全性</strong></p>
+<ul>
+<li>校验文件类型，防止恶意文件上传（如<code>.exe</code>）。</li>
+<li>限制上传目录权限，避免非法访问。</li>
+</ul>
+</li>
+<li>
+<p><strong>异常处理</strong><br>
+捕获<code>IOException</code>或<code>SizeLimitExceededException</code>，返回友好提示。</p>
+</li>
+<li>
+<p><strong>文件名冲突</strong><br>
+建议对上传文件重命名（如UUID），避免覆盖已有文件。</p>
+</li>
+</ol>
+<hr>
+<h2 id="5-总结">5. 总结
+</h2><ul>
+<li>前端表单需设置<code>enctype=&quot;multipart/form-data&quot;</code>。</li>
+<li>后端通过<code>MultipartFile</code>接收文件，使用<code>transferTo()</code>保存。</li>
+<li>配置文件大小限制，增强安全防护。</li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/docker-%E5%85%A5%E9%97%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E5%B0%8F%E7%99%BD%E4%B9%9F%E8%83%BD%E7%9C%8B%E6%87%82/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Docker 入门学习笔记（小白也能看懂！）</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/spring%E7%AF%87-@component-%E4%B8%8E-@bean-%E7%9A%84%E5%8C%BA%E5%88%AB/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring篇-@Component 与 @Bean 的区别</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/%E4%BB%80%E4%B9%88%E6%98%AF%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%B1%9E%E6%80%A7%E6%8B%B7%E8%B4%9D/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">什么是对象的属性拷贝</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/spring-cache-%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring Cache 入门笔记</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/redis%E4%BA%94%E7%A7%8D%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Redis五种常用数据类型</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 歌未竟的个人博客
+    </section>
+
+     
+    <section class="icp-link">
+        <a href="https://icp.gov.moe/?keyword=20256333" target="_blank" >萌ICP备20256333号</a>
+        <a href="https://travel.moe/go.html" target="_blank"  height＝15px>
+    <img src="https://travel.moe/images/logo/pink.png" style="width:auto;height:13px" title="异次元之旅-跃迁-我们一起去萌站成员的星球旅行吧！">
+</a>
+    </section>
+
+
+    
+    <section class="powerby">
+        
+            如对内容有异议，请联系关邮箱2285786274@qq.com修改 <br/>
+        
+
+        
+        
+        
+    </section>
+</footer>
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/hugo-dev/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<style>
+  body {
+    background: url(https://gavin-gwj.github.io/hugo-dev/background/bg1.jpg) no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+    background-color: rgba(255, 255, 255, 0.75);
+    background-blend-mode: lighten;
+  }
+
+   
+  .main-content {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 2rem;
+    border-radius: 8px;
+    margin: 2rem auto;
+    max-width: 1200px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+   
+  [data-scheme="dark"] body {
+    background-color: rgba(0, 0, 0, 0.7);
+    background-blend-mode: darken;
+  }
+</style>
+
+
+<script defer src="https://cn.vercount.one/js"></script>
+
+<script>
+    function showHideView() {
+        
+        let viewCounts = document.querySelectorAll("#viewCount");
+        if (viewCounts) {
+            
+            let article =  document.querySelector(".article-page");
+            if (!article) {
+                viewCounts.forEach(ele => {
+                    ele.style.display = 'none';
+                });
+            }
+        }
+    }
+    
+    showHideView();
+</script>
+
+
+
+    </body>
+</html>

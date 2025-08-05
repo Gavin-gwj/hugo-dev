@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Spring拦截器(Interceptor)学习笔记 一、拦截器概述 1.1 什么是拦截器？ 拦截器是Spring框架提供的一种动态拦截方法调用的机制，类似于Servlet中的过滤器(Filter)。主要特点包括：\n动态拦截控制器方法的执行 在指定方法调用前后执行预设代码 用于处理通用性的业务逻辑（如登录校验、权限检查、日志记录等） 1.2 拦截器 vs 过滤器 特性 拦截器(Interceptor) 过滤器(Filter) 所属框架 Spring MVC Servlet规范 拦截范围 只拦截Spring环境中的资源 拦截所有资源 依赖 依赖Spring容器 不依赖任何框架 执行时机 Controller方法前后 Servlet处理前后 实现接口 HandlerInterceptor Filter 二、拦截器快速入门 2.1 实现步骤 定义拦截器：实现HandlerInterceptor接口 注册配置：通过WebMvcConfigurer配置 2.2 代码实现 1) 自定义拦截器 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 @Component public class DemoInterceptor implements HandlerInterceptor { // 目标方法执行前调用 @Override public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception { System.out.println(&#34;preHandle执行...&#34;); return true; // true放行，false拦截 } // 目标方法执行后调用（视图渲染前） @Override public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception { System.out.println(&#34;postHandle执行...&#34;); } // 整个请求完成后调用（视图渲染后） @Override public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception { System.out.println(&#34;afterCompletion执行...&#34;); } } 2) 注册拦截器 1 2 3 4 5 6 7 8 9 10 11 12 @Configuration public class WebConfig implements WebMvcConfigurer { @Autowired private DemoInterceptor demoInterceptor; @Override public void addInterceptors(InterceptorRegistry registry) { registry.addInterceptor(demoInterceptor) .addPathPatterns(&#34;/**&#34;); // 拦截所有路径 } } 2.3 执行顺序验证 当访问一个Controller方法时，控制台输出：\n">
+<title>Web开发-Interceptor拦截器</title>
+
+<link rel='canonical' href='https://gavin-gwj.github.io/hugo-dev/p/web%E5%BC%80%E5%8F%91-interceptor%E6%8B%A6%E6%88%AA%E5%99%A8/'>
+
+<link rel="stylesheet" href="/hugo-dev/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="Web开发-Interceptor拦截器">
+<meta property='og:description' content="Spring拦截器(Interceptor)学习笔记 一、拦截器概述 1.1 什么是拦截器？ 拦截器是Spring框架提供的一种动态拦截方法调用的机制，类似于Servlet中的过滤器(Filter)。主要特点包括：\n动态拦截控制器方法的执行 在指定方法调用前后执行预设代码 用于处理通用性的业务逻辑（如登录校验、权限检查、日志记录等） 1.2 拦截器 vs 过滤器 特性 拦截器(Interceptor) 过滤器(Filter) 所属框架 Spring MVC Servlet规范 拦截范围 只拦截Spring环境中的资源 拦截所有资源 依赖 依赖Spring容器 不依赖任何框架 执行时机 Controller方法前后 Servlet处理前后 实现接口 HandlerInterceptor Filter 二、拦截器快速入门 2.1 实现步骤 定义拦截器：实现HandlerInterceptor接口 注册配置：通过WebMvcConfigurer配置 2.2 代码实现 1) 自定义拦截器 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 @Component public class DemoInterceptor implements HandlerInterceptor { // 目标方法执行前调用 @Override public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception { System.out.println(&#34;preHandle执行...&#34;); return true; // true放行，false拦截 } // 目标方法执行后调用（视图渲染前） @Override public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception { System.out.println(&#34;postHandle执行...&#34;); } // 整个请求完成后调用（视图渲染后） @Override public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception { System.out.println(&#34;afterCompletion执行...&#34;); } } 2) 注册拦截器 1 2 3 4 5 6 7 8 9 10 11 12 @Configuration public class WebConfig implements WebMvcConfigurer { @Autowired private DemoInterceptor demoInterceptor; @Override public void addInterceptors(InterceptorRegistry registry) { registry.addInterceptor(demoInterceptor) .addPathPatterns(&#34;/**&#34;); // 拦截所有路径 } } 2.3 执行顺序验证 当访问一个Controller方法时，控制台输出：\n">
+<meta property='og:url' content='https://gavin-gwj.github.io/hugo-dev/p/web%E5%BC%80%E5%8F%91-interceptor%E6%8B%A6%E6%88%AA%E5%99%A8/'>
+<meta property='og:site_name' content='Gavin-歌未竟'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-05-24T13:33:57&#43;08:00'/><meta property='article:modified_time' content='2025-05-24T13:33:57&#43;08:00'/><meta property='og:image' content='https://wp-cdn.4ce.cn/v2/i7r99m2.png' />
+<meta name="twitter:title" content="Web开发-Interceptor拦截器">
+<meta name="twitter:description" content="Spring拦截器(Interceptor)学习笔记 一、拦截器概述 1.1 什么是拦截器？ 拦截器是Spring框架提供的一种动态拦截方法调用的机制，类似于Servlet中的过滤器(Filter)。主要特点包括：\n动态拦截控制器方法的执行 在指定方法调用前后执行预设代码 用于处理通用性的业务逻辑（如登录校验、权限检查、日志记录等） 1.2 拦截器 vs 过滤器 特性 拦截器(Interceptor) 过滤器(Filter) 所属框架 Spring MVC Servlet规范 拦截范围 只拦截Spring环境中的资源 拦截所有资源 依赖 依赖Spring容器 不依赖任何框架 执行时机 Controller方法前后 Servlet处理前后 实现接口 HandlerInterceptor Filter 二、拦截器快速入门 2.1 实现步骤 定义拦截器：实现HandlerInterceptor接口 注册配置：通过WebMvcConfigurer配置 2.2 代码实现 1) 自定义拦截器 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 @Component public class DemoInterceptor implements HandlerInterceptor { // 目标方法执行前调用 @Override public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception { System.out.println(&#34;preHandle执行...&#34;); return true; // true放行，false拦截 } // 目标方法执行后调用（视图渲染前） @Override public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception { System.out.println(&#34;postHandle执行...&#34;); } // 整个请求完成后调用（视图渲染后） @Override public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception { System.out.println(&#34;afterCompletion执行...&#34;); } } 2) 注册拦截器 1 2 3 4 5 6 7 8 9 10 11 12 @Configuration public class WebConfig implements WebMvcConfigurer { @Autowired private DemoInterceptor demoInterceptor; @Override public void addInterceptors(InterceptorRegistry registry) { registry.addInterceptor(demoInterceptor) .addPathPatterns(&#34;/**&#34;); // 拦截所有路径 } } 2.3 执行顺序验证 当访问一个Controller方法时，控制台输出：\n"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://wp-cdn.4ce.cn/v2/i7r99m2.png' />
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/hugo-dev/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/hugo-dev/img/avatar_hu_cf5ff899d804496e.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">😅</span>
+                
+            </figure>
+            
+        
+
+
+
+
+
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/hugo-dev">Gavin-歌未竟</a></h1>
+            <h2 class="site-description">探索技术的无限可能！</h2>
+        </div>
+    </header>
+
+    
+
+<div>
+    
+    <span style="color: #707070;">
+        <span id="busuanzi_container_page_pv">
+            总访问量: <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+    </span>
+</div>
+<ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/2123131391'
+                        target="_blank"
+                        title="Bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/Gavin-gwj'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/hugo-dev/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#一拦截器概述">一、拦截器概述</a>
+      <ol>
+        <li><a href="#11-什么是拦截器">1.1 什么是拦截器？</a></li>
+        <li><a href="#12-拦截器-vs-过滤器">1.2 拦截器 vs 过滤器</a></li>
+      </ol>
+    </li>
+    <li><a href="#二拦截器快速入门">二、拦截器快速入门</a>
+      <ol>
+        <li><a href="#21-实现步骤">2.1 实现步骤</a></li>
+        <li><a href="#22-代码实现">2.2 代码实现</a>
+          <ol>
+            <li><a href="#1-自定义拦截器">1) 自定义拦截器</a></li>
+            <li><a href="#2-注册拦截器">2) 注册拦截器</a></li>
+          </ol>
+        </li>
+        <li><a href="#23-执行顺序验证">2.3 执行顺序验证</a></li>
+      </ol>
+    </li>
+    <li><a href="#三登录校验拦截器实战">三、登录校验拦截器实战</a>
+      <ol>
+        <li><a href="#31-令牌校验实现">3.1 令牌校验实现</a></li>
+        <li><a href="#32-配置拦截器">3.2 配置拦截器</a></li>
+      </ol>
+    </li>
+    <li><a href="#四拦截器详解">四、拦截器详解</a>
+      <ol>
+        <li><a href="#41-拦截路径配置">4.1 拦截路径配置</a>
+          <ol>
+            <li><a href="#1-基本配置方法">1) 基本配置方法</a></li>
+            <li><a href="#2-常见路径模式">2) 常见路径模式</a></li>
+          </ol>
+        </li>
+        <li><a href="#42-拦截器执行流程">4.2 拦截器执行流程</a>
+          <ol>
+            <li><a href="#完整请求生命周期">完整请求生命周期</a></li>
+            <li><a href="#执行流程图">执行流程图</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#五最佳实践建议">五、最佳实践建议</a></li>
+    <li><a href="#六常见问题解答">六、常见问题解答</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/hugo-dev/p/web%E5%BC%80%E5%8F%91-interceptor%E6%8B%A6%E6%88%AA%E5%99%A8/">
+                
+                    <img src="https://wp-cdn.4ce.cn/v2/i7r99m2.png" loading="lazy" alt="Featured image of post Web开发-Interceptor拦截器" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/hugo-dev/categories/%E7%AC%94%E8%AE%B0/" >
+                笔记
+            </a>
+        
+            <a href="/hugo-dev/categories/springboot/" >
+                Springboot
+            </a>
+        
+            <a href="/hugo-dev/categories/spring/" >
+                Spring
+            </a>
+        
+            <a href="/hugo-dev/categories/javaweb/" >
+                JavaWeb
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/hugo-dev/p/web%E5%BC%80%E5%8F%91-interceptor%E6%8B%A6%E6%88%AA%E5%99%A8/">Web开发-Interceptor拦截器</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-05-24</time>
+            </div>
+        
+
+    
+    <div class="time-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+  <path d="M5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zM5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1H5z"/>
+  <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/>
+</svg>
+        <span class="article-wordcount">
+            1797字
+        </span>
+    </div>
+
+     
+
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 4 分钟
+                </time>
+            </div>
+        
+
+        
+
+
+        
+    </footer>
+    
+
+
+
+    
+
+  
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="spring拦截器interceptor学习笔记">Spring拦截器(Interceptor)学习笔记
+</h1><h2 id="一拦截器概述">一、拦截器概述
+</h2><h3 id="11-什么是拦截器">1.1 什么是拦截器？
+</h3><p>拦截器是<strong>Spring框架</strong>提供的一种<strong>动态拦截方法调用</strong>的机制，类似于Servlet中的过滤器(Filter)。主要特点包括：</p>
+<ul>
+<li><strong>动态拦截</strong>控制器方法的执行</li>
+<li>在<strong>指定方法调用前后</strong>执行预设代码</li>
+<li>用于处理<strong>通用性</strong>的业务逻辑（如登录校验、权限检查、日志记录等）</li>
+</ul>
+<h3 id="12-拦截器-vs-过滤器">1.2 拦截器 vs 过滤器
+</h3><div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>特性</th>
+          <th>拦截器(Interceptor)</th>
+          <th>过滤器(Filter)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>所属框架</td>
+          <td>Spring MVC</td>
+          <td>Servlet规范</td>
+      </tr>
+      <tr>
+          <td>拦截范围</td>
+          <td>只拦截Spring环境中的资源</td>
+          <td>拦截所有资源</td>
+      </tr>
+      <tr>
+          <td>依赖</td>
+          <td>依赖Spring容器</td>
+          <td>不依赖任何框架</td>
+      </tr>
+      <tr>
+          <td>执行时机</td>
+          <td>Controller方法前后</td>
+          <td>Servlet处理前后</td>
+      </tr>
+      <tr>
+          <td>实现接口</td>
+          <td>HandlerInterceptor</td>
+          <td>Filter</td>
+      </tr>
+  </tbody>
+</table></div>
+<h2 id="二拦截器快速入门">二、拦截器快速入门
+</h2><h3 id="21-实现步骤">2.1 实现步骤
+</h3><ol>
+<li><strong>定义拦截器</strong>：实现<code>HandlerInterceptor</code>接口</li>
+<li><strong>注册配置</strong>：通过<code>WebMvcConfigurer</code>配置</li>
+</ol>
+<h3 id="22-代码实现">2.2 代码实现
+</h3><h4 id="1-自定义拦截器">1) 自定义拦截器
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Component</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">DemoInterceptor</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">HandlerInterceptor</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// 目标方法执行前调用</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">preHandle</span><span class="p">(</span><span class="n">HttpServletRequest</span><span class="w"> </span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">HttpServletResponse</span><span class="w"> </span><span class="n">response</span><span class="p">,</span><span class="w"> </span><span class="n">Object</span><span class="w"> </span><span class="n">handler</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;preHandle执行...&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span><span class="w"> </span><span class="c1">// true放行，false拦截</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// 目标方法执行后调用（视图渲染前）</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">postHandle</span><span class="p">(</span><span class="n">HttpServletRequest</span><span class="w"> </span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">HttpServletResponse</span><span class="w"> </span><span class="n">response</span><span class="p">,</span><span class="w"> </span><span class="n">Object</span><span class="w"> </span><span class="n">handler</span><span class="p">,</span><span class="w"> </span><span class="n">ModelAndView</span><span class="w"> </span><span class="n">modelAndView</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;postHandle执行...&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// 整个请求完成后调用（视图渲染后）</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">afterCompletion</span><span class="p">(</span><span class="n">HttpServletRequest</span><span class="w"> </span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">HttpServletResponse</span><span class="w"> </span><span class="n">response</span><span class="p">,</span><span class="w"> </span><span class="n">Object</span><span class="w"> </span><span class="n">handler</span><span class="p">,</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="n">ex</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;afterCompletion执行...&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="2-注册拦截器">2) 注册拦截器
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Configuration</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">WebConfig</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">WebMvcConfigurer</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Autowired</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">DemoInterceptor</span><span class="w"> </span><span class="n">demoInterceptor</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">addInterceptors</span><span class="p">(</span><span class="n">InterceptorRegistry</span><span class="w"> </span><span class="n">registry</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">registry</span><span class="p">.</span><span class="na">addInterceptor</span><span class="p">(</span><span class="n">demoInterceptor</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">.</span><span class="na">addPathPatterns</span><span class="p">(</span><span class="s">&#34;/**&#34;</span><span class="p">);</span><span class="w"> </span><span class="c1">// 拦截所有路径</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="23-执行顺序验证">2.3 执行顺序验证
+</h3><p>当访问一个Controller方法时，控制台输出：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">preHandle执行...
+</span></span><span class="line"><span class="cl">Controller方法执行...
+</span></span><span class="line"><span class="cl">postHandle执行...
+</span></span><span class="line"><span class="cl">afterCompletion执行...
+</span></span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p><strong>注意</strong>：如果<code>preHandle</code>返回<code>false</code>，则后续流程都不会执行！</p></blockquote>
+<h2 id="三登录校验拦截器实战">三、登录校验拦截器实战
+</h2><h3 id="31-令牌校验实现">3.1 令牌校验实现
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Slf4j</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@Component</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">TokenInterceptor</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">HandlerInterceptor</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">preHandle</span><span class="p">(</span><span class="n">HttpServletRequest</span><span class="w"> </span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">HttpServletResponse</span><span class="w"> </span><span class="n">response</span><span class="p">,</span><span class="w"> </span><span class="n">Object</span><span class="w"> </span><span class="n">handler</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 1. 获取请求URL</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="na">getRequestURL</span><span class="p">().</span><span class="na">toString</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 2. 登录请求直接放行</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">url</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="s">&#34;login&#34;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">log</span><span class="p">.</span><span class="na">info</span><span class="p">(</span><span class="s">&#34;登录请求，放行&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 3. 获取token</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">jwt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="na">getHeader</span><span class="p">(</span><span class="s">&#34;token&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 4. token不存在返回未登录</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">StringUtils</span><span class="p">.</span><span class="na">hasLength</span><span class="p">(</span><span class="n">jwt</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">log</span><span class="p">.</span><span class="na">error</span><span class="p">(</span><span class="s">&#34;令牌为空&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">response</span><span class="p">.</span><span class="na">setStatus</span><span class="p">(</span><span class="n">HttpStatus</span><span class="p">.</span><span class="na">SC_UNAUTHORIZED</span><span class="p">);</span><span class="w"> </span><span class="c1">// 401</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 5. 解析token</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">JwtUtils</span><span class="p">.</span><span class="na">parseJWT</span><span class="p">(</span><span class="n">jwt</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">Exception</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">log</span><span class="p">.</span><span class="na">error</span><span class="p">(</span><span class="s">&#34;令牌解析失败&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">response</span><span class="p">.</span><span class="na">setStatus</span><span class="p">(</span><span class="n">HttpStatus</span><span class="p">.</span><span class="na">SC_UNAUTHORIZED</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 6. 放行</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">log</span><span class="p">.</span><span class="na">info</span><span class="p">(</span><span class="s">&#34;令牌校验通过&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="32-配置拦截器">3.2 配置拦截器
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Configuration</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">WebConfig</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">WebMvcConfigurer</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Autowired</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">TokenInterceptor</span><span class="w"> </span><span class="n">tokenInterceptor</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">addInterceptors</span><span class="p">(</span><span class="n">InterceptorRegistry</span><span class="w"> </span><span class="n">registry</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">registry</span><span class="p">.</span><span class="na">addInterceptor</span><span class="p">(</span><span class="n">tokenInterceptor</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">.</span><span class="na">addPathPatterns</span><span class="p">(</span><span class="s">&#34;/**&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">.</span><span class="na">excludePathPatterns</span><span class="p">(</span><span class="s">&#34;/login&#34;</span><span class="p">);</span><span class="w"> </span><span class="c1">// 排除登录接口</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="四拦截器详解">四、拦截器详解
+</h2><h3 id="41-拦截路径配置">4.1 拦截路径配置
+</h3><h4 id="1-基本配置方法">1) 基本配置方法
+</h4><ul>
+<li><code>addPathPatterns()</code>：添加拦截路径</li>
+<li><code>excludePathPatterns()</code>：添加排除路径</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">registry</span><span class="p">.</span><span class="na">addInterceptor</span><span class="p">(</span><span class="n">interceptor</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">addPathPatterns</span><span class="p">(</span><span class="s">&#34;/**&#34;</span><span class="p">)</span><span class="w">          </span><span class="c1">// 拦截所有</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">excludePathPatterns</span><span class="p">(</span><span class="s">&#34;/login&#34;</span><span class="p">);</span><span class="w">  </span><span class="c1">// 排除登录</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="2-常见路径模式">2) 常见路径模式
+</h4><div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>模式</th>
+          <th>说明</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>/*</code></td>
+          <td>一级路径（如<code>/user</code>）</td>
+      </tr>
+      <tr>
+          <td><code>/**</code></td>
+          <td>任意级路径（如<code>/user/1</code>）</td>
+      </tr>
+      <tr>
+          <td><code>/admin/**</code></td>
+          <td>拦截<code>/admin</code>下的所有路径</td>
+      </tr>
+      <tr>
+          <td><code>/secure/*.do</code></td>
+          <td>拦截<code>/secure</code>下的所有.do请求</td>
+      </tr>
+  </tbody>
+</table></div>
+<h3 id="42-拦截器执行流程">4.2 拦截器执行流程
+</h3><h4 id="完整请求生命周期">完整请求生命周期
+</h4><ol>
+<li><strong>过滤器</strong>前置处理</li>
+<li><strong>DispatcherServlet</strong>接收请求</li>
+<li><strong>拦截器</strong>preHandle
+<ul>
+<li>返回true：继续执行</li>
+<li>返回false：终止流程</li>
+</ul>
+</li>
+<li><strong>Controller</strong>方法执行</li>
+<li><strong>拦截器</strong>postHandle</li>
+<li>视图渲染</li>
+<li><strong>拦截器</strong>afterCompletion</li>
+<li><strong>过滤器</strong>后置处理</li>
+</ol>
+<h4 id="执行流程图">执行流程图
+</h4><p><img src="https://wp-cdn.4ce.cn/v2/yfJNK5j.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+></p>
+<h2 id="五最佳实践建议">五、最佳实践建议
+</h2><ol>
+<li>
+<p><strong>登录校验</strong>：推荐使用拦截器而非过滤器</p>
+<ul>
+<li>能利用Spring的依赖注入</li>
+<li>更精准控制Spring环境中的请求</li>
+</ul>
+</li>
+<li>
+<p><strong>路径配置</strong>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// 推荐配置方式</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">registry</span><span class="p">.</span><span class="na">addInterceptor</span><span class="p">(</span><span class="n">authInterceptor</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">addPathPatterns</span><span class="p">(</span><span class="s">&#34;/api/**&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">.</span><span class="na">excludePathPatterns</span><span class="p">(</span><span class="s">&#34;/api/public/**&#34;</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><strong>性能优化</strong>：</p>
+<ul>
+<li>在<code>preHandle</code>中进行轻量级检查</li>
+<li>避免在拦截器中执行耗时操作</li>
+</ul>
+</li>
+<li>
+<p><strong>多拦截器顺序</strong>：</p>
+<ul>
+<li>通过<code>order()</code>方法控制执行顺序</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">registry</span><span class="p">.</span><span class="na">addInterceptor</span><span class="p">(</span><span class="n">interceptor1</span><span class="p">).</span><span class="na">order</span><span class="p">(</span><span class="n">1</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">registry</span><span class="p">.</span><span class="na">addInterceptor</span><span class="p">(</span><span class="n">interceptor2</span><span class="p">).</span><span class="na">order</span><span class="p">(</span><span class="n">2</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ol>
+<h2 id="六常见问题解答">六、常见问题解答
+</h2><p><strong>Q1：拦截器和过滤器如何选择？</strong></p>
+<ul>
+<li>需要处理Spring相关功能（如自动注入、AOP等）→ <strong>拦截器</strong></li>
+<li>需要处理静态资源、非Spring请求 → <strong>过滤器</strong></li>
+</ul>
+<p><strong>Q2：拦截器能获取Controller方法信息吗？</strong>
+可以，通过<code>handler</code>参数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">handler</span><span class="w"> </span><span class="k">instanceof</span><span class="w"> </span><span class="n">HandlerMethod</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">HandlerMethod</span><span class="w"> </span><span class="n">handlerMethod</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">HandlerMethod</span><span class="p">)</span><span class="w"> </span><span class="n">handler</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Method</span><span class="w"> </span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">handlerMethod</span><span class="p">.</span><span class="na">getMethod</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// 可以获取方法注解等信息</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>Q3：拦截器中如何修改响应数据？</strong>
+可以在<code>postHandle</code>中操作<code>ModelAndView</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">postHandle</span><span class="p">(...)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">modelAndView</span><span class="p">.</span><span class="na">addObject</span><span class="p">(</span><span class="s">&#34;newData&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;value&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/spring%E7%AF%87-@component-%E4%B8%8E-@bean-%E7%9A%84%E5%8C%BA%E5%88%AB/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring篇-@Component 与 @Bean 的区别</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/spring-cache-%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring Cache 入门笔记</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/springboot%E5%8E%9F%E7%90%86/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">SpringBoot原理</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/spirng%E7%AF%87-spring%E4%B8%AD%E4%BA%8B%E5%8A%A1%E5%A4%B1%E6%95%88%E7%9A%84%E5%9C%BA%E6%99%AF/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spirng篇-Spring中事务失效的场景</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/hugo-dev/p/web%E5%BC%80%E5%8F%91-filter%E8%BF%87%E6%BB%A4%E5%99%A8/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="https://wp-cdn.4ce.cn/v2/xEZSlj4.png" loading="lazy" data-key="" data-hash="https://wp-cdn.4ce.cn/v2/xEZSlj4.png"/>
+                
+            </div>
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Web开发-Filter过滤器</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 歌未竟的个人博客
+    </section>
+
+     
+    <section class="icp-link">
+        <a href="https://icp.gov.moe/?keyword=20256333" target="_blank" >萌ICP备20256333号</a>
+        <a href="https://travel.moe/go.html" target="_blank"  height＝15px>
+    <img src="https://travel.moe/images/logo/pink.png" style="width:auto;height:13px" title="异次元之旅-跃迁-我们一起去萌站成员的星球旅行吧！">
+</a>
+    </section>
+
+
+    
+    <section class="powerby">
+        
+            如对内容有异议，请联系关邮箱2285786274@qq.com修改 <br/>
+        
+
+        
+        
+        
+    </section>
+</footer>
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/hugo-dev/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<style>
+  body {
+    background: url(https://gavin-gwj.github.io/hugo-dev/background/bg1.jpg) no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+    background-color: rgba(255, 255, 255, 0.75);
+    background-blend-mode: lighten;
+  }
+
+   
+  .main-content {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 2rem;
+    border-radius: 8px;
+    margin: 2rem auto;
+    max-width: 1200px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+   
+  [data-scheme="dark"] body {
+    background-color: rgba(0, 0, 0, 0.7);
+    background-blend-mode: darken;
+  }
+</style>
+
+
+<script defer src="https://cn.vercount.one/js"></script>
+
+<script>
+    function showHideView() {
+        
+        let viewCounts = document.querySelectorAll("#viewCount");
+        if (viewCounts) {
+            
+            let article =  document.querySelector(".article-page");
+            if (!article) {
+                viewCounts.forEach(ele => {
+                    ele.style.display = 'none';
+                });
+            }
+        }
+    }
+    
+    showHideView();
+</script>
+
+
+
+    </body>
+</html>

@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Vuex 四大核心辅助函数详解 Vuex 是 Vue.js 应用程序的状态管理模式和库。当我们的应用逐渐复杂，组件之间共享和传递状态变得困难时，Vuex 提供了一个集中的存储来管理所有组件的状态。为了更方便地在组件中使用 Vuex store 中的状态 (state)、取值器 (getters)、变更 (mutations) 和动作 (actions)，Vuex 提供了这些辅助函数。它们的主要目的是简化模板代码，减少冗余。\n">
+<title>Vuex 四大核心辅助函数详解</title>
+
+<link rel='canonical' href='https://gavin-gwj.github.io/hugo-dev/p/vuex-%E5%9B%9B%E5%A4%A7%E6%A0%B8%E5%BF%83%E8%BE%85%E5%8A%A9%E5%87%BD%E6%95%B0%E8%AF%A6%E8%A7%A3/'>
+
+<link rel="stylesheet" href="/hugo-dev/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="Vuex 四大核心辅助函数详解">
+<meta property='og:description' content="Vuex 四大核心辅助函数详解 Vuex 是 Vue.js 应用程序的状态管理模式和库。当我们的应用逐渐复杂，组件之间共享和传递状态变得困难时，Vuex 提供了一个集中的存储来管理所有组件的状态。为了更方便地在组件中使用 Vuex store 中的状态 (state)、取值器 (getters)、变更 (mutations) 和动作 (actions)，Vuex 提供了这些辅助函数。它们的主要目的是简化模板代码，减少冗余。\n">
+<meta property='og:url' content='https://gavin-gwj.github.io/hugo-dev/p/vuex-%E5%9B%9B%E5%A4%A7%E6%A0%B8%E5%BF%83%E8%BE%85%E5%8A%A9%E5%87%BD%E6%95%B0%E8%AF%A6%E8%A7%A3/'>
+<meta property='og:site_name' content='Gavin-歌未竟'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-05-31T16:48:58&#43;08:00'/><meta property='article:modified_time' content='2025-05-31T16:48:58&#43;08:00'/>
+<meta name="twitter:title" content="Vuex 四大核心辅助函数详解">
+<meta name="twitter:description" content="Vuex 四大核心辅助函数详解 Vuex 是 Vue.js 应用程序的状态管理模式和库。当我们的应用逐渐复杂，组件之间共享和传递状态变得困难时，Vuex 提供了一个集中的存储来管理所有组件的状态。为了更方便地在组件中使用 Vuex store 中的状态 (state)、取值器 (getters)、变更 (mutations) 和动作 (actions)，Vuex 提供了这些辅助函数。它们的主要目的是简化模板代码，减少冗余。\n">
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/hugo-dev/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/hugo-dev/img/avatar_hu_cf5ff899d804496e.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">😅</span>
+                
+            </figure>
+            
+        
+
+
+
+
+
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/hugo-dev">Gavin-歌未竟</a></h1>
+            <h2 class="site-description">探索技术的无限可能！</h2>
+        </div>
+    </header>
+
+    
+
+<div>
+    
+    <span style="color: #707070;">
+        <span id="busuanzi_container_page_pv">
+            总访问量: <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+    </span>
+</div>
+<ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/2123131391'
+                        target="_blank"
+                        title="Bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/Gavin-gwj'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/hugo-dev/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#-mapstate">🗺️ mapState</a>
+      <ol>
+        <li><a href="#-不用-mapstate">🧩 不用 mapState</a></li>
+        <li><a href="#-用了-mapstate">✅ 用了 mapState</a></li>
+      </ol>
+    </li>
+    <li><a href="#-mapgetters">📊 mapGetters</a>
+      <ol>
+        <li><a href="#-不用-mapgetters">🧩 不用 mapGetters</a></li>
+        <li><a href="#-用了-mapgetters">✅ 用了 mapGetters</a></li>
+      </ol>
+    </li>
+    <li><a href="#-mapmutations">🧬 mapMutations</a>
+      <ol>
+        <li><a href="#-不用-mapmutations">🧩 不用 mapMutations</a></li>
+        <li><a href="#-用了-mapmutations">✅ 用了 mapMutations</a></li>
+      </ol>
+    </li>
+    <li><a href="#-mapactions">🚀 mapActions</a>
+      <ol>
+        <li><a href="#-不用-mapactions">🧩 不用 mapActions</a></li>
+        <li><a href="#-用了-mapactions">✅ 用了 mapActions</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/hugo-dev/categories/%E7%AC%94%E8%AE%B0/" >
+                笔记
+            </a>
+        
+            <a href="/hugo-dev/categories/vue/" >
+                Vue
+            </a>
+        
+            <a href="/hugo-dev/categories/%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/" >
+                期末复习
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/hugo-dev/p/vuex-%E5%9B%9B%E5%A4%A7%E6%A0%B8%E5%BF%83%E8%BE%85%E5%8A%A9%E5%87%BD%E6%95%B0%E8%AF%A6%E8%A7%A3/">Vuex 四大核心辅助函数详解</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-05-31</time>
+            </div>
+        
+
+    
+    <div class="time-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+  <path d="M5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zM5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1H5z"/>
+  <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/>
+</svg>
+        <span class="article-wordcount">
+            2740字
+        </span>
+    </div>
+
+     
+
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 6 分钟
+                </time>
+            </div>
+        
+
+        
+
+
+        
+    </footer>
+    
+
+
+
+    
+
+  
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="vuex-四大核心辅助函数详解">Vuex 四大核心辅助函数详解
+</h1><p>Vuex 是 Vue.js 应用程序的状态管理模式和库。当我们的应用逐渐复杂，组件之间共享和传递状态变得困难时，Vuex 提供了一个集中的存储来管理所有组件的状态。为了更方便地在组件中使用 Vuex store 中的状态 (state)、取值器 (getters)、变更 (mutations) 和动作 (actions)，Vuex 提供了这些辅助函数。它们的主要目的是简化模板代码，减少冗余。</p>
+<hr>
+<h2 id="-mapstate">🗺️ mapState
+</h2><p><code>mapState</code> 辅助函数用于帮助我们方便地在组件的计算属性 (computed) 中映射 store 中的 state。</p>
+<h3 id="-不用-mapstate">🧩 不用 mapState
+</h3><p>当不使用 <code>mapState</code> 时，我们需要为每一个需要从 store 中读取的状态手动创建一个计算属性。</p>
+<p>代码段</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">&lt;</span><span class="n">div</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">Count</span><span class="p">:</span> <span class="p">{{</span> <span class="n">count</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">Message</span><span class="p">:</span> <span class="p">{{</span> <span class="n">message</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">User</span><span class="p">:</span> <span class="p">{{</span> <span class="n">user</span><span class="o">.</span><span class="n">firstName</span> <span class="p">}}</span> <span class="p">{{</span> <span class="n">user</span><span class="o">.</span><span class="n">lastName</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="k">export</span> <span class="n">default</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">computed</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="o">//</span> <span class="err">手动定义计算属性来获取</span> <span class="n">store</span> <span class="err">中的</span> <span class="n">state</span>
+</span></span><span class="line"><span class="cl">    <span class="n">count</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="n">this</span><span class="o">.$</span><span class="n">store</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">count</span><span class="p">;</span> <span class="o">//</span> <span class="err">直接访问</span> <span class="o">$</span><span class="n">store</span><span class="o">.</span><span class="n">state</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="n">message</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="n">this</span><span class="o">.$</span><span class="n">store</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">message</span><span class="p">;</span> <span class="o">//</span> <span class="err">直接访问</span> <span class="o">$</span><span class="n">store</span><span class="o">.</span><span class="n">state</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="n">user</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="n">this</span><span class="o">.$</span><span class="n">store</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">user</span><span class="p">;</span> <span class="o">//</span> <span class="err">直接访问</span> <span class="o">$</span><span class="n">store</span><span class="o">.</span><span class="n">state</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>注释说明:</strong></p>
+<ul>
+<li>在 <code>computed</code> 对象中，我们为 <code>count</code>、<code>message</code> 和 <code>user</code> 分别定义了计算属性。</li>
+<li>每个计算属性都返回 <code>this.$store.state</code> 中对应的状态值。</li>
+</ul>
+<h3 id="-用了-mapstate">✅ 用了 mapState
+</h3><p>使用 <code>mapState</code> 后，代码会变得更加简洁。它可以接收一个数组或一个对象作为参数。</p>
+<p><strong>1. 传递字符串数组：</strong></p>
+<p>当映射的计算属性的名称与 state 子树的名称相同时。</p>
+<p>代码段</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">&lt;</span><span class="n">div</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">Count</span><span class="p">:</span> <span class="p">{{</span> <span class="n">count</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">Message</span><span class="p">:</span> <span class="p">{{</span> <span class="n">message</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">Local</span> <span class="n">Computed</span><span class="p">:</span> <span class="p">{{</span> <span class="n">localComputed</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="n">import</span> <span class="p">{</span> <span class="n">mapState</span> <span class="p">}</span> <span class="n">from</span> <span class="s1">&#39;vuex&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">export</span> <span class="n">default</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">data</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">localData</span><span class="p">:</span> <span class="s1">&#39;这是局部数据&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">};</span>
+</span></span><span class="line"><span class="cl">  <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="n">computed</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="o">//</span> <span class="err">局部计算属性</span>
+</span></span><span class="line"><span class="cl">    <span class="n">localComputed</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="n">this</span><span class="o">.</span><span class="n">localData</span><span class="o">.</span><span class="n">toUpperCase</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="o">//</span> <span class="err">使用</span> <span class="n">mapState</span> <span class="err">辅助函数将</span> <span class="n">store</span> <span class="err">中的</span> <span class="n">state</span> <span class="err">映射到局部计算属性</span>
+</span></span><span class="line"><span class="cl">    <span class="o">...</span><span class="n">mapState</span><span class="p">([</span>
+</span></span><span class="line"><span class="cl">      <span class="s1">&#39;count&#39;</span><span class="p">,</span>   <span class="o">//</span> <span class="err">映射</span> <span class="n">this</span><span class="o">.</span><span class="n">count</span> <span class="err">为</span> <span class="n">store</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">count</span>
+</span></span><span class="line"><span class="cl">      <span class="s1">&#39;message&#39;</span>  <span class="o">//</span> <span class="err">映射</span> <span class="n">this</span><span class="o">.</span><span class="n">message</span> <span class="err">为</span> <span class="n">store</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">message</span>
+</span></span><span class="line"><span class="cl">    <span class="p">])</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>注释说明:</strong></p>
+<ul>
+<li>我们从 <code>vuex</code> 导入 <code>mapState</code> 函数。</li>
+<li>使用对象展开运算符 (<code>...</code>) 将 <code>mapState</code> 返回的对象混入到 <code>computed</code> 对象中。</li>
+<li><code>mapState(['count', 'message'])</code> 会生成 <code>{ count() { return this.$store.state.count }, message() { return this.$store.state.message } }</code>。</li>
+</ul>
+<p><strong>2. 传递对象：</strong></p>
+<p>当映射的计算属性的名称与 state 子树的名称不同，或者需要更复杂的取值时。</p>
+<p>代码段</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">&lt;</span><span class="n">div</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">Current</span> <span class="n">Count</span><span class="p">:</span> <span class="p">{{</span> <span class="n">currentCount</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">App</span> <span class="n">Message</span><span class="p">:</span> <span class="p">{{</span> <span class="n">appMessage</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">Full</span> <span class="n">Name</span><span class="p">:</span> <span class="p">{{</span> <span class="n">fullName</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="n">import</span> <span class="p">{</span> <span class="n">mapState</span> <span class="p">}</span> <span class="n">from</span> <span class="s1">&#39;vuex&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">export</span> <span class="n">default</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">computed</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="o">...</span><span class="n">mapState</span><span class="p">({</span>
+</span></span><span class="line"><span class="cl">      <span class="n">currentCount</span><span class="p">:</span> <span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="o">//</span> <span class="err">将</span> <span class="n">this</span><span class="o">.</span><span class="n">currentCount</span> <span class="err">映射为</span> <span class="n">store</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">count</span>
+</span></span><span class="line"><span class="cl">      <span class="n">appMessage</span><span class="p">:</span> <span class="n">state</span> <span class="o">=&gt;</span> <span class="n">state</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="o">//</span> <span class="err">可以使用函数进行更灵活的映射</span>
+</span></span><span class="line"><span class="cl">      <span class="n">fullName</span><span class="p">:</span> <span class="n">state</span> <span class="o">=&gt;</span> <span class="err">`</span><span class="o">$</span><span class="p">{</span><span class="n">state</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">firstName</span><span class="p">}</span> <span class="o">$</span><span class="p">{</span><span class="n">state</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">lastName</span><span class="p">}</span><span class="err">`</span> <span class="o">//</span> <span class="err">访问深层嵌套的状态</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>注释说明:</strong></p>
+<ul>
+<li><code>currentCount: 'count'</code> 表示将组件内的计算属性 <code>currentCount</code> 映射到 Vuex store 中的 <code>state.count</code>。</li>
+<li><code>appMessage: state =&gt; state.message</code> 和 <code>fullName: state =&gt; ...</code> 展示了如何使用函数来获取 state，这提供了更大的灵活性，例如当 state 的值需要计算或来自嵌套对象时。</li>
+</ul>
+<hr>
+<h2 id="-mapgetters">📊 mapGetters
+</h2><p><code>mapGetters</code> 辅助函数用于将 store 中的 getters 映射到组件的计算属性 (computed) 中。Getters 可以看作是 store 的计算属性。</p>
+<h3 id="-不用-mapgetters">🧩 不用 mapGetters
+</h3><p>不使用 <code>mapGetters</code> 时，你需要为每个 getter 手动创建计算属性。</p>
+<p>代码段</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">&lt;</span><span class="n">div</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">Doubled</span> <span class="n">Count</span><span class="p">:</span> <span class="p">{{</span> <span class="n">doubledCountValue</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">Welcome</span><span class="p">:</span> <span class="p">{{</span> <span class="n">welcomeText</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="k">export</span> <span class="n">default</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">computed</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="o">//</span> <span class="err">手动定义计算属性来获取</span> <span class="n">store</span> <span class="err">中的</span> <span class="n">getter</span>
+</span></span><span class="line"><span class="cl">    <span class="n">doubledCountValue</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="n">this</span><span class="o">.$</span><span class="n">store</span><span class="o">.</span><span class="n">getters</span><span class="o">.</span><span class="n">doubledCount</span><span class="p">;</span> <span class="o">//</span> <span class="err">通过</span> <span class="o">$</span><span class="n">store</span><span class="o">.</span><span class="n">getters</span> <span class="err">访问</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="n">welcomeText</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="n">this</span><span class="o">.$</span><span class="n">store</span><span class="o">.</span><span class="n">getters</span><span class="o">.</span><span class="n">welcomeMessage</span><span class="p">;</span> <span class="o">//</span> <span class="err">通过</span> <span class="o">$</span><span class="n">store</span><span class="o">.</span><span class="n">getters</span> <span class="err">访问</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>注释说明:</strong></p>
+<ul>
+<li><code>doubledCountValue</code> 和 <code>welcomeText</code> 计算属性分别从 <code>this.$store.getters</code> 获取对应的 getter 值。</li>
+</ul>
+<h3 id="-用了-mapgetters">✅ 用了 mapGetters
+</h3><p>使用 <code>mapGetters</code> 可以简化这个过程。它也支持数组和对象两种形式。</p>
+<p><strong>1. 传递字符串数组：</strong></p>
+<p>当映射的计算属性的名称与 getter 的名称相同时。</p>
+<p>代码段</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">&lt;</span><span class="n">div</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">Doubled</span> <span class="n">Count</span><span class="p">:</span> <span class="p">{{</span> <span class="n">doubledCount</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">Welcome</span><span class="p">:</span> <span class="p">{{</span> <span class="n">welcomeMessage</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="n">import</span> <span class="p">{</span> <span class="n">mapGetters</span> <span class="p">}</span> <span class="n">from</span> <span class="s1">&#39;vuex&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">export</span> <span class="n">default</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">computed</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="o">//</span> <span class="err">使用</span> <span class="n">mapGetters</span> <span class="err">辅助函数将</span> <span class="n">store</span> <span class="err">中的</span> <span class="n">getters</span> <span class="err">映射到局部计算属性</span>
+</span></span><span class="line"><span class="cl">    <span class="o">...</span><span class="n">mapGetters</span><span class="p">([</span>
+</span></span><span class="line"><span class="cl">      <span class="s1">&#39;doubledCount&#39;</span><span class="p">,</span>   <span class="o">//</span> <span class="err">映射</span> <span class="n">this</span><span class="o">.</span><span class="n">doubledCount</span> <span class="err">为</span> <span class="n">store</span><span class="o">.</span><span class="n">getters</span><span class="o">.</span><span class="n">doubledCount</span>
+</span></span><span class="line"><span class="cl">      <span class="s1">&#39;welcomeMessage&#39;</span>  <span class="o">//</span> <span class="err">映射</span> <span class="n">this</span><span class="o">.</span><span class="n">welcomeMessage</span> <span class="err">为</span> <span class="n">store</span><span class="o">.</span><span class="n">getters</span><span class="o">.</span><span class="n">welcomeMessage</span>
+</span></span><span class="line"><span class="cl">    <span class="p">])</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>注释说明:</strong></p>
+<ul>
+<li><code>mapGetters(['doubledCount', 'welcomeMessage'])</code> 会生成相应的计算属性，它们的值来源于 Vuex store 中的同名 getters。</li>
+</ul>
+<p><strong>2. 传递对象：</strong></p>
+<p>当映射的计算属性的名称与 getter 的名称不同时。</p>
+<p>代码段</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">&lt;</span><span class="n">div</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">Calculated</span> <span class="n">Double</span><span class="p">:</span> <span class="p">{{</span> <span class="n">calcDouble</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">Greeting</span><span class="p">:</span> <span class="p">{{</span> <span class="n">greeting</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="n">import</span> <span class="p">{</span> <span class="n">mapGetters</span> <span class="p">}</span> <span class="n">from</span> <span class="s1">&#39;vuex&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">export</span> <span class="n">default</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">computed</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="o">...</span><span class="n">mapGetters</span><span class="p">({</span>
+</span></span><span class="line"><span class="cl">      <span class="n">calcDouble</span><span class="p">:</span> <span class="s1">&#39;doubledCount&#39;</span><span class="p">,</span>   <span class="o">//</span> <span class="err">将</span> <span class="n">this</span><span class="o">.</span><span class="n">calcDouble</span> <span class="err">映射为</span> <span class="n">store</span><span class="o">.</span><span class="n">getters</span><span class="o">.</span><span class="n">doubledCount</span>
+</span></span><span class="line"><span class="cl">      <span class="n">greeting</span><span class="p">:</span> <span class="s1">&#39;welcomeMessage&#39;</span>   <span class="o">//</span> <span class="err">将</span> <span class="n">this</span><span class="o">.</span><span class="n">greeting</span> <span class="err">映射为</span> <span class="n">store</span><span class="o">.</span><span class="n">getters</span><span class="o">.</span><span class="n">welcomeMessage</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>注释说明:</strong></p>
+<ul>
+<li><code>calcDouble: 'doubledCount'</code> 将组件的 <code>calcDouble</code> 计算属性映射到 store 的 <code>doubledCount</code> getter。</li>
+</ul>
+<hr>
+<h2 id="-mapmutations">🧬 mapMutations
+</h2><p><code>mapMutations</code> 辅助函数用于将 store 中的 mutations 映射到组件的 methods 中。这样你就可以在组件方法中直接调用 <code>this.mutationName(payload)</code> 来提交 mutation，而不是使用 <code>this.$store.commit('mutationName', payload)</code>。</p>
+<h3 id="-不用-mapmutations">🧩 不用 mapMutations
+</h3><p>不使用 <code>mapMutations</code> 时，你需要为每个 mutation 手动创建方法来调用 <code>this.$store.commit</code>。</p>
+<p>代码段</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">&lt;</span><span class="n">div</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">Count</span><span class="p">:</span> <span class="p">{{</span> <span class="o">$</span><span class="n">store</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">count</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">button</span> <span class="err">@</span><span class="n">click</span><span class="o">=</span><span class="s2">&#34;incrementCountManually&#34;</span><span class="o">&gt;</span><span class="n">Increment</span> <span class="n">Count</span> <span class="n">Manually</span><span class="o">&lt;/</span><span class="n">button</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">button</span> <span class="err">@</span><span class="n">click</span><span class="o">=</span><span class="s2">&#34;setMessageManually(&#39;New Manual Message&#39;)&#34;</span><span class="o">&gt;</span><span class="n">Set</span> <span class="n">Message</span> <span class="n">Manually</span><span class="o">&lt;/</span><span class="n">button</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="k">export</span> <span class="n">default</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">methods</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="o">//</span> <span class="err">手动定义方法来提交</span> <span class="n">mutation</span>
+</span></span><span class="line"><span class="cl">    <span class="n">incrementCountManually</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">this</span><span class="o">.$</span><span class="n">store</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="s1">&#39;INCREMENT_COUNT&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">);</span> <span class="o">//</span> <span class="err">手动调用</span> <span class="o">$</span><span class="n">store</span><span class="o">.</span><span class="n">commit</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="n">setMessageManually</span><span class="p">(</span><span class="n">newMessage</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">this</span><span class="o">.$</span><span class="n">store</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="s1">&#39;SET_MESSAGE&#39;</span><span class="p">,</span> <span class="n">newMessage</span><span class="p">);</span> <span class="o">//</span> <span class="err">手动调用</span> <span class="o">$</span><span class="n">store</span><span class="o">.</span><span class="n">commit</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>注释说明:</strong></p>
+<ul>
+<li><code>incrementCountManually</code> 方法通过 <code>this.$store.commit('INCREMENT_COUNT', 5)</code> 来提交 <code>INCREMENT_COUNT</code> mutation，并传递 payload <code>5</code>。</li>
+<li><code>setMessageManually</code> 方法提交 <code>SET_MESSAGE</code> mutation，并传递新的消息字符串。</li>
+</ul>
+<h3 id="-用了-mapmutations">✅ 用了 mapMutations
+</h3><p>使用 <code>mapMutations</code> 可以将 mutations 映射为组件的 methods。</p>
+<p><strong>1. 传递字符串数组：</strong></p>
+<p>当映射的方法名与 mutation 名相同时。</p>
+<p>代码段</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">&lt;</span><span class="n">div</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">Count</span><span class="p">:</span> <span class="p">{{</span> <span class="o">$</span><span class="n">store</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">count</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">Message</span><span class="p">:</span> <span class="p">{{</span> <span class="o">$</span><span class="n">store</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">message</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">button</span> <span class="err">@</span><span class="n">click</span><span class="o">=</span><span class="s2">&#34;INCREMENT_COUNT(2)&#34;</span><span class="o">&gt;</span><span class="n">Increment</span> <span class="n">Count</span><span class="o">&lt;/</span><span class="n">button</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">button</span> <span class="err">@</span><span class="n">click</span><span class="o">=</span><span class="s2">&#34;SET_MESSAGE(&#39;Hello from mapMutations!&#39;)&#34;</span><span class="o">&gt;</span><span class="n">Set</span> <span class="n">Message</span><span class="o">&lt;/</span><span class="n">button</span><span class="o">&gt;</span> <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="n">import</span> <span class="p">{</span> <span class="n">mapMutations</span> <span class="p">}</span> <span class="n">from</span> <span class="s1">&#39;vuex&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">export</span> <span class="n">default</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">methods</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="o">//</span> <span class="err">使用</span> <span class="n">mapMutations</span> <span class="err">辅助函数将</span> <span class="n">store</span> <span class="err">中的</span> <span class="n">mutations</span> <span class="err">映射到局部方法</span>
+</span></span><span class="line"><span class="cl">    <span class="o">...</span><span class="n">mapMutations</span><span class="p">([</span>
+</span></span><span class="line"><span class="cl">      <span class="s1">&#39;INCREMENT_COUNT&#39;</span><span class="p">,</span> <span class="o">//</span> <span class="err">映射</span> <span class="n">this</span><span class="o">.</span><span class="n">INCREMENT_COUNT</span><span class="p">()</span> <span class="err">为</span> <span class="n">this</span><span class="o">.$</span><span class="n">store</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="s1">&#39;INCREMENT_COUNT&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="s1">&#39;SET_MESSAGE&#39;</span>      <span class="o">//</span> <span class="err">映射</span> <span class="n">this</span><span class="o">.</span><span class="n">SET_MESSAGE</span><span class="p">()</span> <span class="err">为</span> <span class="n">this</span><span class="o">.$</span><span class="n">store</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="s1">&#39;SET_MESSAGE&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">])</span>
+</span></span><span class="line"><span class="cl">    <span class="o">//</span> <span class="err">调用</span> <span class="n">this</span><span class="o">.</span><span class="n">INCREMENT_COUNT</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span> <span class="err">等同于</span> <span class="n">this</span><span class="o">.$</span><span class="n">store</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="s1">&#39;INCREMENT_COUNT&#39;</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>注释说明:</strong></p>
+<ul>
+<li><code>mapMutations(['INCREMENT_COUNT', 'SET_MESSAGE'])</code> 会将 <code>INCREMENT_COUNT</code> 和 <code>SET_MESSAGE</code> mutations 映射为组件的同名方法。</li>
+<li>调用 <code>this.INCREMENT_COUNT(2)</code> 时，<code>2</code> 会作为 payload 传递给 <code>INCREMENT_COUNT</code> mutation。</li>
+</ul>
+<p><strong>2. 传递对象：</strong></p>
+<p>当映射的方法名与 mutation 名不同时。</p>
+<p>代码段</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">&lt;</span><span class="n">div</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">Count</span><span class="p">:</span> <span class="p">{{</span> <span class="o">$</span><span class="n">store</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">count</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">button</span> <span class="err">@</span><span class="n">click</span><span class="o">=</span><span class="s2">&#34;addCount(3)&#34;</span><span class="o">&gt;</span><span class="n">Add</span> <span class="n">to</span> <span class="n">Count</span><span class="o">&lt;/</span><span class="n">button</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">button</span> <span class="err">@</span><span class="n">click</span><span class="o">=</span><span class="s2">&#34;changeMessage(&#39;Message updated via alias!&#39;)&#34;</span><span class="o">&gt;</span><span class="n">Change</span> <span class="n">App</span> <span class="n">Message</span><span class="o">&lt;/</span><span class="n">button</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="n">import</span> <span class="p">{</span> <span class="n">mapMutations</span> <span class="p">}</span> <span class="n">from</span> <span class="s1">&#39;vuex&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">export</span> <span class="n">default</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">methods</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="o">...</span><span class="n">mapMutations</span><span class="p">({</span>
+</span></span><span class="line"><span class="cl">      <span class="n">addCount</span><span class="p">:</span> <span class="s1">&#39;INCREMENT_COUNT&#39;</span><span class="p">,</span> <span class="o">//</span> <span class="err">将</span> <span class="n">this</span><span class="o">.</span><span class="n">addCount</span><span class="p">()</span> <span class="err">映射为</span> <span class="n">this</span><span class="o">.$</span><span class="n">store</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="s1">&#39;INCREMENT_COUNT&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="n">changeMessage</span><span class="p">:</span> <span class="s1">&#39;SET_MESSAGE&#39;</span> <span class="o">//</span> <span class="err">将</span> <span class="n">this</span><span class="o">.</span><span class="n">changeMessage</span><span class="p">()</span> <span class="err">映射为</span> <span class="n">this</span><span class="o">.$</span><span class="n">store</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="s1">&#39;SET_MESSAGE&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="o">//</span> <span class="err">调用</span> <span class="n">this</span><span class="o">.</span><span class="n">addCount</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span> <span class="err">等同于</span> <span class="n">this</span><span class="o">.$</span><span class="n">store</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="s1">&#39;INCREMENT_COUNT&#39;</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>注释说明:</strong></p>
+<ul>
+<li><code>addCount: 'INCREMENT_COUNT'</code> 将组件的 <code>addCount</code> 方法映射到名为 <code>INCREMENT_COUNT</code> 的 mutation。调用 <code>this.addCount(3)</code> 实际上是执行 <code>this.$store.commit('INCREMENT_COUNT', 3)</code>。</li>
+</ul>
+<hr>
+<h2 id="-mapactions">🚀 mapActions
+</h2><p><code>mapActions</code> 辅助函数用于将 store 中的 actions 映射到组件的 methods 中。这样你就可以在组件方法中直接调用 <code>this.actionName(payload)</code> 来分发 action，而不是使用 <code>this.$store.dispatch('actionName', payload)</code>。</p>
+<h3 id="-不用-mapactions">🧩 不用 mapActions
+</h3><p>不使用 <code>mapActions</code> 时，你需要为每个 action 手动创建方法来调用 <code>this.$store.dispatch</code>。</p>
+<p>代码段</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">&lt;</span><span class="n">div</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">Count</span><span class="p">:</span> <span class="p">{{</span> <span class="o">$</span><span class="n">store</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">count</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">Message</span><span class="p">:</span> <span class="p">{{</span> <span class="o">$</span><span class="n">store</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">message</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">button</span> <span class="err">@</span><span class="n">click</span><span class="o">=</span><span class="s2">&#34;incrementAsyncManually&#34;</span><span class="o">&gt;</span><span class="n">Increment</span> <span class="n">Async</span> <span class="n">Manually</span><span class="o">&lt;/</span><span class="n">button</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">button</span> <span class="err">@</span><span class="n">click</span><span class="o">=</span><span class="s2">&#34;updateMsgManually(&#39;Async new message&#39;)&#34;</span><span class="o">&gt;</span><span class="n">Update</span> <span class="n">Message</span> <span class="n">Async</span> <span class="n">Manually</span><span class="o">&lt;/</span><span class="n">button</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="k">export</span> <span class="n">default</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">methods</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="o">//</span> <span class="err">手动定义方法来分发</span> <span class="n">action</span>
+</span></span><span class="line"><span class="cl">    <span class="n">incrementAsyncManually</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="o">//</span> <span class="err">手动调用</span> <span class="o">$</span><span class="n">store</span><span class="o">.</span><span class="n">dispatch</span><span class="err">，并传递</span> <span class="n">payload</span> <span class="err">对象</span>
+</span></span><span class="line"><span class="cl">      <span class="n">this</span><span class="o">.$</span><span class="n">store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="s1">&#39;incrementAsync&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="n">amount</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="n">delay</span><span class="p">:</span> <span class="mi">500</span> <span class="p">});</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="n">updateMsgManually</span><span class="p">(</span><span class="n">newMessage</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="o">//</span> <span class="err">手动调用</span> <span class="o">$</span><span class="n">store</span><span class="o">.</span><span class="n">dispatch</span>
+</span></span><span class="line"><span class="cl">      <span class="n">this</span><span class="o">.$</span><span class="n">store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="s1">&#39;updateMessage&#39;</span><span class="p">,</span> <span class="n">newMessage</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>注释说明:</strong></p>
+<ul>
+<li><code>incrementAsyncManually</code> 方法通过 <code>this.$store.dispatch</code> 分发 <code>incrementAsync</code> action，并传递包含 <code>amount</code> 和 <code>delay</code> 的 payload 对象。</li>
+<li><code>updateMsgManually</code> 方法分发 <code>updateMessage</code> action。</li>
+</ul>
+<h3 id="-用了-mapactions">✅ 用了 mapActions
+</h3><p>使用 <code>mapActions</code> 可以将 actions 映射为组件的 methods。</p>
+<p><strong>1. 传递字符串数组：</strong></p>
+<p>当映射的方法名与 action 名相同时。</p>
+<p>代码段</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">&lt;</span><span class="n">div</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">Count</span><span class="p">:</span> <span class="p">{{</span> <span class="o">$</span><span class="n">store</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">count</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">Message</span><span class="p">:</span> <span class="p">{{</span> <span class="o">$</span><span class="n">store</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">message</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">button</span> <span class="err">@</span><span class="n">click</span><span class="o">=</span><span class="s2">&#34;incrementAsync({ amount: 3, delay: 1500 })&#34;</span><span class="o">&gt;</span><span class="n">Increment</span> <span class="n">Async</span><span class="o">&lt;/</span><span class="n">button</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">button</span> <span class="err">@</span><span class="n">click</span><span class="o">=</span><span class="s2">&#34;updateMessage(&#39;Hello from mapActions!&#39;)&#34;</span><span class="o">&gt;</span><span class="n">Update</span> <span class="n">Message</span><span class="o">&lt;/</span><span class="n">button</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="n">import</span> <span class="p">{</span> <span class="n">mapActions</span> <span class="p">}</span> <span class="n">from</span> <span class="s1">&#39;vuex&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">export</span> <span class="n">default</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">methods</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="o">//</span> <span class="err">使用</span> <span class="n">mapActions</span> <span class="err">辅助函数将</span> <span class="n">store</span> <span class="err">中的</span> <span class="n">actions</span> <span class="err">映射到局部方法</span>
+</span></span><span class="line"><span class="cl">    <span class="o">...</span><span class="n">mapActions</span><span class="p">([</span>
+</span></span><span class="line"><span class="cl">      <span class="s1">&#39;incrementAsync&#39;</span><span class="p">,</span> <span class="o">//</span> <span class="err">映射</span> <span class="n">this</span><span class="o">.</span><span class="n">incrementAsync</span><span class="p">()</span> <span class="err">为</span> <span class="n">this</span><span class="o">.$</span><span class="n">store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="s1">&#39;incrementAsync&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="s1">&#39;updateMessage&#39;</span>   <span class="o">//</span> <span class="err">映射</span> <span class="n">this</span><span class="o">.</span><span class="n">updateMessage</span><span class="p">()</span> <span class="err">为</span> <span class="n">this</span><span class="o">.$</span><span class="n">store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="s1">&#39;updateMessage&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">])</span>
+</span></span><span class="line"><span class="cl">    <span class="o">//</span> <span class="err">调用</span> <span class="n">this</span><span class="o">.</span><span class="n">incrementAsync</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span> <span class="err">等同于</span> <span class="n">this</span><span class="o">.$</span><span class="n">store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="s1">&#39;incrementAsync&#39;</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>注释说明:</strong></p>
+<ul>
+<li><code>mapActions(['incrementAsync', 'updateMessage'])</code> 将 <code>incrementAsync</code> 和 <code>updateMessage</code> actions 映射为组件的同名方法。</li>
+<li>调用 <code>this.incrementAsync({ amount: 3, delay: 1500 })</code> 时，该对象会作为 payload 传递给 <code>incrementAsync</code> action。</li>
+</ul>
+<p><strong>2. 传递对象：</strong></p>
+<p>当映射的方法名与 action 名不同时。</p>
+<p>代码段</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">&lt;</span><span class="n">div</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">Count</span><span class="p">:</span> <span class="p">{{</span> <span class="o">$</span><span class="n">store</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">count</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">button</span> <span class="err">@</span><span class="n">click</span><span class="o">=</span><span class="s2">&#34;addAsync({ amount: 7 })&#34;</span><span class="o">&gt;</span><span class="n">Add</span> <span class="n">to</span> <span class="n">Count</span> <span class="n">Async</span><span class="o">&lt;/</span><span class="n">button</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">button</span> <span class="err">@</span><span class="n">click</span><span class="o">=</span><span class="s2">&#34;modifyMessage(&#39;Asynchronously changed message!&#39;)&#34;</span><span class="o">&gt;</span><span class="n">Modify</span> <span class="n">App</span> <span class="n">Message</span> <span class="n">Async</span><span class="o">&lt;/</span><span class="n">button</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="n">import</span> <span class="p">{</span> <span class="n">mapActions</span> <span class="p">}</span> <span class="n">from</span> <span class="s1">&#39;vuex&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">export</span> <span class="n">default</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">methods</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="o">...</span><span class="n">mapActions</span><span class="p">({</span>
+</span></span><span class="line"><span class="cl">      <span class="n">addAsync</span><span class="p">:</span> <span class="s1">&#39;incrementAsync&#39;</span><span class="p">,</span> <span class="o">//</span> <span class="err">将</span> <span class="n">this</span><span class="o">.</span><span class="n">addAsync</span><span class="p">()</span> <span class="err">映射为</span> <span class="n">this</span><span class="o">.$</span><span class="n">store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="s1">&#39;incrementAsync&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="n">modifyMessage</span><span class="p">:</span> <span class="s1">&#39;updateMessage&#39;</span> <span class="o">//</span> <span class="err">将</span> <span class="n">this</span><span class="o">.</span><span class="n">modifyMessage</span><span class="p">()</span> <span class="err">映射为</span> <span class="n">this</span><span class="o">.$</span><span class="n">store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="s1">&#39;updateMessage&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="o">//</span> <span class="err">调用</span> <span class="n">this</span><span class="o">.</span><span class="n">addAsync</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span> <span class="err">等同于</span> <span class="n">this</span><span class="o">.$</span><span class="n">store</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="s1">&#39;incrementAsync&#39;</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>注释说明:</strong></p>
+<ul>
+<li><code>addAsync: 'incrementAsync'</code> 将组件的 <code>addAsync</code> 方法映射到名为 <code>incrementAsync</code> 的 action。调用 <code>this.addAsync({ amount: 7 })</code> 实际上是执行 <code>this.$store.dispatch('incrementAsync', { amount: 7 })</code>。</li>
+</ul>
+<hr>
+<p>总结一下，Vuex 的辅助函数 (<code>mapState</code>, <code>mapGetters</code>, <code>mapActions</code>, <code>mapMutations</code>) 大大简化了在 Vue 组件中与 store 的交互，使得代码更加简洁、易读和易于维护。它们通过将 store 的属性和方法直接映射到组件的 <code>computed</code> 和 <code>methods</code> 中，减少了模板和脚本中的冗余代码。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/docker-%E5%85%A5%E9%97%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E5%B0%8F%E7%99%BD%E4%B9%9F%E8%83%BD%E7%9C%8B%E6%87%82/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Docker 入门学习笔记（小白也能看懂！）</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/spring%E7%AF%87-@component-%E4%B8%8E-@bean-%E7%9A%84%E5%8C%BA%E5%88%AB/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring篇-@Component 与 @Bean 的区别</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/%E4%BB%80%E4%B9%88%E6%98%AF%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%B1%9E%E6%80%A7%E6%8B%B7%E8%B4%9D/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">什么是对象的属性拷贝</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/spring-cache-%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring Cache 入门笔记</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/redis%E4%BA%94%E7%A7%8D%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Redis五种常用数据类型</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 歌未竟的个人博客
+    </section>
+
+     
+    <section class="icp-link">
+        <a href="https://icp.gov.moe/?keyword=20256333" target="_blank" >萌ICP备20256333号</a>
+        <a href="https://travel.moe/go.html" target="_blank"  height＝15px>
+    <img src="https://travel.moe/images/logo/pink.png" style="width:auto;height:13px" title="异次元之旅-跃迁-我们一起去萌站成员的星球旅行吧！">
+</a>
+    </section>
+
+
+    
+    <section class="powerby">
+        
+            如对内容有异议，请联系关邮箱2285786274@qq.com修改 <br/>
+        
+
+        
+        
+        
+    </section>
+</footer>
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/hugo-dev/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<style>
+  body {
+    background: url(https://gavin-gwj.github.io/hugo-dev/background/bg1.jpg) no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+    background-color: rgba(255, 255, 255, 0.75);
+    background-blend-mode: lighten;
+  }
+
+   
+  .main-content {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 2rem;
+    border-radius: 8px;
+    margin: 2rem auto;
+    max-width: 1200px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+   
+  [data-scheme="dark"] body {
+    background-color: rgba(0, 0, 0, 0.7);
+    background-blend-mode: darken;
+  }
+</style>
+
+
+<script defer src="https://cn.vercount.one/js"></script>
+
+<script>
+    function showHideView() {
+        
+        let viewCounts = document.querySelectorAll("#viewCount");
+        if (viewCounts) {
+            
+            let article =  document.querySelector(".article-page");
+            if (!article) {
+                viewCounts.forEach(ele => {
+                    ele.style.display = 'none';
+                });
+            }
+        }
+    }
+    
+    showHideView();
+</script>
+
+
+
+    </body>
+</html>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>日记 on Gavin-歌未竟</title>
+        <link>https://gavin-gwj.github.io/hugo-dev/categories/%E6%97%A5%E8%AE%B0/</link>
+        <description>Recent content in 日记 on Gavin-歌未竟</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>zh-cn</language>
+        <copyright>歌未竟的个人博客</copyright>
+        <lastBuildDate>Mon, 12 May 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://gavin-gwj.github.io/hugo-dev/categories/%E6%97%A5%E8%AE%B0/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>5月13日日记</title>
+        <link>https://gavin-gwj.github.io/hugo-dev/p/5%E6%9C%8813%E6%97%A5%E6%97%A5%E8%AE%B0/</link>
+        <pubDate>Mon, 12 May 2025 00:00:00 +0000</pubDate>
+        
+        <guid>https://gavin-gwj.github.io/hugo-dev/p/5%E6%9C%8813%E6%97%A5%E6%97%A5%E8%AE%B0/</guid>
+        <description>&lt;h1 id=&#34;2025年5月13日-星期二-晴多云&#34;&gt;2025年5月13日 星期二 晴/多云
+&lt;/h1&gt;&lt;h2 id=&#34;-学术日常&#34;&gt;📖 学术日常
+&lt;/h2&gt;&lt;p&gt;今天难得没课，终于能专心肝&lt;strong&gt;计算机法律&lt;/strong&gt;大作业了！&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;高效输出&lt;/strong&gt;：两小时极限操作写完5000字，手速堪比代码编译&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;查重迷惑&lt;/strong&gt;：Turnitin查重率**0.8%**低到离谱（导师：你这怕不是法外狂徒？）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;紧急补救&lt;/strong&gt;：立刻补了段硬核文献综述：
+&lt;blockquote&gt;
+&lt;p&gt;📜 &lt;strong&gt;新增文献支撑&lt;/strong&gt;&lt;br&gt;
+参照Lessig《代码即法律》的架构理论，结合欧盟《人工智能法案》第17条&amp;quot;高风险系统透明度要求&amp;quot;，对算法解释权条款进行交叉论证&amp;hellip;&lt;/p&gt;&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;明日待办&lt;/strong&gt;：明天用知网再战，求求重复率升到5%左右吧🙏&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;-技术历险记&#34;&gt;💻 技术历险记
+&lt;/h2&gt;&lt;p&gt;下午作死用&lt;strong&gt;Hugo+Github&lt;/strong&gt;重构博客，结果：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;主题暴雷&lt;/strong&gt;：下载的hugo-theme-stack居然不兼容最新版，疯狂报错&lt;code&gt;failed to extract shortcode&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;部署鬼畜&lt;/strong&gt;：Github Actions自动部署时&lt;code&gt;.md&lt;/code&gt;文件全部乱码，被迫手动改编码格式&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;终极对决&lt;/strong&gt;：晚上9点才搞定，发现&lt;code&gt;baseURL&lt;/code&gt;少写个斜杠导致CSS全崩（人类为什么要发明斜杠？）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;-深夜碎碎念&#34;&gt;🌃 深夜碎碎念
+&lt;/h2&gt;&lt;p&gt;今日成就解锁：
+✔️ 法律作业初稿+1&lt;br&gt;
+✔️ Hugo技能点+1（代价是头发-10086）&lt;br&gt;
+明天一定要&amp;hellip;先备份再改代码！（flag高高立起）&lt;/p&gt;</description>
+        </item>
+        
+    </channel>
+</rss>

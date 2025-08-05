@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Docker on Gavin-歌未竟</title>
+        <link>https://gavin-gwj.github.io/hugo-dev/categories/docker/</link>
+        <description>Recent content in Docker on Gavin-歌未竟</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>zh-cn</language>
+        <copyright>歌未竟的个人博客</copyright>
+        <lastBuildDate>Tue, 05 Aug 2025 15:32:51 +0800</lastBuildDate><atom:link href="https://gavin-gwj.github.io/hugo-dev/categories/docker/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Docker 入门学习笔记（小白也能看懂！）</title>
+        <link>https://gavin-gwj.github.io/hugo-dev/p/docker-%E5%85%A5%E9%97%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E5%B0%8F%E7%99%BD%E4%B9%9F%E8%83%BD%E7%9C%8B%E6%87%82/</link>
+        <pubDate>Tue, 05 Aug 2025 15:32:51 +0800</pubDate>
+        
+        <guid>https://gavin-gwj.github.io/hugo-dev/p/docker-%E5%85%A5%E9%97%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E5%B0%8F%E7%99%BD%E4%B9%9F%E8%83%BD%E7%9C%8B%E6%87%82/</guid>
+        <description>&lt;h1 id=&#34;-docker-入门学习笔记小白也能看懂&#34;&gt;🐳 Docker 入门学习笔记（小白也能看懂！）
+&lt;/h1&gt;&lt;hr&gt;
+&lt;h2 id=&#34;-什么是-docker&#34;&gt;🚀 什么是 Docker？
+&lt;/h2&gt;&lt;p&gt;Docker 就像一个“应用装在盒子里”的系统，它可以让我们在任何地方快速运行一个“打包好的应用环境”。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;容器（Container）：装着软件和运行环境的盒子&lt;/li&gt;
+&lt;li&gt;镜像（Image）：这个盒子的“蓝图”，可以无限复制&lt;/li&gt;
+&lt;li&gt;宿主机（Host）：你电脑/服务器，就是装盒子的地方&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;-docker-常用命令一览&#34;&gt;🛠 Docker 常用命令一览
+&lt;/h2&gt;&lt;table&gt;
+  &lt;thead&gt;
+      &lt;tr&gt;
+          &lt;th&gt;命令&lt;/th&gt;
+          &lt;th&gt;说明&lt;/th&gt;
+      &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;code&gt;docker ps&lt;/code&gt;&lt;/td&gt;
+          &lt;td&gt;查看正在运行的容器&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;code&gt;docker ps -a&lt;/code&gt;&lt;/td&gt;
+          &lt;td&gt;查看所有容器（包括已停止的）&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;code&gt;docker images&lt;/code&gt;&lt;/td&gt;
+          &lt;td&gt;查看已有镜像&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;code&gt;docker run&lt;/code&gt;&lt;/td&gt;
+          &lt;td&gt;创建并运行容器&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;code&gt;docker start 容器名/ID&lt;/code&gt;&lt;/td&gt;
+          &lt;td&gt;启动一个停止的容器&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;code&gt;docker stop 容器名/ID&lt;/code&gt;&lt;/td&gt;
+          &lt;td&gt;停止容器&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;code&gt;docker rm 容器名/ID&lt;/code&gt;&lt;/td&gt;
+          &lt;td&gt;删除容器&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;code&gt;docker rmi 镜像名/ID&lt;/code&gt;&lt;/td&gt;
+          &lt;td&gt;删除镜像&lt;/td&gt;
+      &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;-docker-数据卷volume&#34;&gt;📦 Docker 数据卷（Volume）
+&lt;/h2&gt;&lt;h3 id=&#34;-什么是数据卷&#34;&gt;✅ 什么是数据卷？
+&lt;/h3&gt;&lt;p&gt;Docker 容器里的数据&lt;strong&gt;默认是临时的&lt;/strong&gt;，你一删容器数据就没了。&lt;br&gt;
+&lt;strong&gt;数据卷就是 Docker 的“存档系统”，数据可以长期保存。&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id=&#34;-打比方&#34;&gt;🎮 打比方：
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;容器就像是你玩的游戏&lt;/li&gt;
+&lt;li&gt;数据卷就像你保存进度的U盘&lt;/li&gt;
+&lt;li&gt;不挂数据卷 = 玩了也白玩，关机就全没了！&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;-如何使用数据卷&#34;&gt;🧱 如何使用数据卷？
+&lt;/h3&gt;&lt;h4 id=&#34;-创建并挂载数据卷&#34;&gt;✅ 创建并挂载数据卷：
+&lt;/h4&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;docker run -d &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;  --name mysql &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;  -e &lt;span class=&#34;nv&#34;&gt;MYSQL_ROOT_PASSWORD&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;123&lt;/span&gt; &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;  -p 3306:3306 &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;  -v mysql-data:/var/lib/mysql &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;  mysql
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;-v 卷名:容器内部路径&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;上面例子就是：把容器的 &lt;code&gt;/var/lib/mysql&lt;/code&gt; 存储在宿主机的 &lt;code&gt;mysql-data&lt;/code&gt; 卷里。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;-查看和管理卷&#34;&gt;🔍 查看和管理卷
+&lt;/h3&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;docker volume ls           &lt;span class=&#34;c1&#34;&gt;# 查看有哪些卷&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;docker volume inspect 卷名 &lt;span class=&#34;c1&#34;&gt;# 查看卷详情（比如路径）&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;docker volume rm 卷名      &lt;span class=&#34;c1&#34;&gt;# 删除某个卷&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;docker volume prune        &lt;span class=&#34;c1&#34;&gt;# 删除所有没用的卷&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;⚠️ &lt;code&gt;volume prune&lt;/code&gt; 是大扫除，用前请慎重！&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;-常见错误端口占用&#34;&gt;⚠️ 常见错误：端口占用
+&lt;/h2&gt;&lt;p&gt;如果你运行容器时报这个错：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Error: listen tcp4 0.0.0.0:3306: bind: address already in use
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;-说明&#34;&gt;🎯 说明：
+&lt;/h3&gt;&lt;p&gt;👉 你要映射的端口（比如 3306）已经被别的程序/容器占用了！&lt;/p&gt;
+&lt;h3 id=&#34;-解决方法&#34;&gt;🛠 解决方法：
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;找到谁占用了端口：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;lsof -i :3306
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;杀掉那个进程：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;kill&lt;/span&gt; -9 进程ID
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;或者换一个端口映射：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;-p 13306:3306  &lt;span class=&#34;c1&#34;&gt;# 把宿主机的13306映射到容器的3306&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;-小结&#34;&gt;🌊 小结
+&lt;/h2&gt;&lt;table&gt;
+  &lt;thead&gt;
+      &lt;tr&gt;
+          &lt;th&gt;名词&lt;/th&gt;
+          &lt;th&gt;通俗理解&lt;/th&gt;
+      &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+      &lt;tr&gt;
+          &lt;td&gt;容器&lt;/td&gt;
+          &lt;td&gt;装着应用的“盒子”&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;镜像&lt;/td&gt;
+          &lt;td&gt;造盒子的“模具”&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;卷（volume）&lt;/td&gt;
+          &lt;td&gt;用来保存“盒子数据”的U盘&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;code&gt;-v&lt;/code&gt; 参数&lt;/td&gt;
+          &lt;td&gt;把容器里的数据保存出来&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;code&gt;-p&lt;/code&gt; 参数&lt;/td&gt;
+          &lt;td&gt;把容器里的端口映射出来&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;code&gt;-e&lt;/code&gt; 参数&lt;/td&gt;
+          &lt;td&gt;给容器传环境变量，比如数据库密码&lt;/td&gt;
+      &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;-推荐学习方式&#34;&gt;💡 推荐学习方式
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;多用 &lt;code&gt;docker run&lt;/code&gt; 搞实验&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;数据重要的容器 &lt;strong&gt;一定要挂数据卷！&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;不怕错，错了就 &lt;code&gt;docker rm&lt;/code&gt; 删除重来！&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;p&gt;🎉 &lt;strong&gt;恭喜你，已经比大多数人更懂 Docker 的基础啦！继续冲！&lt;/strong&gt;&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

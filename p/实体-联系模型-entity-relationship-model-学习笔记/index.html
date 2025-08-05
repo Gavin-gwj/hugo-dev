@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="E-R图">
+<title>实体-联系模型 (Entity-Relationship Model) 学习笔记</title>
+
+<link rel='canonical' href='https://gavin-gwj.github.io/hugo-dev/p/%E5%AE%9E%E4%BD%93-%E8%81%94%E7%B3%BB%E6%A8%A1%E5%9E%8B-entity-relationship-model-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/'>
+
+<link rel="stylesheet" href="/hugo-dev/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="实体-联系模型 (Entity-Relationship Model) 学习笔记">
+<meta property='og:description' content="E-R图">
+<meta property='og:url' content='https://gavin-gwj.github.io/hugo-dev/p/%E5%AE%9E%E4%BD%93-%E8%81%94%E7%B3%BB%E6%A8%A1%E5%9E%8B-entity-relationship-model-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/'>
+<meta property='og:site_name' content='Gavin-歌未竟'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-05-14T13:20:57&#43;08:00'/><meta property='article:modified_time' content='2025-05-14T13:20:57&#43;08:00'/>
+<meta name="twitter:title" content="实体-联系模型 (Entity-Relationship Model) 学习笔记">
+<meta name="twitter:description" content="E-R图">
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/hugo-dev/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/hugo-dev/img/avatar_hu_cf5ff899d804496e.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">😅</span>
+                
+            </figure>
+            
+        
+
+
+
+
+
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/hugo-dev">Gavin-歌未竟</a></h1>
+            <h2 class="site-description">探索技术的无限可能！</h2>
+        </div>
+    </header>
+
+    
+
+<div>
+    
+    <span style="color: #707070;">
+        <span id="busuanzi_container_page_pv">
+            总访问量: <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+    </span>
+</div>
+<ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/2123131391'
+                        target="_blank"
+                        title="Bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/Gavin-gwj'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/hugo-dev/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1-概述">1. 概述</a></li>
+    <li><a href="#2-基本概念">2. 基本概念</a>
+      <ol>
+        <li><a href="#21-实体-entity">2.1 实体 (Entity)</a></li>
+        <li><a href="#22-属性-attribute">2.2 属性 (Attribute)</a></li>
+        <li><a href="#23-联系-relationship">2.3 联系 (Relationship)</a></li>
+        <li><a href="#24-联系的度-cardinality">2.4 联系的度 (Cardinality)</a></li>
+        <li><a href="#25-联系的属性">2.5 联系的属性</a></li>
+        <li><a href="#26-弱实体-weak-entity">2.6 弱实体 (Weak Entity)</a></li>
+      </ol>
+    </li>
+    <li><a href="#3-e-r图的绘制步骤">3. E-R图的绘制步骤</a></li>
+    <li><a href="#4-e-r模型的优点">4. E-R模型的优点</a></li>
+    <li><a href="#5-e-r模型的局限性">5. E-R模型的局限性</a></li>
+    <li><a href="#6-总结">6. 总结</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/hugo-dev/categories/%E7%AC%94%E8%AE%B0/" >
+                笔记
+            </a>
+        
+            <a href="/hugo-dev/categories/e-r%E5%9B%BE/" >
+                E-R图
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/hugo-dev/p/%E5%AE%9E%E4%BD%93-%E8%81%94%E7%B3%BB%E6%A8%A1%E5%9E%8B-entity-relationship-model-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">实体-联系模型 (Entity-Relationship Model) 学习笔记</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            E-R图
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-05-14</time>
+            </div>
+        
+
+    
+    <div class="time-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+  <path d="M5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zM5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1H5z"/>
+  <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/>
+</svg>
+        <span class="article-wordcount">
+            2167字
+        </span>
+    </div>
+
+     
+
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 5 分钟
+                </time>
+            </div>
+        
+
+        
+
+
+        
+    </footer>
+    
+
+
+
+    
+
+  
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="e-r图学习笔记">E-R图学习笔记
+</h1><hr>
+<h2 id="1-概述">1. 概述
+</h2><p>实体-联系模型 (E-R模型) 是一种用于数据库设计的概念模型，它提供了一种描述数据结构的高层视图，独立于任何特定的数据库管理系统 (DBMS)。E-R模型使用实体、属性和联系来表示现实世界中的数据及其相互关系。</p>
+<p><strong>主要目标：</strong></p>
+<ul>
+<li>清晰地表示数据需求。</li>
+<li>为后续的数据库逻辑设计提供基础。</li>
+<li>促进数据库设计者和用户之间的沟通。</li>
+</ul>
+<h2 id="2-基本概念">2. 基本概念
+</h2><h3 id="21-实体-entity">2.1 实体 (Entity)
+</h3><ul>
+<li><strong>定义：</strong> 现实世界中可以区分的、独立存在的“事物”或“对象”。例如：学生、课程、教师、部门等。</li>
+<li><strong>表示：</strong> 通常用<strong>矩形框</strong>表示，框内写明实体的名称。
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">+----------+
+</span></span><span class="line"><span class="cl">|   学生   |
+</span></span><span class="line"><span class="cl">+----------+
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h3 id="22-属性-attribute">2.2 属性 (Attribute)
+</h3><ul>
+<li><strong>定义：</strong> 描述实体特征的性质。例如：学生的学号、姓名、年龄；课程的课程号、课程名、学分等。</li>
+<li><strong>表示：</strong> 通常用<strong>椭圆</strong>表示，并用<strong>直线</strong>连接到所属的实体。属性名写在椭圆内。
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">    +----------+
+</span></span><span class="line"><span class="cl">    |   学生   |
+</span></span><span class="line"><span class="cl">    +----------+
+</span></span><span class="line"><span class="cl">       /   |   \
+</span></span><span class="line"><span class="cl">      /    |    \
+</span></span><span class="line"><span class="cl">  +-------+ +-------+ +-------+
+</span></span><span class="line"><span class="cl">  | 学号  | | 姓名  | | 年龄  |
+</span></span><span class="line"><span class="cl">  +-------+ +-------+ +-------+
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li><strong>属性类型：</strong>
+<ul>
+<li><strong>简单属性 (Simple Attribute)：</strong> 不能再分解为更小部分的属性，如年龄。</li>
+<li><strong>复合属性 (Composite Attribute)：</strong> 可以分解为更小部分的属性，如地址 (可以分解为省、市、街道等)。</li>
+<li><strong>多值属性 (Multivalued Attribute)：</strong> 对于一个实体实例可以有多个值的属性，如一个学生可以有多个兴趣爱好。通常用<strong>双层椭圆</strong>表示。
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">    +----------+
+</span></span><span class="line"><span class="cl">    |   学生   |
+</span></span><span class="line"><span class="cl">    +----------+
+</span></span><span class="line"><span class="cl">         |
+</span></span><span class="line"><span class="cl">    +----------+
+</span></span><span class="line"><span class="cl">    | 兴趣爱好 |
+</span></span><span class="line"><span class="cl">    +----------+
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li><strong>派生属性 (Derived Attribute)：</strong> 其值可以从其他属性计算得到的属性，如学生的年龄可以从出生日期计算得到。通常用<strong>虚线椭圆</strong>表示。
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">    +----------+
+</span></span><span class="line"><span class="cl">    |   学生   |
+</span></span><span class="line"><span class="cl">    +----------+
+</span></span><span class="line"><span class="cl">         |
+</span></span><span class="line"><span class="cl">    +----------+
+</span></span><span class="line"><span class="cl">    |   年龄   | (派生)
+</span></span><span class="line"><span class="cl">    +----------+
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+</li>
+<li><strong>主键 (Primary Key)：</strong> 唯一标识一个实体实例的一个或一组属性。通常在属性名下方加<strong>下划线</strong>表示。一个实体只能有一个主键。
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">    +----------+
+</span></span><span class="line"><span class="cl">    |   学生   |
+</span></span><span class="line"><span class="cl">    +----------+
+</span></span><span class="line"><span class="cl">       /   |   \
+</span></span><span class="line"><span class="cl">      /    |    \
+</span></span><span class="line"><span class="cl">  +--------+ +-------+ +-------+
+</span></span><span class="line"><span class="cl">  | 学号   | | 姓名  | | 年龄  |
+</span></span><span class="line"><span class="cl">  +--------+ +-------+ +-------+
+</span></span><span class="line"><span class="cl">    -------
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li><strong>候选键 (Candidate Key)：</strong> 可以唯一标识一个实体实例的一个或一组属性。一个实体可以有多个候选键，但只能选择一个作为主键。</li>
+</ul>
+<h3 id="23-联系-relationship">2.3 联系 (Relationship)
+</h3><ul>
+<li><strong>定义：</strong> 实体之间的关联或相互作用。例如：学生<strong>选修</strong>课程，教师<strong>教授</strong>课程，部门<strong>拥有</strong>员工等。</li>
+<li><strong>表示：</strong> 通常用<strong>菱形框</strong>表示，框内写明联系的名称，并用<strong>直线</strong>连接到相关的实体。
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">    +----------+        +----------+
+</span></span><span class="line"><span class="cl">    |   学生   |--------|  选修  |--------|   课程   |
+</span></span><span class="line"><span class="cl">    +----------+        +----------+        +----------+
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h3 id="24-联系的度-cardinality">2.4 联系的度 (Cardinality)
+</h3><ul>
+<li>描述参与联系的实体实例之间的数量关系，也称为<strong>基数比率</strong>。常见的基数比率有：
+<ul>
+<li><strong>一对一 (1:1)：</strong> 实体集A中的每个实体最多与实体集B中的一个实体相关联，反之亦然。
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">+-----+     1:1     +-----+
+</span></span><span class="line"><span class="cl">|  A  |-------------|  B  |
+</span></span><span class="line"><span class="cl">+-----+             +-----+
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li><strong>一对多 (1:N)：</strong> 实体集A中的每个实体可以与实体集B中的零个或多个实体相关联，但实体集B中的每个实体最多与实体集A中的一个实体相关联。
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">+-----+     1:N     +-----+
+</span></span><span class="line"><span class="cl">|  A  |-------------|  B  |
+</span></span><span class="line"><span class="cl">+-----+             +-----+
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li><strong>多对多 (M:N)：</strong> 实体集A中的每个实体可以与实体集B中的零个或多个实体相关联，并且实体集B中的每个实体也可以与实体集A中的零个或多个实体相关联。
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">+-----+     M:N     +-----+
+</span></span><span class="line"><span class="cl">|  A  |-------------|  B  |
+</span></span><span class="line"><span class="cl">+-----+             +-----+
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+</li>
+<li><strong>表示方法：</strong> 将基数比率标注在连接联系和实体的直线上。通常在靠近实体的一侧标注该实体参与联系的最小和最大实例数。例如：
+<ul>
+<li><code>1:1</code></li>
+<li><code>1:N</code> 或 <code>(0,N)</code> 或 <code>(1,N)</code></li>
+<li><code>M:N</code> 或 <code>(0,M, 0,N)</code> 或 <code>(1,M, 1,N)</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="25-联系的属性">2.5 联系的属性
+</h3><ul>
+<li>联系本身也可以拥有属性，这些属性描述了实体之间联系的特征。例如，学生选修课程的联系可以有“选修日期”和“成绩”等属性。</li>
+<li><strong>表示：</strong> 联系的属性用<strong>椭圆</strong>表示，并用<strong>虚线</strong>连接到所属的联系菱形框。
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">    +----------+        +----------+        +----------+
+</span></span><span class="line"><span class="cl">    |   学生   |--------|  选修  |--------|   课程   |
+</span></span><span class="line"><span class="cl">    +----------+        +----------+        +----------+
+</span></span><span class="line"><span class="cl">                           |
+</span></span><span class="line"><span class="cl">                       +----------+
+</span></span><span class="line"><span class="cl">                       |  成绩  |
+</span></span><span class="line"><span class="cl">                       +----------+
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li><strong>注意：</strong> 只有在多对多联系中，联系才通常拥有自己的属性。在一对一或一对多联系中，联系的属性通常可以转移到参与联系的某个实体中。</li>
+</ul>
+<h3 id="26-弱实体-weak-entity">2.6 弱实体 (Weak Entity)
+</h3><ul>
+<li><strong>定义：</strong> 依赖于另一个实体 (称为强实体或标识实体) 而存在的实体，自身没有主键。弱实体通过与强实体的联系以及自身的局部键来唯一标识。</li>
+<li><strong>表示：</strong> 用<strong>双层矩形框</strong>表示。</li>
+<li><strong>标识性联系 (Identifying Relationship)：</strong> 弱实体与强实体之间的联系，用于标识弱实体实例。用<strong>双层菱形框</strong>表示。
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">    +------------+      +--------------------+      +----------+
+</span></span><span class="line"><span class="cl">    ||  家属  ||------||  属于 (标识性)  ||------|   员工   |
+</span></span><span class="line"><span class="cl">    +------------+      +--------------------+      +----------+
+</span></span><span class="line"><span class="cl">       /   |   \
+</span></span><span class="line"><span class="cl">      /    |    \
+</span></span><span class="line"><span class="cl">  +-------+ +-------+
+</span></span><span class="line"><span class="cl">  | 姓名  | | 关系  |
+</span></span><span class="line"><span class="cl">  +-------+ +-------+
+</span></span><span class="line"><span class="cl">    ------- (局部键)
+</span></span></code></pre></td></tr></table>
+</div>
+</div>在上面的例子中，“家属”是弱实体，它依赖于“员工”实体存在，自身的“姓名”不足以唯一标识一个家属，需要结合其所属的员工才能唯一确定。</li>
+</ul>
+<h2 id="3-e-r图的绘制步骤">3. E-R图的绘制步骤
+</h2><ol>
+<li><strong>识别实体：</strong> 从需求描述中找出所有重要的名词，它们通常代表实体。</li>
+<li><strong>识别属性：</strong> 为每个实体确定其相关的特征属性。确定主键、候选键、复合属性、多值属性和派生属性。</li>
+<li><strong>识别联系：</strong> 找出实体之间的动词或动词短语，它们通常代表实体之间的联系。</li>
+<li><strong>确定联系的类型和基数比率：</strong> 分析每个联系所涉及的实体数量关系 (一对一、一对多、多对多)。</li>
+<li><strong>为联系添加属性 (如果需要)：</strong> 如果联系本身具有需要记录的信息，则为其添加属性。</li>
+<li><strong>绘制E-R图：</strong> 使用标准的E-R图符号将实体、属性和联系连接起来。</li>
+<li><strong>完善E-R图：</strong> 检查E-R图是否准确、完整地反映了数据需求。考虑是否存在冗余或不清晰的地方。</li>
+</ol>
+<h2 id="4-e-r模型的优点">4. E-R模型的优点
+</h2><ul>
+<li>简单直观，易于理解和沟通。</li>
+<li>独立于具体的数据库实现。</li>
+<li>为数据库设计提供了一个清晰的概念框架。</li>
+<li>有助于发现和解决数据设计中的问题。</li>
+</ul>
+<h2 id="5-e-r模型的局限性">5. E-R模型的局限性
+</h2><ul>
+<li>对于复杂的约束和规则，E-R模型可能难以清晰表达。</li>
+<li>缺乏形式化的定义，可能存在二义性。</li>
+<li>不直接支持数据操作的描述。</li>
+</ul>
+<h2 id="6-总结">6. 总结
+</h2><p>E-R模型是数据库设计的重要工具，通过实体、属性和联系的概念，能够有效地描述现实世界的数据及其关系。掌握E-R模型的基本概念和绘制方法，对于进行良好的数据库设计至关重要。在实际应用中，通常会使用专门的建模工具来辅助E-R图的绘制和管理。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/docker-%E5%85%A5%E9%97%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E5%B0%8F%E7%99%BD%E4%B9%9F%E8%83%BD%E7%9C%8B%E6%87%82/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Docker 入门学习笔记（小白也能看懂！）</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/spring%E7%AF%87-@component-%E4%B8%8E-@bean-%E7%9A%84%E5%8C%BA%E5%88%AB/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring篇-@Component 与 @Bean 的区别</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/%E4%BB%80%E4%B9%88%E6%98%AF%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%B1%9E%E6%80%A7%E6%8B%B7%E8%B4%9D/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">什么是对象的属性拷贝</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/spring-cache-%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring Cache 入门笔记</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/redis%E4%BA%94%E7%A7%8D%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Redis五种常用数据类型</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 歌未竟的个人博客
+    </section>
+
+     
+    <section class="icp-link">
+        <a href="https://icp.gov.moe/?keyword=20256333" target="_blank" >萌ICP备20256333号</a>
+        <a href="https://travel.moe/go.html" target="_blank"  height＝15px>
+    <img src="https://travel.moe/images/logo/pink.png" style="width:auto;height:13px" title="异次元之旅-跃迁-我们一起去萌站成员的星球旅行吧！">
+</a>
+    </section>
+
+
+    
+    <section class="powerby">
+        
+            如对内容有异议，请联系关邮箱2285786274@qq.com修改 <br/>
+        
+
+        
+        
+        
+    </section>
+</footer>
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/hugo-dev/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<style>
+  body {
+    background: url(https://gavin-gwj.github.io/hugo-dev/background/bg1.jpg) no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+    background-color: rgba(255, 255, 255, 0.75);
+    background-blend-mode: lighten;
+  }
+
+   
+  .main-content {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 2rem;
+    border-radius: 8px;
+    margin: 2rem auto;
+    max-width: 1200px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+   
+  [data-scheme="dark"] body {
+    background-color: rgba(0, 0, 0, 0.7);
+    background-blend-mode: darken;
+  }
+</style>
+
+
+<script defer src="https://cn.vercount.one/js"></script>
+
+<script>
+    function showHideView() {
+        
+        let viewCounts = document.querySelectorAll("#viewCount");
+        if (viewCounts) {
+            
+            let article =  document.querySelector(".article-page");
+            if (!article) {
+                viewCounts.forEach(ele => {
+                    ele.style.display = 'none';
+                });
+            }
+        }
+    }
+    
+    showHideView();
+</script>
+
+
+
+    </body>
+</html>

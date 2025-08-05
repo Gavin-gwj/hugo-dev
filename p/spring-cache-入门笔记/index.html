@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Spring Cache 入门笔记 1. 什么是 Spring Cache？ 想象一下，你的应用程序有一个方法，需要从数据库查询一些不经常变化的数据，比如商品分类。每次用户请求这个数据，你的代码都会执行一次数据库查询，如果访问量很大，这会对数据库造成巨大的压力，并且响应速度也会变慢。\n">
+<title>Spring Cache 入门笔记</title>
+
+<link rel='canonical' href='https://gavin-gwj.github.io/hugo-dev/p/spring-cache-%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/'>
+
+<link rel="stylesheet" href="/hugo-dev/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="Spring Cache 入门笔记">
+<meta property='og:description' content="Spring Cache 入门笔记 1. 什么是 Spring Cache？ 想象一下，你的应用程序有一个方法，需要从数据库查询一些不经常变化的数据，比如商品分类。每次用户请求这个数据，你的代码都会执行一次数据库查询，如果访问量很大，这会对数据库造成巨大的压力，并且响应速度也会变慢。\n">
+<meta property='og:url' content='https://gavin-gwj.github.io/hugo-dev/p/spring-cache-%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/'>
+<meta property='og:site_name' content='Gavin-歌未竟'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-07-03T15:05:20&#43;08:00'/><meta property='article:modified_time' content='2025-07-03T15:05:20&#43;08:00'/>
+<meta name="twitter:title" content="Spring Cache 入门笔记">
+<meta name="twitter:description" content="Spring Cache 入门笔记 1. 什么是 Spring Cache？ 想象一下，你的应用程序有一个方法，需要从数据库查询一些不经常变化的数据，比如商品分类。每次用户请求这个数据，你的代码都会执行一次数据库查询，如果访问量很大，这会对数据库造成巨大的压力，并且响应速度也会变慢。\n">
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/hugo-dev/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/hugo-dev/img/avatar_hu_cf5ff899d804496e.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">😅</span>
+                
+            </figure>
+            
+        
+
+
+
+
+
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/hugo-dev">Gavin-歌未竟</a></h1>
+            <h2 class="site-description">探索技术的无限可能！</h2>
+        </div>
+    </header>
+
+    
+
+<div>
+    
+    <span style="color: #707070;">
+        <span id="busuanzi_container_page_pv">
+            总访问量: <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+    </span>
+</div>
+<ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/2123131391'
+                        target="_blank"
+                        title="Bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/Gavin-gwj'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/hugo-dev/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1-什么是-spring-cache">1. 什么是 Spring Cache？</a></li>
+    <li><a href="#2-核心概念">2. 核心概念</a></li>
+    <li><a href="#3-最核心的三个注解">3. 最核心的三个注解</a>
+      <ol>
+        <li><a href="#31-cacheable查询缓存有则返回无则执行并缓存">3.1 <code>@Cacheable</code>：查询缓存，有则返回，无则执行并缓存</a></li>
+        <li><a href="#32-cacheput更新缓存每次都执行并刷新缓存">3.2 <code>@CachePut</code>：更新缓存，每次都执行，并刷新缓存</a></li>
+        <li><a href="#33-cacheevict删除缓存">3.3 <code>@CacheEvict</code>：删除缓存</a></li>
+      </ol>
+    </li>
+    <li><a href="#4-如何在-spring-boot-项目中使用">4. 如何在 Spring Boot 项目中使用</a></li>
+    <li><a href="#5-集成-redis作为缓存">5. 集成 Redis作为缓存</a></li>
+    <li><a href="#6-高级主题和常用配置">6. 高级主题和常用配置</a>
+      <ol>
+        <li><a href="#61-自定义-key-生成策略">6.1 自定义 Key 生成策略</a></li>
+        <li><a href="#62-条件缓存-condition-和-unless">6.2 条件缓存 <code>condition</code> 和 <code>unless</code></a></li>
+        <li><a href="#63-统一配置缓存过期时间-ttl">6.3 统一配置缓存过期时间 (TTL)</a></li>
+        <li><a href="#64-caching-组合注解">6.4 <code>@Caching</code> 组合注解</a></li>
+      </ol>
+    </li>
+    <li><a href="#7-总结">7. 总结</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/hugo-dev/categories/%E7%AC%94%E8%AE%B0/" >
+                笔记
+            </a>
+        
+            <a href="/hugo-dev/categories/springboot/" >
+                Springboot
+            </a>
+        
+            <a href="/hugo-dev/categories/redis/" >
+                Redis
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/hugo-dev/p/spring-cache-%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/">Spring Cache 入门笔记</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-07-03</time>
+            </div>
+        
+
+    
+    <div class="time-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+  <path d="M5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zM5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1H5z"/>
+  <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/>
+</svg>
+        <span class="article-wordcount">
+            3515字
+        </span>
+    </div>
+
+     
+
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 8 分钟
+                </time>
+            </div>
+        
+
+        
+
+
+        
+    </footer>
+    
+
+
+
+    
+
+  
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="spring-cache-入门笔记">Spring Cache 入门笔记
+</h1><h2 id="1-什么是-spring-cache">1. 什么是 Spring Cache？
+</h2><p>想象一下，你的应用程序有一个方法，需要从数据库查询一些不经常变化的数据，比如商品分类。每次用户请求这个数据，你的代码都会执行一次数据库查询，如果访问量很大，这会对数据库造成巨大的压力，并且响应速度也会变慢。</p>
+<p><strong>Spring Cache 就是为了解决这类问题而生的。</strong></p>
+<p>它是一个基于注解的缓存解决方案，能够将方法的运行结果存储起来（通常是存储在内存或像 Redis 这样的高速缓存数据库中）。当下次用相同的参数再次调用这个方法时，Spring Cache 会直接返回之前存储的结果，而<strong>不会再执行方法体内的代码</strong>（例如，不会再去查数据库）。</p>
+<p><strong>核心思想：</strong> 用一个简单的注解，为你的 Java 方法添加缓存能力，从而提高应用性能和响应速度。</p>
+<h2 id="2-核心概念">2. 核心概念
+</h2><p>在使用 Spring Cache 之前，你需要理解几个关键概念：</p>
+<div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>概念 (英文)</th>
+          <th>概念 (中文)</th>
+          <th>解释</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong><code>Cache</code></strong></td>
+          <td><strong>缓存</strong></td>
+          <td>一个存储键值对（Key-Value）的容器。在 Spring Cache 中，它是一个逻辑上的概念，可以对应一个具体的缓存实现（如一个 ConcurrentMap，一个 Redis Hash 等）。</td>
+      </tr>
+      <tr>
+          <td><strong><code>CacheManager</code></strong></td>
+          <td><strong>缓存管理器</strong></td>
+          <td>顾名思义，它是用来管理多个 <code>Cache</code> 实例的。你可以通过它来获取、创建或删除 <code>Cache</code>。Spring Boot 会根据你的依赖和配置自动配置一个 <code>CacheManager</code>。</td>
+      </tr>
+      <tr>
+          <td><strong><code>@EnableCaching</code></strong></td>
+          <td><strong>开启缓存</strong></td>
+          <td>这是一个开关。在你的 Spring Boot 主启动类或任何配置类上添加这个注解，就代表 &ldquo;我要开始使用 Spring Cache 的功能了！&quot;。</td>
+      </tr>
+      <tr>
+          <td><strong>缓存注解</strong></td>
+          <td><strong>缓存注解</strong></td>
+          <td>Spring Cache 的精髓所在。通过在方法上添加不同的注解（如 <code>@Cacheable</code>, <code>@CachePut</code>, <code>@CacheEvict</code>），来告诉 Spring 如何操作缓存。</td>
+      </tr>
+  </tbody>
+</table></div>
+<p>导出到 Google 表格</p>
+<h2 id="3-最核心的三个注解">3. 最核心的三个注解
+</h2><p>掌握了下面这三个注解，你就掌握了 Spring Cache 80% 的用法。</p>
+<h3 id="31-cacheable查询缓存有则返回无则执行并缓存">3.1 <code>@Cacheable</code>：查询缓存，有则返回，无则执行并缓存
+</h3><p>这是最常用，也是最重要的一个注解。它的作用是：</p>
+<ol>
+<li>
+<p>在方法执行前，Spring 会根据方法的参数生成一个 <code>Key</code>。</p>
+</li>
+<li>
+<p>用这个 <code>Key</code> 去 <code>Cache</code> 中查找。</p>
+</li>
+<li>
+<p><strong>如果找到了</strong>：直接返回找到的 <code>Value</code>，方法体内的代码<strong>完全不会执行</strong>。</p>
+</li>
+<li>
+<p><strong>如果没有找到</strong>：执行方法体内的代码，获取返回值。然后将 <code>Key-返回值</code> 这个键值对存入 <code>Cache</code> 中，最后再返回这个值。</p>
+</li>
+</ol>
+<p><strong>使用场景</strong>：查询操作，尤其是不经常变化的数据查询（比如，根据 ID 查询用户信息、查询商品详情等）。</p>
+<p><strong>示例代码：</strong></p>
+<p>Java</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">import org.springframework.cache.annotation.Cacheable;
+</span></span><span class="line"><span class="cl">import org.springframework.stereotype.Service;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">@Service
+</span></span><span class="line"><span class="cl">public class UserServiceImpl implements UserService {
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    // 模拟数据库查询
+</span></span><span class="line"><span class="cl">    @Override
+</span></span><span class="line"><span class="cl">    @Cacheable(cacheNames = &#34;users&#34;, key = &#34;#id&#34;)
+</span></span><span class="line"><span class="cl">    public User findUserById(Long id) {
+</span></span><span class="line"><span class="cl">        System.out.println(&#34;正在从数据库中查询用户，ID: &#34; + id);
+</span></span><span class="line"><span class="cl">        // 实际的数据库查询逻辑...
+</span></span><span class="line"><span class="cl">        return new User(id, &#34;张三&#34;);
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>代码解释：</strong></p>
+<ul>
+<li>
+<p><code>@Cacheable(cacheNames = &quot;users&quot;, key = &quot;#id&quot;)</code></p>
+<ul>
+<li>
+<p><code>cacheNames = &quot;users&quot;</code>: 指定了要使用的 <code>Cache</code> 的名字叫做 &ldquo;users&rdquo;。你可以把它想象成数据库中的一张表名。你可以指定多个 <code>cacheNames</code>，如 <code>{&quot;users&quot;, &quot;customers&quot;}</code>。</p>
+</li>
+<li>
+<p><code>key = &quot;#id&quot;</code>: 这是缓存的 <code>Key</code>。这里使用了 Spring Expression Language (SpEL)。<code>#id</code> 表示使用方法参数中名为 <code>id</code> 的值作为 Key。</p>
+<ul>
+<li>
+<p>第一次调用 <code>findUserById(1L)</code> 时，控制台会打印 &ldquo;正在从数据库中查询用户&hellip;&quot;。</p>
+</li>
+<li>
+<p>第二次调用 <code>findUserById(1L)</code> 时，控制台<strong>不会</strong>有任何输出，方法会直接返回上次缓存的结果。</p>
+</li>
+<li>
+<p>调用 <code>findUserById(2L)</code> 时，因为 Key 不同，所以会再次查询数据库。</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="32-cacheput更新缓存每次都执行并刷新缓存">3.2 <code>@CachePut</code>：更新缓存，每次都执行，并刷新缓存
+</h3><p>有时候我们希望更新数据，并确保缓存中的数据也是最新的。这时就用 <code>@CachePut</code>。</p>
+<p>它的作用是：</p>
+<ol>
+<li>
+<p><strong>不管缓存中有没有</strong>，方法体内的代码<strong>总是会执行</strong>。</p>
+</li>
+<li>
+<p>方法执行成功后，将生成的 <code>Key-返回值</code> 存入 <code>Cache</code> 中。如果该 Key 已存在，则会覆盖原来的值。</p>
+</li>
+</ol>
+<p><strong>使用场景</strong>：更新操作。比如，更新了用户信息后，希望缓存中的用户信息也同步更新。</p>
+<p><strong>示例代码：</strong></p>
+<p>Java</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">import org.springframework.cache.annotation.CachePut;
+</span></span><span class="line"><span class="cl">import org.springframework.stereotype.Service;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">@Service
+</span></span><span class="line"><span class="cl">public class UserServiceImpl implements UserService {
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    @Override
+</span></span><span class="line"><span class="cl">    @CachePut(cacheNames = &#34;users&#34;, key = &#34;#user.id&#34;)
+</span></span><span class="line"><span class="cl">    public User updateUser(User user) {
+</span></span><span class="line"><span class="cl">        System.out.println(&#34;正在更新数据库中的用户，ID: &#34; + user.getId());
+</span></span><span class="line"><span class="cl">        // 实际的数据库更新逻辑...
+</span></span><span class="line"><span class="cl">        // 必须返回更新后的对象，这个返回值会被放入缓存
+</span></span><span class="line"><span class="cl">        return user;
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>代码解释：</strong></p>
+<ul>
+<li>
+<p><code>@CachePut(cacheNames = &quot;users&quot;, key = &quot;#user.id&quot;)</code></p>
+<ul>
+<li>
+<p><code>key = &quot;#user.id&quot;</code>: 使用传入的 <code>user</code> 对象的 <code>id</code> 属性作为 Key。</p>
+</li>
+<li>
+<p>每次调用 <code>updateUser(new User(1L, &quot;李四&quot;))</code> 时，控制台<strong>总是</strong>会打印 &ldquo;正在更新数据库中的用户&hellip;&quot;。</p>
+</li>
+<li>
+<p>执行完毕后，<code>users</code> 缓存中 Key 为 <code>1L</code> 的值会被更新为返回的 <code>User</code> 对象。这样下次 <code>findUserById(1L)</code> 就能获取到最新的用户信息了。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="33-cacheevict删除缓存">3.3 <code>@CacheEvict</code>：删除缓存
+</h3><p>当数据被删除时，我们也应该把缓存中对应的数据清理掉，避免用户获取到脏数据。</p>
+<p>它的作用是：根据指定的 <code>Key</code>，从 <code>Cache</code> 中删除对应的条目。</p>
+<p><strong>使用场景</strong>：删除操作。</p>
+<p><strong>示例代码：</strong></p>
+<p>Java</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">import org.springframework.cache.annotation.CacheEvict;
+</span></span><span class="line"><span class="cl">import org.springframework.stereotype.Service;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">@Service
+</span></span><span class="line"><span class="cl">public class UserServiceImpl implements UserService {
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    @Override
+</span></span><span class="line"><span class="cl">    @CacheEvict(cacheNames = &#34;users&#34;, key = &#34;#id&#34;)
+</span></span><span class="line"><span class="cl">    public void deleteUser(Long id) {
+</span></span><span class="line"><span class="cl">        System.out.println(&#34;正在从数据库中删除用户，ID: &#34; + id);
+</span></span><span class="line"><span class="cl">        // 实际的数据库删除逻辑...
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>代码解释：</strong></p>
+<ul>
+<li>
+<p><code>@CacheEvict(cacheNames = &quot;users&quot;, key = &quot;#id&quot;)</code></p>
+<ul>
+<li>
+<p>调用 <code>deleteUser(1L)</code> 后，Spring Cache 会将 <code>users</code> 缓存中 Key 为 <code>1L</code> 的数据删除。</p>
+</li>
+<li>
+<p><strong>一个有用的属性</strong>：<code>allEntries = true</code>。如果设置为 <code>true</code>，它会清空整个 <code>&quot;users&quot;</code> 缓存，而不是只删除某个 Key。例如 <code>@CacheEvict(cacheNames = &quot;users&quot;, allEntries = true)</code>。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="4-如何在-spring-boot-项目中使用">4. 如何在 Spring Boot 项目中使用
+</h2><p>在 Spring Boot 中使用 Spring Cache 非常简单，只需三步。</p>
+<p><strong>第一步：添加依赖</strong></p>
+<p>在你的 <code>pom.xml</code> 文件中，添加 Spring Cache 的启动器依赖。</p>
+<p>XML</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&lt;dependency&gt;
+</span></span><span class="line"><span class="cl">    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+</span></span><span class="line"><span class="cl">    &lt;artifactId&gt;spring-boot-starter-cache&lt;/artifactId&gt;
+</span></span><span class="line"><span class="cl">&lt;/dependency&gt;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>第二步：开启缓存功能</strong></p>
+<p>在你的主启动类上添加 <code>@EnableCaching</code> 注解。</p>
+<p>Java</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">import org.springframework.boot.SpringApplication;
+</span></span><span class="line"><span class="cl">import org.springframework.boot.autoconfigure.SpringBootApplication;
+</span></span><span class="line"><span class="cl">import org.springframework.cache.annotation.EnableCaching;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">@SpringBootApplication
+</span></span><span class="line"><span class="cl">@EnableCaching // 开启缓存功能
+</span></span><span class="line"><span class="cl">public class MyApplication {
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    public static void main(String[] args) {
+</span></span><span class="line"><span class="cl">        SpringApplication.run(MyApplication.class, args);
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>第三步：在方法上使用注解</strong></p>
+<p>就像上面的例子一样，在你的 Service 方法上添加 <code>@Cacheable</code>, <code>@CachePut</code>, <code>@CacheEvict</code> 注解即可。</p>
+<p><strong>默认的缓存是什么？</strong></p>
+<p>如果你只完成了上面三步，Spring Boot 默认会使用 <code>ConcurrentHashMap</code>作为缓存。这意味着缓存是存储在<strong>应用程序的内存</strong>中的。这对于单个应用实例的简单场景是够用的，但有以下缺点：</p>
+<ul>
+<li>
+<p>应用重启后缓存会全部丢失。</p>
+</li>
+<li>
+<p>在分布式或集群环境下，每个应用实例都维护自己的缓存，无法共享。</p>
+</li>
+</ul>
+<p>因此，在生产环境中，我们通常会集成专业的缓存中间件，如 Redis。</p>
+<h2 id="5-集成-redis作为缓存">5. 集成 Redis作为缓存
+</h2><p>将 Spring Cache 的底层实现替换为 Redis 非常流行且简单。</p>
+<p><strong>第一步：添加 Redis 依赖</strong></p>
+<p>在 <code>pom.xml</code> 中添加 <code>spring-boot-starter-data-redis</code>。</p>
+<p>XML</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&lt;dependency&gt;
+</span></span><span class="line"><span class="cl">    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+</span></span><span class="line"><span class="cl">    &lt;artifactId&gt;spring-boot-starter-data-redis&lt;/artifactId&gt;
+</span></span><span class="line"><span class="cl">&lt;/dependency&gt;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>第二步：配置 Redis 连接</strong></p>
+<p>在 <code>application.properties</code> 或 <code>application.yml</code> 文件中配置 Redis 的地址、端口等信息。</p>
+<p><strong><code>application.properties</code> 示例:</strong></p>
+<p>Properties</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># Redis 服务器地址
+</span></span><span class="line"><span class="cl">spring.redis.host=127.0.0.1
+</span></span><span class="line"><span class="cl"># Redis 服务器端口
+</span></span><span class="line"><span class="cl">spring.redis.port=6379
+</span></span><span class="line"><span class="cl"># 如果有密码
+</span></span><span class="line"><span class="cl"># spring.redis.password=yourpassword
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong><code>application.yml</code> 示例:</strong></p>
+<p>YAML</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">spring:
+</span></span><span class="line"><span class="cl">  redis:
+</span></span><span class="line"><span class="cl">    host: 127.0.0.1
+</span></span><span class="line"><span class="cl">    port: 6379
+</span></span><span class="line"><span class="cl">    # password: yourpassword
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>完成了！</strong></p>
+<p>是的，就这么简单。Spring Boot 的自动配置机制非常强大。当它检测到 Redis 的依赖和配置后，会自动创建并配置一个 <code>RedisCacheManager</code> 来替代默认的 <code>ConcurrentHashMap</code> 缓存。</p>
+<p>你的 Java 代码（<code>@Cacheable</code> 等注解）<strong>完全不需要做任何改动</strong>。这就是 Spring Cache 设计的优雅之处：业务代码与具体的缓存实现是解耦的。</p>
+<h2 id="6-高级主题和常用配置">6. 高级主题和常用配置
+</h2><h3 id="61-自定义-key-生成策略">6.1 自定义 Key 生成策略
+</h3><p>默认情况下，Key 的生成规则是：</p>
+<ul>
+<li>
+<p>如果没有参数，Key 是一个 <code>SimpleKey.EMPTY</code> 常量。</p>
+</li>
+<li>
+<p>如果只有一个参数，Key 就是这个参数的实例。</p>
+</li>
+<li>
+<p>如果有多个参数，Key 是一个包含了所有参数的 <code>SimpleKey</code>。</p>
+</li>
+</ul>
+<p>大多数情况下，使用 SpEL <code>key=&quot;...&quot;</code> 属性就足够了。但你也可以创建全局的 Key 生成器。</p>
+<h3 id="62-条件缓存-condition-和-unless">6.2 条件缓存 <code>condition</code> 和 <code>unless</code>
+</h3><ul>
+<li>
+<p><strong><code>condition</code></strong>: 在方法执行<strong>前</strong>判断，只有条件为 <code>true</code>，才会走缓存逻辑（查询或存入）。</p>
+</li>
+<li>
+<p><strong><code>unless</code></strong>: 在方法执行<strong>后</strong>判断，只有条件为 <code>false</code>，才会将方法的返回值放入缓存。通常用来过滤掉不希望缓存的结果（比如，返回值为 <code>null</code>）。</p>
+</li>
+</ul>
+<p><strong>示例：</strong></p>
+<p>Java</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// 只有当参数 id 大于 1 时，才使用缓存
+</span></span><span class="line"><span class="cl">@Cacheable(cacheNames = &#34;users&#34;, key = &#34;#id&#34;, condition = &#34;#id &gt; 1&#34;)
+</span></span><span class="line"><span class="cl">public User findUserById(Long id) { ... }
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">// 如果查询结果的用户名为 &#34;guest&#34;，则不缓存这个结果
+</span></span><span class="line"><span class="cl">@Cacheable(cacheNames = &#34;users&#34;, key = &#34;#id&#34;, unless = &#34;#result.username == &#39;guest&#39;&#34;)
+</span></span><span class="line"><span class="cl">public User findUserById(Long id) { ... }
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>#result</code> 是 SpEL 中一个特殊的变量，代表方法的返回值。</p>
+<h3 id="63-统一配置缓存过期时间-ttl">6.3 统一配置缓存过期时间 (TTL)
+</h3><p>在 <code>application.properties</code> 或 <code>application.yml</code> 中可以统一配置缓存的过期时间。</p>
+<p><strong><code>application.properties</code> 示例:</strong></p>
+<p>Properties</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># 全局设置所有缓存的默认过期时间为 10 分钟
+</span></span><span class="line"><span class="cl">spring.cache.redis.time-to-live=10m
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 针对名为 &#34;users&#34; 的缓存，设置其过期时间为 30 分钟
+</span></span><span class="line"><span class="cl">spring.cache.redis.cache-names=users,products
+</span></span><span class="line"><span class="cl">spring.cache.redis.initial-cache-configuration.users.time-to-live=30m
+</span></span><span class="line"><span class="cl">spring.cache.redis.initial-cache-configuration.products.time-to-live=1h
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong><code>application.yml</code> 示例:</strong></p>
+<p>YAML</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">spring:
+</span></span><span class="line"><span class="cl">  cache:
+</span></span><span class="line"><span class="cl">    redis:
+</span></span><span class="line"><span class="cl">      time-to-live: 10m # 全局默认10分钟
+</span></span><span class="line"><span class="cl">      cache-names: users,products
+</span></span><span class="line"><span class="cl">      initial-cache-configuration:
+</span></span><span class="line"><span class="cl">        users:
+</span></span><span class="line"><span class="cl">          time-to-live: 30m # users缓存30分钟
+</span></span><span class="line"><span class="cl">        products:
+</span></span><span class="line"><span class="cl">          time-to-live: 1h  # products缓存1小时
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="64-caching-组合注解">6.4 <code>@Caching</code> 组合注解
+</h3><p>如果你想对一个方法应用多个缓存操作，比如同时清除多个缓存，可以使用 <code>@Caching</code>。</p>
+<p>Java</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">@Caching(evict = {
+</span></span><span class="line"><span class="cl">    @CacheEvict(cacheNames = &#34;users&#34;, key = &#34;#user.id&#34;),
+</span></span><span class="line"><span class="cl">    @CacheEvict(cacheNames = &#34;user-list&#34;, allEntries = true)
+</span></span><span class="line"><span class="cl">})
+</span></span><span class="line"><span class="cl">public User updateUser(User user) {
+</span></span><span class="line"><span class="cl">    // ... 更新逻辑
+</span></span><span class="line"><span class="cl">    return user;
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这个例子在更新用户后，既清除了该用户的单条缓存，也清除了一个可能存在的用户列表缓存。</p>
+<h2 id="7-总结">7. 总结
+</h2><p>Spring Cache 是一个非常实用且强大的工具，它通过声明式的方式（注解）将缓存逻辑与业务逻辑解耦，让开发者能更专注于业务本身。</p>
+<p><strong>入门学习路径建议：</strong></p>
+<ol>
+<li>
+<p><strong>理解核心思想</strong>：通过缓存减少对慢速资源的访问。</p>
+</li>
+<li>
+<p><strong>掌握三大注解</strong>：<code>@Cacheable</code> (查询), <code>@CachePut</code> (更新), <code>@CacheEvict</code> (删除)。</p>
+</li>
+<li>
+<p><strong>实践操作</strong>：在 Spring Boot项目中，通过引入依赖、开启注解、配置 <code>application.yml</code> 来集成 Redis。</p>
+</li>
+<li>
+<p><strong>深入学习</strong>：探索 <code>key</code> 的 SpEL 写法、<code>condition</code>/<code>unless</code> 条件缓存以及统一的过期时间配置。</p>
+</li>
+</ol>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/redis%E4%BA%94%E7%A7%8D%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Redis五种常用数据类型</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/springboot%E5%8E%9F%E7%90%86/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">SpringBoot原理</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/hugo-dev/p/web%E5%BC%80%E5%8F%91-interceptor%E6%8B%A6%E6%88%AA%E5%99%A8/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="https://wp-cdn.4ce.cn/v2/i7r99m2.png" loading="lazy" data-key="" data-hash="https://wp-cdn.4ce.cn/v2/i7r99m2.png"/>
+                
+            </div>
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Web开发-Interceptor拦截器</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/springboot-mybatis-%E7%99%BB%E5%BD%95%E8%AE%A4%E8%AF%81%E5%8A%9F%E8%83%BD%E5%AE%9E%E7%8E%B0/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">SpringBoot&#43;Mybatis 登录认证功能实现</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/hugo-dev/p/java-%E4%B8%AD-bean%E5%8D%95%E4%BE%8B%E5%8F%8A%E5%8D%95%E4%BE%8B-bean-%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="https://wp-cdn.4ce.cn/v2/hjEyjjL.png" loading="lazy" data-key="" data-hash="https://wp-cdn.4ce.cn/v2/hjEyjjL.png"/>
+                
+            </div>
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java 中 Bean、单例及单例 Bean 的学习笔记</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 歌未竟的个人博客
+    </section>
+
+     
+    <section class="icp-link">
+        <a href="https://icp.gov.moe/?keyword=20256333" target="_blank" >萌ICP备20256333号</a>
+        <a href="https://travel.moe/go.html" target="_blank"  height＝15px>
+    <img src="https://travel.moe/images/logo/pink.png" style="width:auto;height:13px" title="异次元之旅-跃迁-我们一起去萌站成员的星球旅行吧！">
+</a>
+    </section>
+
+
+    
+    <section class="powerby">
+        
+            如对内容有异议，请联系关邮箱2285786274@qq.com修改 <br/>
+        
+
+        
+        
+        
+    </section>
+</footer>
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/hugo-dev/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<style>
+  body {
+    background: url(https://gavin-gwj.github.io/hugo-dev/background/bg1.jpg) no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+    background-color: rgba(255, 255, 255, 0.75);
+    background-blend-mode: lighten;
+  }
+
+   
+  .main-content {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 2rem;
+    border-radius: 8px;
+    margin: 2rem auto;
+    max-width: 1200px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+   
+  [data-scheme="dark"] body {
+    background-color: rgba(0, 0, 0, 0.7);
+    background-blend-mode: darken;
+  }
+</style>
+
+
+<script defer src="https://cn.vercount.one/js"></script>
+
+<script>
+    function showHideView() {
+        
+        let viewCounts = document.querySelectorAll("#viewCount");
+        if (viewCounts) {
+            
+            let article =  document.querySelector(".article-page");
+            if (!article) {
+                viewCounts.forEach(ele => {
+                    ele.style.display = 'none';
+                });
+            }
+        }
+    }
+    
+    showHideView();
+</script>
+
+
+
+    </body>
+</html>

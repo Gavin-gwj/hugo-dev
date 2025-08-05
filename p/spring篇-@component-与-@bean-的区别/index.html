@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="@Component 与 @Bean 的区别：Spring核心注解学习笔记 在 Spring 框架中，@Component 和 @Bean 是两个最常用也是最核心的注解，它们都用于将对象（Bean）注册到 Spring IOC 容器中，从而实现依赖注入。然而，它们在使用场景和作用方式上有着本质的区别。\n">
+<title>Spring篇-@Component 与 @Bean 的区别</title>
+
+<link rel='canonical' href='https://gavin-gwj.github.io/hugo-dev/p/spring%E7%AF%87-@component-%E4%B8%8E-@bean-%E7%9A%84%E5%8C%BA%E5%88%AB/'>
+
+<link rel="stylesheet" href="/hugo-dev/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="Spring篇-@Component 与 @Bean 的区别">
+<meta property='og:description' content="@Component 与 @Bean 的区别：Spring核心注解学习笔记 在 Spring 框架中，@Component 和 @Bean 是两个最常用也是最核心的注解，它们都用于将对象（Bean）注册到 Spring IOC 容器中，从而实现依赖注入。然而，它们在使用场景和作用方式上有着本质的区别。\n">
+<meta property='og:url' content='https://gavin-gwj.github.io/hugo-dev/p/spring%E7%AF%87-@component-%E4%B8%8E-@bean-%E7%9A%84%E5%8C%BA%E5%88%AB/'>
+<meta property='og:site_name' content='Gavin-歌未竟'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-07-04T20:07:58&#43;08:00'/><meta property='article:modified_time' content='2025-07-04T20:07:58&#43;08:00'/>
+<meta name="twitter:title" content="Spring篇-@Component 与 @Bean 的区别">
+<meta name="twitter:description" content="@Component 与 @Bean 的区别：Spring核心注解学习笔记 在 Spring 框架中，@Component 和 @Bean 是两个最常用也是最核心的注解，它们都用于将对象（Bean）注册到 Spring IOC 容器中，从而实现依赖注入。然而，它们在使用场景和作用方式上有着本质的区别。\n">
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/hugo-dev/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/hugo-dev/img/avatar_hu_cf5ff899d804496e.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">😅</span>
+                
+            </figure>
+            
+        
+
+
+
+
+
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/hugo-dev">Gavin-歌未竟</a></h1>
+            <h2 class="site-description">探索技术的无限可能！</h2>
+        </div>
+    </header>
+
+    
+
+<div>
+    
+    <span style="color: #707070;">
+        <span id="busuanzi_container_page_pv">
+            总访问量: <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+    </span>
+</div>
+<ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/2123131391'
+                        target="_blank"
+                        title="Bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/Gavin-gwj'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/hugo-dev/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#component-与-bean-的区别spring核心注解学习笔记">@Component 与 @Bean 的区别：Spring核心注解学习笔记</a>
+          <ol>
+            <li><a href="#一核心概念速览">一、核心概念速览</a></li>
+            <li><a href="#二关键区别对比">二、关键区别对比</a></li>
+            <li><a href="#三使用场景use-cases">三、使用场景（Use Cases）</a></li>
+            <li><a href="#四核心总结">四、核心总结</a></li>
+            <li><a href="#面试官问component-和-bean-有什么区别该怎么回答">面试官问：@Component 和 @Bean 有什么区别？该怎么回答</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/hugo-dev/categories/%E7%AC%94%E8%AE%B0/" >
+                笔记
+            </a>
+        
+            <a href="/hugo-dev/categories/spring/" >
+                Spring
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/hugo-dev/p/spring%E7%AF%87-@component-%E4%B8%8E-@bean-%E7%9A%84%E5%8C%BA%E5%88%AB/">Spring篇-@Component 与 @Bean 的区别</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-07-04</time>
+            </div>
+        
+
+    
+    <div class="time-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+  <path d="M5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zM5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1H5z"/>
+  <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/>
+</svg>
+        <span class="article-wordcount">
+            2866字
+        </span>
+    </div>
+
+     
+
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 6 分钟
+                </time>
+            </div>
+        
+
+        
+
+
+        
+    </footer>
+    
+
+
+
+    
+
+  
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h3 id="component-与-bean-的区别spring核心注解学习笔记">@Component 与 @Bean 的区别：Spring核心注解学习笔记
+</h3><p>在 Spring 框架中，<code>@Component</code> 和 <code>@Bean</code> 是两个最常用也是最核心的注解，它们都用于将对象（Bean）注册到 Spring IOC 容器中，从而实现依赖注入。然而，它们在使用场景和作用方式上有着本质的区别。</p>
+<h4 id="一核心概念速览">一、核心概念速览
+</h4><ul>
+<li>
+<p><strong><code>@Component</code></strong>:</p>
+<ul>
+<li>
+<p><strong>作用对象</strong>: 类（Class）</p>
+</li>
+<li>
+<p><strong>核心思想</strong>: 自动扫描（Component Scanning）。告诉 Spring：“这是一个需要被管理的组件，请在扫描时找到我，并为我创建一个实例。”</p>
+</li>
+<li>
+<p><strong>属于</strong>: &ldquo;Stereotype&rdquo;（构造型）注解，它还有几个常用的衍生注解：</p>
+<ul>
+<li>
+<p><code>@Service</code>: 用于标注业务逻辑层的组件。</p>
+</li>
+<li>
+<p><code>@Repository</code>: 用于标注数据访问层（DAO）的组件。</p>
+</li>
+<li>
+<p><code>@Controller</code> / <code>@RestController</code>: 用于标注Web控制层的组件。</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong><code>@Bean</code></strong>:</p>
+<ul>
+<li>
+<p><strong>作用对象</strong>: 方法（Method）</p>
+</li>
+<li>
+<p><strong>核心思想</strong>: 显式声明。在一个用 <code>@Configuration</code> 注解的类中，通过一个方法来创建一个对象，并用 <code>@Bean</code> 告诉 Spring：“这个方法返回的对象需要被注册到容器中。”</p>
+</li>
+<li>
+<p><strong>灵活性</strong>: 提供了更强的灵活性和自定义能力。</p>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="二关键区别对比">二、关键区别对比
+</h4><div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>特性</th>
+          <th><code>@Component</code></th>
+          <th><code>@Bean</code></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>注解位置</strong></td>
+          <td><strong>类</strong>上</td>
+          <td><strong>方法</strong>上 (该方法必须在<code>@Configuration</code>或<code>@Component</code>类中)</td>
+      </tr>
+      <tr>
+          <td><strong>控制权</strong></td>
+          <td><strong>控制权在开发者</strong> (将注解加在自己编写的类上)</td>
+          <td><strong>控制权在配置类</strong> (可以在方法中对第三方库的类进行实例化和配置)</td>
+      </tr>
+      <tr>
+          <td><strong>使用场景</strong></td>
+          <td><strong>自动配置</strong>：用于我们自己开发的类，实现自动扫描和装配。</td>
+          <td><strong>手动配置</strong>：用于将第三方库中的类、或者需要复杂初始化逻辑的类注入到容器中。</td>
+      </tr>
+      <tr>
+          <td><strong>自定义</strong></td>
+          <td>较弱，Spring 自动处理实例化。</td>
+          <td><strong>非常灵活</strong>，可以在方法体中编写任意的初始化逻辑，再返回最终的对象实例。</td>
+      </tr>
+      <tr>
+          <td><strong>耦合度</strong></td>
+          <td>被注解的类与 Spring 框架有一定的耦合。</td>
+          <td>将 Bean 的创建逻辑集中在配置类中，与业务类本身解耦。</td>
+      </tr>
+      <tr>
+          <td><strong>生命周期</strong></td>
+          <td>由 Spring 容器通过组件扫描自动管理。</td>
+          <td>可以在<code>@Bean</code>注解中指定<code>initMethod</code>和<code>destroyMethod</code>来管理生命周期回调。</td>
+      </tr>
+  </tbody>
+</table></div>
+<hr>
+<h4 id="三使用场景use-cases">三、使用场景（Use Cases）
+</h4><p>通过具体的例子来理解何时使用它们是最好的方式。</p>
+<h5 id="场景一使用-component">场景一：使用 <code>@Component</code>
+</h5><p>假设你正在开发一个用户服务，你自己编写了 <code>UserService</code> 和 <code>UserRepository</code>。</p>
+<p><strong>步骤</strong>:</p>
+<ol>
+<li>
+<p>在你的类上加上 <code>@Service</code> (它是 <code>@Component</code> 的一种)。</p>
+</li>
+<li>
+<p>确保你的 Spring Boot 主启动类或配置类上有 <code>@ComponentScan</code> (在 Spring Boot 中通常是默认启用的)。</p>
+</li>
+</ol>
+<p>Java</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// 数据访问层
+</span></span><span class="line"><span class="cl">@Repository // @Repository 也是一种 @Component
+</span></span><span class="line"><span class="cl">public class UserRepository {
+</span></span><span class="line"><span class="cl">    public User findById(Long id) {
+</span></span><span class="line"><span class="cl">        // ... 查询数据库的逻辑 ...
+</span></span><span class="line"><span class="cl">        return new User();
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">// 业务逻辑层
+</span></span><span class="line"><span class="cl">@Service // @Service 是一种 @Component
+</span></span><span class="line"><span class="cl">public class UserServiceImpl implements UserService {
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    private final UserRepository userRepository;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    // 使用构造函数注入，这是推荐的方式
+</span></span><span class="line"><span class="cl">    @Autowired
+</span></span><span class="line"><span class="cl">    public UserServiceImpl(UserRepository userRepository) {
+</span></span><span class="line"><span class="cl">        this.userRepository = userRepository;
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    @Override
+</span></span><span class="line"><span class="cl">    public User getUserById(Long id) {
+</span></span><span class="line"><span class="cl">        return userRepository.findById(id);
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>总结</strong>: 对于<strong>我们自己项目中的类</strong>，使用 <code>@Component</code> 及其衍生注解是最直接、最常见的方式。Spring 会自动扫描并创建它们的实例。</p>
+<hr>
+<h5 id="场景二使用-bean">场景二：使用 <code>@Bean</code>
+</h5><p>现在，假设你的项目需要使用一个第三方的库，比如一个 <code>DataSource</code>（数据源）或者一个 <code>RestTemplate</code>（用于发起HTTP请求）。你无法修改这些类的源代码去给它们加上 <code>@Component</code> 注解。这时，<code>@Bean</code> 就派上用场了。</p>
+<p><strong>步骤</strong>:</p>
+<ol>
+<li>
+<p>创建一个配置类，并用 <code>@Configuration</code> 注解它。</p>
+</li>
+<li>
+<p>在类中创建一个方法，这个方法返回你需要被 Spring管理的对象实例。</p>
+</li>
+<li>
+<p>在该方法上加上 <code>@Bean</code> 注解。</p>
+</li>
+</ol>
+<p>Java</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">import org.springframework.context.annotation.Bean;
+</span></span><span class="line"><span class="cl">import org.springframework.context.annotation.Configuration;
+</span></span><span class="line"><span class="cl">import org.springframework.web.client.RestTemplate;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">@Configuration
+</span></span><span class="line"><span class="cl">public class AppConfig {
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    // 场景1: 注入一个第三方库的类
+</span></span><span class="line"><span class="cl">    @Bean
+</span></span><span class="line"><span class="cl">    public RestTemplate restTemplate() {
+</span></span><span class="line"><span class="cl">        // 在这里可以进行各种自定义配置
+</span></span><span class="line"><span class="cl">        // 比如设置超时时间、消息转换器等
+</span></span><span class="line"><span class="cl">        return new RestTemplate();
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    // 场景2: 需要复杂的初始化逻辑
+</span></span><span class="line"><span class="cl">    @Bean(name = &#34;customUser&#34;) // 也可以自定义 Bean 的名字
+</span></span><span class="line"><span class="cl">    public User createCustomUser() {
+</span></span><span class="line"><span class="cl">        User user = new User();
+</span></span><span class="line"><span class="cl">        user.setName(&#34;我是通过@Bean创建的&#34;);
+</span></span><span class="line"><span class="cl">        user.setRole(&#34;ADMIN&#34;);
+</span></span><span class="line"><span class="cl">        // ... 其他复杂的初始化设置 ...
+</span></span><span class="line"><span class="cl">        return user;
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>总结</strong>: 当你想要将一个<strong>无法直接修改源码的类</strong>（例如来自第三方JAR包的类）的实例交给 Spring 管理时，或者当一个对象的<strong>创建过程比较复杂</strong>，需要一些自定义的初始化逻辑时，<code>@Bean</code> 是最佳选择。</p>
+<hr>
+<h4 id="四核心总结">四、核心总结
+</h4><ul>
+<li>
+<p><strong><code>@Component</code> 是 “自动挡”</strong>：你只需要在自己的类上标记一下，Spring 会帮你搞定剩下的。适用于管理自己项目中的组件。</p>
+</li>
+<li>
+<p><strong><code>@Bean</code> 是 “手动挡”</strong>：你需要在一个配置类中，亲手通过一个方法来创建和配置对象。适用于管理第三方组件或需要复杂初始化的对象。</p>
+</li>
+</ul>
+<p>简单记：<strong>管自己的类，用 <code>@Component</code>；管别人的类，用 <code>@Bean</code></strong>。</p>
+<h4 id="面试官问component-和-bean-有什么区别该怎么回答">面试官问：@Component 和 @Bean 有什么区别？该怎么回答
+</h4><p>面试时，回答这个问题的关键在于<strong>结构清晰、由浅入深、并结合实际场景</strong>。下面是一个推荐的回答结构和内容。</p>
+<h5 id="第一步给出核心摘要一句话总结">第一步：给出核心摘要（一句话总结）
+</h5><p>你应该先用一句话概括出最核心的区别，这能立刻向面试官展示你对概念的清晰理解。</p>
+<blockquote>
+<p><strong>面试官您好，@Component 和 @Bean 最核心的区别在于它们的使用方式和目标对象不同。@Component 是一个类级别的注解，用于Spring的自动扫描和装配；而 @Bean 是一个方法级别的注解，用于在配置类中显式地声明和定义一个Bean。</strong></p></blockquote>
+<hr>
+<h5 id="第二步深入阐述关键不同点展开对比">第二步：深入阐述关键不同点（展开对比）
+</h5><p>在给出摘要后，从几个关键维度展开详细对比，展示你知识的深度。</p>
+<p><strong>1. 注解的目标不同</strong></p>
+<ul>
+<li>
+<p><strong><code>@Component</code></strong>：直接用在<strong>类</strong>上。它告诉 Spring：“请扫描这个类，并为我创建一个实例放入容器中。” 它是一种“声明式”的组件，我们只需要声明，具体创建由 Spring 完成。</p>
+</li>
+<li>
+<p><strong><code>@Bean</code></strong>：用在<strong>方法</strong>上。这个方法必须定义在一个由 <code>@Configuration</code> 或 <code>@Component</code> 注解的类中。它告诉 Spring：“请执行这个方法，并将该方法返回的对象实例放入容器中。”</p>
+</li>
+</ul>
+<p><strong>2. 控制粒度和来源不同</strong></p>
+<ul>
+<li>
+<p><strong><code>@Component</code></strong> 主要用于我们<strong>自己开发的类</strong>。我们对这些类有完全的控制权，可以直接在类定义上添加注解。这是一种“自动化”的配置方式。比如我们自己写的 <code>UserService</code>、<code>OrderController</code> 等。</p>
+<p>Java</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// 我们自己写的类，有源码控制权
+</span></span><span class="line"><span class="cl">@Service // @Service 是 @Component 的一种特化
+</span></span><span class="line"><span class="cl">public class MyUserService {
+</span></span><span class="line"><span class="cl">    // ...
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><strong><code>@Bean</code></strong> 主要用于将<strong>第三方库中的类</strong>或<strong>需要复杂初始化逻辑的类</strong>纳入 Spring 管理。因为我们无法修改第三方库的源码去添加 <code>@Component</code> 注解，所以只能在我们的配置类中，通过一个方法来创建它的实例，并用 <code>@Bean</code> 声明。这提供了更强的<strong>灵活性和控制权</strong>。</p>
+<p>Java</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">@Configuration
+</span></span><span class="line"><span class="cl">public class AppConfig {
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    // 我们无法修改 RestTemplate 的源码，所以用 @Bean
+</span></span><span class="line"><span class="cl">    @Bean
+</span></span><span class="line"><span class="cl">    public RestTemplate restTemplate() {
+</span></span><span class="line"><span class="cl">        // 在这里可以进行非常灵活的自定义配置
+</span></span><span class="line"><span class="cl">        RestTemplate template = new RestTemplate();
+</span></span><span class="line"><span class="cl">        template.setConnectTimeout(Duration.ofSeconds(5));
+</span></span><span class="line"><span class="cl">        return template;
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<p><strong>3. 使用场景总结</strong></p>
+<ul>
+<li>
+<p><strong>何时使用 <code>@Component</code>？</strong></p>
+<ul>
+<li>
+<p>当你创建的是自己项目中的业务组件时（如<code>@Controller</code>, <code>@Service</code>, <code>@Repository</code>）。</p>
+</li>
+<li>
+<p>当这个组件的创建不需要复杂的配置逻辑时。</p>
+</li>
+<li>
+<p>追求<strong>自动化配置</strong>和<strong>约定大于配置</strong>的开发模式时。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>何时使用 <code>@Bean</code>？</strong></p>
+<ul>
+<li>
+<p>当你需要将一个<strong>第三方库</strong>提供的对象（如 <code>DataSource</code>, <code>RestTemplate</code>, <code>JedisPool</code>）注册为 Bean 时。</p>
+</li>
+<li>
+<p>当一个对象的<strong>实例化过程非常复杂</strong>，需要在创建前执行一些前置配置或逻辑时。</p>
+</li>
+<li>
+<p>当你需要根据不同的条件创建不同的 Bean 实例时（例如结合 <code>@Profile</code> 或 <code>@Conditional</code> 注解）。</p>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h5 id="第三步用一个生动的比喻结尾加深印象">第三步：用一个生动的比喻结尾（加深印象）
+</h5><p>最后，用一个简单的比喻来总结，能让你的回答更生动，更容易被记住。</p>
+<blockquote>
+<p><strong>所以，您可以把 <code>@Component</code> 理解为“自动挡”汽车，我们只需要挂上挡（加上注解），车（Spring）就会自动行驶（创建Bean）。而 <code>@Bean</code> 则更像是“手动挡”汽车，我们需要自己踩离合、挂挡、给油（在方法中编写创建和配置逻辑），控制更加精细和灵活。</strong></p>
+<p><strong>简单来说，就是一句话：我们自己代码里的类用 <code>@Component</code>，引入的外部依赖或需要复杂配置的用 <code>@Bean</code>。</strong></p></blockquote>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/hugo-dev/p/web%E5%BC%80%E5%8F%91-interceptor%E6%8B%A6%E6%88%AA%E5%99%A8/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="https://wp-cdn.4ce.cn/v2/i7r99m2.png" loading="lazy" data-key="" data-hash="https://wp-cdn.4ce.cn/v2/i7r99m2.png"/>
+                
+            </div>
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Web开发-Interceptor拦截器</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/spirng%E7%AF%87-spring%E4%B8%AD%E4%BA%8B%E5%8A%A1%E5%A4%B1%E6%95%88%E7%9A%84%E5%9C%BA%E6%99%AF/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spirng篇-Spring中事务失效的场景</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/spirng%E7%AF%87-aop-%E4%B8%8E-spring-%E4%BA%8B%E5%8A%A1/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spirng篇-AOP 与 Spring 事务</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/spring%E7%AF%87-spring-%E5%AE%B9%E5%99%A8%E4%B8%AD%E5%8D%95%E4%BE%8Bbean%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E5%88%86%E6%9E%90/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring篇-Spring 容器中单例Bean的线程安全分析</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/docker-%E5%85%A5%E9%97%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E5%B0%8F%E7%99%BD%E4%B9%9F%E8%83%BD%E7%9C%8B%E6%87%82/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Docker 入门学习笔记（小白也能看懂！）</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 歌未竟的个人博客
+    </section>
+
+     
+    <section class="icp-link">
+        <a href="https://icp.gov.moe/?keyword=20256333" target="_blank" >萌ICP备20256333号</a>
+        <a href="https://travel.moe/go.html" target="_blank"  height＝15px>
+    <img src="https://travel.moe/images/logo/pink.png" style="width:auto;height:13px" title="异次元之旅-跃迁-我们一起去萌站成员的星球旅行吧！">
+</a>
+    </section>
+
+
+    
+    <section class="powerby">
+        
+            如对内容有异议，请联系关邮箱2285786274@qq.com修改 <br/>
+        
+
+        
+        
+        
+    </section>
+</footer>
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/hugo-dev/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<style>
+  body {
+    background: url(https://gavin-gwj.github.io/hugo-dev/background/bg1.jpg) no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+    background-color: rgba(255, 255, 255, 0.75);
+    background-blend-mode: lighten;
+  }
+
+   
+  .main-content {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 2rem;
+    border-radius: 8px;
+    margin: 2rem auto;
+    max-width: 1200px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+   
+  [data-scheme="dark"] body {
+    background-color: rgba(0, 0, 0, 0.7);
+    background-blend-mode: darken;
+  }
+</style>
+
+
+<script defer src="https://cn.vercount.one/js"></script>
+
+<script>
+    function showHideView() {
+        
+        let viewCounts = document.querySelectorAll("#viewCount");
+        if (viewCounts) {
+            
+            let article =  document.querySelector(".article-page");
+            if (!article) {
+                viewCounts.forEach(ele => {
+                    ele.style.display = 'none';
+                });
+            }
+        }
+    }
+    
+    showHideView();
+</script>
+
+
+
+    </body>
+</html>

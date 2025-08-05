@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="MyBatis 风格">
+<title>Spring Boot 简单的增删改查功能的实现</title>
+
+<link rel='canonical' href='https://gavin-gwj.github.io/hugo-dev/p/spring-boot-%E7%AE%80%E5%8D%95%E7%9A%84%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5%E5%8A%9F%E8%83%BD%E7%9A%84%E5%AE%9E%E7%8E%B0/'>
+
+<link rel="stylesheet" href="/hugo-dev/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="Spring Boot 简单的增删改查功能的实现">
+<meta property='og:description' content="MyBatis 风格">
+<meta property='og:url' content='https://gavin-gwj.github.io/hugo-dev/p/spring-boot-%E7%AE%80%E5%8D%95%E7%9A%84%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5%E5%8A%9F%E8%83%BD%E7%9A%84%E5%AE%9E%E7%8E%B0/'>
+<meta property='og:site_name' content='Gavin-歌未竟'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='笔记' /><meta property='article:tag' content='springboot' /><meta property='article:tag' content='Java' /><meta property='article:tag' content='MyBatis' /><meta property='article:published_time' content='2025-05-14T15:36:34&#43;08:00'/><meta property='article:modified_time' content='2025-05-14T15:36:34&#43;08:00'/>
+<meta name="twitter:title" content="Spring Boot 简单的增删改查功能的实现">
+<meta name="twitter:description" content="MyBatis 风格">
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/hugo-dev/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/hugo-dev/img/avatar_hu_cf5ff899d804496e.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">😅</span>
+                
+            </figure>
+            
+        
+
+
+
+
+
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/hugo-dev">Gavin-歌未竟</a></h1>
+            <h2 class="site-description">探索技术的无限可能！</h2>
+        </div>
+    </header>
+
+    
+
+<div>
+    
+    <span style="color: #707070;">
+        <span id="busuanzi_container_page_pv">
+            总访问量: <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+    </span>
+</div>
+<ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/2123131391'
+                        target="_blank"
+                        title="Bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/Gavin-gwj'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/hugo-dev/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1-核心概念三层架构">1. 核心概念：三层架构</a></li>
+    <li><a href="#2-技术栈简介">2. 技术栈简介</a></li>
+    <li><a href="#3-前提实体类与结果类">3. 前提：实体类与结果类</a></li>
+    <li><a href="#4-crud-操作步骤详解">4. CRUD 操作步骤详解</a>
+      <ol>
+        <li><a href="#41-查询部门-根据id---readget">4.1 查询部门 (根据ID - Read/Get)</a></li>
+        <li><a href="#42-查询所有部门-read-alllist">4.2 查询所有部门 (Read All/List)</a></li>
+        <li><a href="#43-添加部门-createadd">4.3 添加部门 (Create/Add)</a></li>
+        <li><a href="#44-修改部门-update">4.4 修改部门 (Update)</a></li>
+        <li><a href="#45-删除部门-delete">4.5 删除部门 (Delete)</a></li>
+      </ol>
+    </li>
+    <li><a href="#5-总结与展望">5. 总结与展望</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/hugo-dev/categories/%E7%AC%94%E8%AE%B0/" >
+                笔记
+            </a>
+        
+            <a href="/hugo-dev/categories/java/" >
+                Java
+            </a>
+        
+            <a href="/hugo-dev/categories/springboot/" >
+                Springboot
+            </a>
+        
+            <a href="/hugo-dev/categories/mybatis/" >
+                MyBatis
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/hugo-dev/p/spring-boot-%E7%AE%80%E5%8D%95%E7%9A%84%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5%E5%8A%9F%E8%83%BD%E7%9A%84%E5%AE%9E%E7%8E%B0/">Spring Boot 简单的增删改查功能的实现</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            MyBatis 风格
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-05-14</time>
+            </div>
+        
+
+    
+    <div class="time-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+  <path d="M5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zM5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1H5z"/>
+  <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/>
+</svg>
+        <span class="article-wordcount">
+            3571字
+        </span>
+    </div>
+
+     
+
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 8 分钟
+                </time>
+            </div>
+        
+
+        
+
+
+        
+    </footer>
+    
+
+
+
+    
+
+  
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="spring-boot-三层架构-crud-与前后端联调笔记-mybatis-风格-mapper">Spring Boot 三层架构 CRUD 与前后端联调笔记 (MyBatis 风格 Mapper)
+</h1><hr>
+<h2 id="1-核心概念三层架构">1. 核心概念：三层架构
+</h2><p>在典型的 Web 应用中，我们将后端逻辑划分为三个主要层次：</p>
+<ul>
+<li>
+<p><strong>Controller (控制层/表现层):</strong></p>
+<ul>
+<li><strong>职责:</strong> 接收前端发送的 HTTP 请求，对请求参数进行初步校验和转换。</li>
+<li>调用 Service 层处理业务逻辑。</li>
+<li>将 Service 层返回的结果封装成 HTTP 响应（通常是 JSON 格式）返回给前端。</li>
+<li>直接与外界（如浏览器、App 或其他服务）打交道。</li>
+</ul>
+</li>
+<li>
+<p><strong>Service (服务层/业务逻辑层):</strong></p>
+<ul>
+<li><strong>职责:</strong> 实现核心业务逻辑。</li>
+<li>组合调用一个或多个 Mapper/Repository 层的方法来完成复杂的业务操作。</li>
+<li>处理事务管理。</li>
+<li>不直接与 HTTP 请求或数据库打交道，而是作为 Controller 和 Mapper 之间的桥梁。</li>
+</ul>
+</li>
+<li>
+<p><strong>Mapper (数据访问层/持久层):</strong></p>
+<ul>
+<li><strong>职责:</strong> 与数据库进行直接交互，执行 SQL 语句（在此示例中，我们使用 MyBatis 风格的注解）。</li>
+<li>提供原子性的数据操作方法（增、删、改、查）。</li>
+</ul>
+</li>
+</ul>
+<p><strong>数据流向 (请求):</strong> 前端 -&gt; Controller -&gt; Service -&gt; Mapper -&gt; 数据库
+<strong>数据流向 (响应):</strong> 数据库 -&gt; Mapper -&gt; Service -&gt; Controller -&gt; 前端</p>
+<h2 id="2-技术栈简介">2. 技术栈简介
+</h2><ul>
+<li><strong>Spring Boot:</strong> 用于快速搭建和运行 Java 应用。</li>
+<li><strong>Maven:</strong> 项目构建和依赖管理。</li>
+<li><strong>Lombok:</strong> (可选, 本笔记中未显式在 Dept 类使用，但推荐) 通过注解减少 Java 代码的冗余。</li>
+<li><strong>MySQL:</strong> 关系型数据库。</li>
+<li><strong>MyBatis:</strong> (通过注解方式) 持久层框架，直接编写 SQL。</li>
+</ul>
+<h2 id="3-前提实体类与结果类">3. 前提：实体类与结果类
+</h2><p>假设我们有如下实体类 <code>Dept.java</code> 和一个通用的返回结果类 <code>Result.java</code>。</p>
+<p><code>Dept.java</code>:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// package com.example.myapp.entity; // 假设的包名</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.time.LocalDateTime</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// (为简化，省略 Lombok 注解，实际项目中推荐使用 @Data, @NoArgsConstructor, @AllArgsConstructor)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Dept</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Integer</span><span class="w"> </span><span class="n">id</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">LocalDateTime</span><span class="w"> </span><span class="n">createTime</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">LocalDateTime</span><span class="w"> </span><span class="n">updateTime</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// Standard getters and setters</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Integer</span><span class="w"> </span><span class="nf">getId</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">id</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setId</span><span class="p">(</span><span class="n">Integer</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">id</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">getName</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">name</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setName</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">name</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">LocalDateTime</span><span class="w"> </span><span class="nf">getCreateTime</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">createTime</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setCreateTime</span><span class="p">(</span><span class="n">LocalDateTime</span><span class="w"> </span><span class="n">createTime</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">createTime</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">createTime</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">LocalDateTime</span><span class="w"> </span><span class="nf">getUpdateTime</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">updateTime</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setUpdateTime</span><span class="p">(</span><span class="n">LocalDateTime</span><span class="w"> </span><span class="n">updateTime</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">updateTime</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">updateTime</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">toString</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="s">&#34;Dept{&#34;</span><span class="w"> </span><span class="o">+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">               </span><span class="s">&#34;id=&#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">               </span><span class="s">&#34;, name=&#39;&#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="sc">&#39;\&#39;&#39;</span><span class="w"> </span><span class="o">+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">               </span><span class="s">&#34;, createTime=&#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">createTime</span><span class="w"> </span><span class="o">+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">               </span><span class="s">&#34;, updateTime=&#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">updateTime</span><span class="w"> </span><span class="o">+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">               </span><span class="sc">&#39;}&#39;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>Result.java</code>:</p>
+<p>Java</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// package com.example.myapp.util; // 假设的包名</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">public</span> <span class="nx">class</span> <span class="nx">Result</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">private</span> <span class="nx">Integer</span> <span class="nx">code</span><span class="p">;</span> <span class="c1">// 1 for success, 0 for error (或其他自定义状态码)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">private</span> <span class="nx">String</span> <span class="nx">msg</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">private</span> <span class="nx">Object</span> <span class="nx">data</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 私有构造，防止直接实例化</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">private</span> <span class="nf">Result</span><span class="p">()</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">public</span> <span class="nx">static</span> <span class="nx">Result</span> <span class="nf">success</span><span class="p">(</span><span class="nx">Object</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">Result</span> <span class="nx">r</span> <span class="p">=</span> <span class="nx">new</span> <span class="nf">Result</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">r</span><span class="p">.</span><span class="nx">code</span> <span class="p">=</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// 假设 1 代表成功</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">r</span><span class="p">.</span><span class="nx">msg</span> <span class="p">=</span> <span class="s">&#34;操作成功&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">r</span><span class="p">.</span><span class="nx">data</span> <span class="p">=</span> <span class="nx">data</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="nx">r</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">public</span> <span class="nx">static</span> <span class="nx">Result</span> <span class="nf">success</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">Result</span> <span class="nx">r</span> <span class="p">=</span> <span class="nx">new</span> <span class="nf">Result</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">r</span><span class="p">.</span><span class="nx">code</span> <span class="p">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">r</span><span class="p">.</span><span class="nx">msg</span> <span class="p">=</span> <span class="s">&#34;操作成功&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="nx">r</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">public</span> <span class="nx">static</span> <span class="nx">Result</span> <span class="nb">error</span><span class="p">(</span><span class="nx">String</span> <span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">Result</span> <span class="nx">r</span> <span class="p">=</span> <span class="nx">new</span> <span class="nf">Result</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">r</span><span class="p">.</span><span class="nx">code</span> <span class="p">=</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">// 假设 0 代表失败</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">r</span><span class="p">.</span><span class="nx">msg</span> <span class="p">=</span> <span class="nx">msg</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="nx">r</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Standard getters and setters</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">public</span> <span class="nx">Integer</span> <span class="nf">getCode</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="nx">code</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">public</span> <span class="nx">void</span> <span class="nf">setCode</span><span class="p">(</span><span class="nx">Integer</span> <span class="nx">code</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">this</span><span class="p">.</span><span class="nx">code</span> <span class="p">=</span> <span class="nx">code</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">public</span> <span class="nx">String</span> <span class="nf">getMsg</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="nx">msg</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">public</span> <span class="nx">void</span> <span class="nf">setMsg</span><span class="p">(</span><span class="nx">String</span> <span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">this</span><span class="p">.</span><span class="nx">msg</span> <span class="p">=</span> <span class="nx">msg</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">public</span> <span class="nx">Object</span> <span class="nf">getData</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="nx">data</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">public</span> <span class="nx">void</span> <span class="nf">setData</span><span class="p">(</span><span class="nx">Object</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">this</span><span class="p">.</span><span class="nx">data</span> <span class="p">=</span> <span class="nx">data</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><em>(请确保以上类已正确配置 <code>getters</code> 和 <code>setters</code>，如果使用 Lombok，则会自动生成)</em></p>
+<hr>
+<h2 id="4-crud-操作步骤详解">4. CRUD 操作步骤详解
+</h2><h3 id="41-查询部门-根据id---readget">4.1 查询部门 (根据ID - Read/Get)
+</h3><ul>
+<li>
+<p><strong>步骤 1: Controller 层 (<code>DeptController.java</code>)</strong></p>
+<ul>
+<li>定义一个处理 GET 请求的方法，通过路径变量接收 <code>id</code>。</li>
+<li>调用 <code>deptService.getById(id)</code>。</li>
+<li>返回 <code>Result.success(dept)</code>。</li>
+</ul>
+  <!-- end list -->
+<p>Java</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// package com.example.myapp.controller; // 假设的包名</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nx">com</span><span class="p">.</span><span class="nx">example</span><span class="p">.</span><span class="nx">myapp</span><span class="p">.</span><span class="nx">entity</span><span class="p">.</span><span class="nx">Dept</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nx">com</span><span class="p">.</span><span class="nx">example</span><span class="p">.</span><span class="nx">myapp</span><span class="p">.</span><span class="nx">service</span><span class="p">.</span><span class="nx">DeptService</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nx">com</span><span class="p">.</span><span class="nx">example</span><span class="p">.</span><span class="nx">myapp</span><span class="p">.</span><span class="nx">util</span><span class="p">.</span><span class="nx">Result</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nx">org</span><span class="p">.</span><span class="nx">springframework</span><span class="p">.</span><span class="nx">beans</span><span class="p">.</span><span class="nx">factory</span><span class="p">.</span><span class="nx">annotation</span><span class="p">.</span><span class="nx">Autowired</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nx">org</span><span class="p">.</span><span class="nx">springframework</span><span class="p">.</span><span class="nx">web</span><span class="p">.</span><span class="nx">bind</span><span class="p">.</span><span class="nx">annotation</span><span class="p">.</span><span class="nx">GetMapping</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nx">org</span><span class="p">.</span><span class="nx">springframework</span><span class="p">.</span><span class="nx">web</span><span class="p">.</span><span class="nx">bind</span><span class="p">.</span><span class="nx">annotation</span><span class="p">.</span><span class="nx">PathVariable</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nx">org</span><span class="p">.</span><span class="nx">springframework</span><span class="p">.</span><span class="nx">web</span><span class="p">.</span><span class="nx">bind</span><span class="p">.</span><span class="nx">annotation</span><span class="p">.</span><span class="nx">RestController</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">@</span><span class="nx">RestController</span>
+</span></span><span class="line"><span class="cl"><span class="nx">public</span> <span class="nx">class</span> <span class="nx">DeptController</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="err">@</span><span class="nx">Autowired</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">private</span> <span class="nx">DeptService</span> <span class="nx">deptService</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="err">@</span><span class="nf">GetMapping</span><span class="p">(</span><span class="s">&#34;/depts/{id}&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">public</span> <span class="nx">Result</span> <span class="nf">getInfo</span><span class="p">(</span><span class="err">@</span><span class="nx">PathVariable</span> <span class="nx">Integer</span> <span class="nx">id</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">System</span><span class="p">.</span><span class="nx">out</span><span class="p">.</span><span class="nb">println</span><span class="p">(</span><span class="s">&#34;根据ID查询部门 : &#34;</span> <span class="o">+</span> <span class="nx">id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">Dept</span> <span class="nx">dept</span> <span class="p">=</span> <span class="nx">deptService</span><span class="p">.</span><span class="nf">getById</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span> <span class="c1">// 调用 Service 层</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="nx">dept</span> <span class="o">!=</span> <span class="nx">null</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="nx">Result</span><span class="p">.</span><span class="nf">success</span><span class="p">(</span><span class="nx">dept</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="nx">Result</span><span class="p">.</span><span class="nb">error</span><span class="p">(</span><span class="s">&#34;未找到ID为 &#34;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s">&#34; 的部门&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><strong>步骤 2: Service 接口 (<code>DeptService.java</code>)</strong></p>
+<ul>
+<li>在 <code>DeptController.java</code> 中的 <code>deptService.getById(id)</code> 上使用 <code>Alt+Enter</code> (IDEA 快捷键) 或手动创建方法。</li>
+<li>定义 <code>getById(Integer id)</code> 接口方法。</li>
+</ul>
+  <!-- end list -->
+<p>Java</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// package com.example.myapp.service; // 假设的包名</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nx">com</span><span class="p">.</span><span class="nx">example</span><span class="p">.</span><span class="nx">myapp</span><span class="p">.</span><span class="nx">entity</span><span class="p">.</span><span class="nx">Dept</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nx">java</span><span class="p">.</span><span class="nx">util</span><span class="p">.</span><span class="nx">List</span><span class="p">;</span> <span class="c1">// 为后续 listAll 方法准备</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">public</span> <span class="kd">interface</span> <span class="nx">DeptService</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Dept</span> <span class="nf">getById</span><span class="p">(</span><span class="nx">Integer</span> <span class="nx">id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 后续会添加其他方法</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">List</span><span class="p">&lt;</span><span class="nx">Dept</span><span class="p">&gt;</span> <span class="nf">listAll</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">void</span> <span class="nf">addDept</span><span class="p">(</span><span class="nx">Dept</span> <span class="nx">dept</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">void</span> <span class="nf">updateDept</span><span class="p">(</span><span class="nx">Dept</span> <span class="nx">dept</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">void</span> <span class="nf">deleteDeptById</span><span class="p">(</span><span class="nx">Integer</span> <span class="nx">id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><strong>步骤 3: Service 实现类 (<code>DeptServiceImpl.java</code>)</strong></p>
+<ul>
+<li>在 <code>DeptService</code> 接口名上点击左侧绿色小箭头跳转到实现类，或手动创建。</li>
+<li>实现 <code>getById(Integer id)</code> 方法。</li>
+<li>调用 <code>deptMapper.getById(id)</code>。</li>
+</ul>
+  <!-- end list -->
+<p>Java</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// package com.example.myapp.service.impl; // 假设的包名</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nx">com</span><span class="p">.</span><span class="nx">example</span><span class="p">.</span><span class="nx">myapp</span><span class="p">.</span><span class="nx">entity</span><span class="p">.</span><span class="nx">Dept</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nx">com</span><span class="p">.</span><span class="nx">example</span><span class="p">.</span><span class="nx">myapp</span><span class="p">.</span><span class="nx">mapper</span><span class="p">.</span><span class="nx">DeptMapper</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nx">com</span><span class="p">.</span><span class="nx">example</span><span class="p">.</span><span class="nx">myapp</span><span class="p">.</span><span class="nx">service</span><span class="p">.</span><span class="nx">DeptService</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nx">org</span><span class="p">.</span><span class="nx">springframework</span><span class="p">.</span><span class="nx">beans</span><span class="p">.</span><span class="nx">factory</span><span class="p">.</span><span class="nx">annotation</span><span class="p">.</span><span class="nx">Autowired</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nx">org</span><span class="p">.</span><span class="nx">springframework</span><span class="p">.</span><span class="nx">stereotype</span><span class="p">.</span><span class="nx">Service</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nx">java</span><span class="p">.</span><span class="nx">util</span><span class="p">.</span><span class="nx">List</span><span class="p">;</span> <span class="c1">// 为后续 listAll 方法准备</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nx">java</span><span class="p">.</span><span class="nx">time</span><span class="p">.</span><span class="nx">LocalDateTime</span><span class="p">;</span> <span class="c1">// 为后续 add/update 方法准备</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">@</span><span class="nx">Service</span>
+</span></span><span class="line"><span class="cl"><span class="nx">public</span> <span class="nx">class</span> <span class="nx">DeptServiceImpl</span> <span class="nx">implements</span> <span class="nx">DeptService</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="err">@</span><span class="nx">Autowired</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">private</span> <span class="nx">DeptMapper</span> <span class="nx">deptMapper</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="err">@</span><span class="nx">Override</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">public</span> <span class="nx">Dept</span> <span class="nf">getById</span><span class="p">(</span><span class="nx">Integer</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span>  <span class="nx">deptMapper</span><span class="p">.</span><span class="nf">getById</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span> <span class="c1">// 调用 Mapper 层</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 后续会实现其他方法</span>
+</span></span><span class="line"><span class="cl">    <span class="err">@</span><span class="nx">Override</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">public</span> <span class="nx">List</span><span class="p">&lt;</span><span class="nx">Dept</span><span class="p">&gt;</span> <span class="nf">listAll</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 待实现</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="nx">deptMapper</span><span class="p">.</span><span class="nf">findAll</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="err">@</span><span class="nx">Override</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">public</span> <span class="nx">void</span> <span class="nf">addDept</span><span class="p">(</span><span class="nx">Dept</span> <span class="nx">dept</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 待实现</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">dept</span><span class="p">.</span><span class="nf">setCreateTime</span><span class="p">(</span><span class="nx">LocalDateTime</span><span class="p">.</span><span class="nf">now</span><span class="p">());</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">dept</span><span class="p">.</span><span class="nf">setUpdateTime</span><span class="p">(</span><span class="nx">LocalDateTime</span><span class="p">.</span><span class="nf">now</span><span class="p">());</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">deptMapper</span><span class="p">.</span><span class="nf">insert</span><span class="p">(</span><span class="nx">dept</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="err">@</span><span class="nx">Override</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">public</span> <span class="nx">void</span> <span class="nf">updateDept</span><span class="p">(</span><span class="nx">Dept</span> <span class="nx">dept</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 待实现</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">dept</span><span class="p">.</span><span class="nf">setUpdateTime</span><span class="p">(</span><span class="nx">LocalDateTime</span><span class="p">.</span><span class="nf">now</span><span class="p">());</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">deptMapper</span><span class="p">.</span><span class="nf">update</span><span class="p">(</span><span class="nx">dept</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="err">@</span><span class="nx">Override</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">public</span> <span class="nx">void</span> <span class="nf">deleteDeptById</span><span class="p">(</span><span class="nx">Integer</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 待实现</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">deptMapper</span><span class="p">.</span><span class="nf">deleteById</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><strong>步骤 4: Mapper 接口 (<code>DeptMapper.java</code>)</strong></p>
+<ul>
+<li>在 <code>DeptServiceImpl.java</code> 中的 <code>deptMapper.getById(id)</code> 上使用 <code>Alt+Enter</code> 或手动创建方法。</li>
+<li>定义 <code>getById(Integer id)</code> 接口方法。</li>
+<li>使用 <code>@Select</code> 注解编写 SQL 查询语句。</li>
+</ul>
+  <!-- end list -->
+<p>Java</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// package com.example.myapp.mapper; // 假设的包名</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nx">com</span><span class="p">.</span><span class="nx">example</span><span class="p">.</span><span class="nx">myapp</span><span class="p">.</span><span class="nx">entity</span><span class="p">.</span><span class="nx">Dept</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nx">org</span><span class="p">.</span><span class="nx">apache</span><span class="p">.</span><span class="nx">ibatis</span><span class="p">.</span><span class="nx">annotations</span><span class="p">.</span><span class="o">*</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nx">java</span><span class="p">.</span><span class="nx">util</span><span class="p">.</span><span class="nx">List</span><span class="p">;</span> <span class="c1">// 为后续 findAll 方法准备</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">@</span><span class="nx">Mapper</span>
+</span></span><span class="line"><span class="cl"><span class="nx">public</span> <span class="kd">interface</span> <span class="nx">DeptMapper</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 根据id查询部门</span>
+</span></span><span class="line"><span class="cl">    <span class="err">@</span><span class="nf">Select</span><span class="p">(</span><span class="s">&#34;SELECT id, name, create_time , update_time from depts WHERE id = #{id}&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Dept</span> <span class="nf">getById</span><span class="p">(</span><span class="nx">Integer</span> <span class="nx">id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 后续会添加其他方法</span>
+</span></span><span class="line"><span class="cl">    <span class="err">@</span><span class="nf">Select</span><span class="p">(</span><span class="s">&#34;SELECT id, name, create_time, update_time FROM depts&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">List</span><span class="p">&lt;</span><span class="nx">Dept</span><span class="p">&gt;</span> <span class="nf">findAll</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="err">@</span><span class="nf">Insert</span><span class="p">(</span><span class="s">&#34;INSERT INTO depts (name, create_time, update_time) VALUES (#{name}, #{createTime}, #{updateTime})&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="err">@</span><span class="nf">Options</span><span class="p">(</span><span class="nx">useGeneratedKeys</span> <span class="p">=</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">keyProperty</span> <span class="p">=</span> <span class="s">&#34;id&#34;</span><span class="p">)</span> <span class="c1">// 如果需要返回自增ID</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">void</span> <span class="nf">insert</span><span class="p">(</span><span class="nx">Dept</span> <span class="nx">dept</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="err">@</span><span class="nf">Update</span><span class="p">(</span><span class="s">&#34;UPDATE depts SET name = #{name}, update_time = #{updateTime} WHERE id = #{id}&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">void</span> <span class="nf">update</span><span class="p">(</span><span class="nx">Dept</span> <span class="nx">dept</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="err">@</span><span class="nf">Delete</span><span class="p">(</span><span class="s">&#34;DELETE FROM depts WHERE id = #{id}&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">void</span> <span class="nf">deleteById</span><span class="p">(</span><span class="nx">Integer</span> <span class="nx">id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<hr>
+<h3 id="42-查询所有部门-read-alllist">4.2 查询所有部门 (Read All/List)
+</h3><ul>
+<li>
+<p><strong>步骤 1: Controller 层 (<code>DeptController.java</code>)</strong></p>
+<ul>
+<li>定义一个处理 GET 请求的方法，例如 <code>/depts</code>。</li>
+<li>调用 <code>deptService.listAll()</code>。</li>
+<li>返回 <code>Result.success(deptList)</code>。</li>
+</ul>
+  <!-- end list -->
+<p>Java</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// 在 DeptController.java 中添加
+</span></span><span class="line"><span class="cl">// import java.util.List; // 确保已导入
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">@GetMapping(&#34;/depts&#34;)
+</span></span><span class="line"><span class="cl">public Result listAllDepts() {
+</span></span><span class="line"><span class="cl">    System.out.println(&#34;查询所有部门&#34;);
+</span></span><span class="line"><span class="cl">    List&lt;Dept&gt; deptList = deptService.listAll(); // 调用 Service 层
+</span></span><span class="line"><span class="cl">    return Result.success(deptList);
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><strong>步骤 2: Service 接口 (<code>DeptService.java</code>)</strong></p>
+<ul>
+<li>(已在上面 <code>getById</code> 部分的 <code>DeptService.java</code> 中定义 <code>List&lt;Dept&gt; listAll();</code>)</li>
+</ul>
+</li>
+<li>
+<p><strong>步骤 3: Service 实现类 (<code>DeptServiceImpl.java</code>)</strong></p>
+<ul>
+<li>(已在上面 <code>getById</code> 部分的 <code>DeptServiceImpl.java</code> 中初步实现，调用 <code>deptMapper.findAll()</code>)</li>
+</ul>
+</li>
+<li>
+<p><strong>步骤 4: Mapper 接口 (<code>DeptMapper.java</code>)</strong></p>
+<ul>
+<li>(已在上面 <code>getById</code> 部分的 <code>DeptMapper.java</code> 中定义 <code>List&lt;Dept&gt; findAll();</code> 并使用 <code>@Select</code> 注解)</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="43-添加部门-createadd">4.3 添加部门 (Create/Add)
+</h3><ul>
+<li>
+<p><strong>步骤 1: Controller 层 (<code>DeptController.java</code>)</strong></p>
+<ul>
+<li>定义一个处理 POST 请求的方法，例如 <code>/depts</code>，通过 <code>@RequestBody</code> 接收部门信息。</li>
+<li>调用 <code>deptService.addDept(dept)</code>。</li>
+<li>返回 <code>Result.success()</code>。</li>
+</ul>
+  <!-- end list -->
+<p>Java</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// 在 DeptController.java 中添加
+</span></span><span class="line"><span class="cl">// import org.springframework.web.bind.annotation.PostMapping;
+</span></span><span class="line"><span class="cl">// import org.springframework.web.bind.annotation.RequestBody; // 确保已导入
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">@PostMapping(&#34;/depts&#34;)
+</span></span><span class="line"><span class="cl">public Result addDept(@RequestBody Dept dept) {
+</span></span><span class="line"><span class="cl">    System.out.println(&#34;添加部门: &#34; + dept.getName());
+</span></span><span class="line"><span class="cl">    deptService.addDept(dept); // 调用 Service 层
+</span></span><span class="line"><span class="cl">    // 如果 service 层或 mapper 层返回了带 ID 的对象，可以将其放入 Result
+</span></span><span class="line"><span class="cl">    // 例如: Dept createdDept = deptService.addDept(dept); return Result.success(createdDept);
+</span></span><span class="line"><span class="cl">    return Result.success();
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><strong>步骤 2: Service 接口 (<code>DeptService.java</code>)</strong></p>
+<ul>
+<li>(已在上面 <code>getById</code> 部分的 <code>DeptService.java</code> 中定义 <code>void addDept(Dept dept);</code>)</li>
+</ul>
+</li>
+<li>
+<p><strong>步骤 3: Service 实现类 (<code>DeptServiceImpl.java</code>)</strong></p>
+<ul>
+<li>(已在上面 <code>getById</code> 部分的 <code>DeptServiceImpl.java</code> 中初步实现，设置时间并调用 <code>deptMapper.insert(dept)</code>)</li>
+</ul>
+</li>
+<li>
+<p><strong>步骤 4: Mapper 接口 (<code>DeptMapper.java</code>)</strong></p>
+<ul>
+<li>(已在上面 <code>getById</code> 部分的 <code>DeptMapper.java</code> 中定义 <code>void insert(Dept dept);</code> 并使用 <code>@Insert</code> 和 <code>@Options</code> 注解)</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="44-修改部门-update">4.4 修改部门 (Update)
+</h3><ul>
+<li>
+<p><strong>步骤 1: Controller 层 (<code>DeptController.java</code>)</strong></p>
+<ul>
+<li>定义一个处理 PUT 请求的方法，例如 <code>/depts</code> 或 <code>/depts/{id}</code>，通过 <code>@RequestBody</code> 接收更新的部门信息。</li>
+<li>调用 <code>deptService.updateDept(dept)</code>。</li>
+<li>返回 <code>Result.success()</code>。</li>
+</ul>
+  <!-- end list -->
+<p>Java</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// 在 DeptController.java 中添加
+</span></span><span class="line"><span class="cl">// import org.springframework.web.bind.annotation.PutMapping; // 确保已导入
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">@PutMapping(&#34;/depts&#34;) // 通常 PUT 请求体中应包含 ID
+</span></span><span class="line"><span class="cl">public Result updateDept(@RequestBody Dept dept) {
+</span></span><span class="line"><span class="cl">    if (dept.getId() == null) {
+</span></span><span class="line"><span class="cl">        return Result.error(&#34;更新部门时必须提供部门ID&#34;);
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">    System.out.println(&#34;修改部门ID: &#34; + dept.getId() + &#34;, 新名称: &#34; + dept.getName());
+</span></span><span class="line"><span class="cl">    deptService.updateDept(dept); // 调用 Service 层
+</span></span><span class="line"><span class="cl">    return Result.success();
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><strong>步骤 2: Service 接口 (<code>DeptService.java</code>)</strong></p>
+<ul>
+<li>(已在上面 <code>getById</code> 部分的 <code>DeptService.java</code> 中定义 <code>void updateDept(Dept dept);</code>)</li>
+</ul>
+</li>
+<li>
+<p><strong>步骤 3: Service 实现类 (<code>DeptServiceImpl.java</code>)</strong></p>
+<ul>
+<li>(已在上面 <code>getById</code> 部分的 <code>DeptServiceImpl.java</code> 中初步实现，设置更新时间并调用 <code>deptMapper.update(dept)</code>)</li>
+</ul>
+</li>
+<li>
+<p><strong>步骤 4: Mapper 接口 (<code>DeptMapper.java</code>)</strong></p>
+<ul>
+<li>(已在上面 <code>getById</code> 部分的 <code>DeptMapper.java</code> 中定义 <code>void update(Dept dept);</code> 并使用 <code>@Update</code> 注解)</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="45-删除部门-delete">4.5 删除部门 (Delete)
+</h3><ul>
+<li>
+<p><strong>步骤 1: Controller 层 (<code>DeptController.java</code>)</strong></p>
+<ul>
+<li>定义一个处理 DELETE 请求的方法，例如 <code>/depts/{id}</code>，通过 <code>@PathVariable</code> 接收 <code>id</code>。</li>
+<li>调用 <code>deptService.deleteDeptById(id)</code>。</li>
+<li>返回 <code>Result.success()</code>。</li>
+</ul>
+  <!-- end list -->
+<p>Java</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// 在 DeptController.java 中添加
+</span></span><span class="line"><span class="cl">// import org.springframework.web.bind.annotation.DeleteMapping; // 确保已导入
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">@DeleteMapping(&#34;/depts/{id}&#34;)
+</span></span><span class="line"><span class="cl">public Result deleteDept(@PathVariable Integer id) {
+</span></span><span class="line"><span class="cl">    System.out.println(&#34;删除部门ID: &#34; + id);
+</span></span><span class="line"><span class="cl">    deptService.deleteDeptById(id); // 调用 Service 层
+</span></span><span class="line"><span class="cl">    return Result.success();
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><strong>步骤 2: Service 接口 (<code>DeptService.java</code>)</strong></p>
+<ul>
+<li>(已在上面 <code>getById</code> 部分的 <code>DeptService.java</code> 中定义 <code>void deleteDeptById(Integer id);</code>)</li>
+</ul>
+</li>
+<li>
+<p><strong>步骤 3: Service 实现类 (<code>DeptServiceImpl.java</code>)</strong></p>
+<ul>
+<li>(已在上面 <code>getById</code> 部分的 <code>DeptServiceImpl.java</code> 中初步实现，调用 <code>deptMapper.deleteById(id)</code>)</li>
+</ul>
+</li>
+<li>
+<p><strong>步骤 4: Mapper 接口 (<code>DeptMapper.java</code>)</strong></p>
+<ul>
+<li>(已在上面 <code>getById</code> 部分的 <code>DeptMapper.java</code> 中定义 <code>void deleteById(Integer id);</code> 并使用 <code>@Delete</code> 注解)</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="5-总结与展望">5. 总结与展望
+</h2><p>本笔记通过简单的部门 (Dept) 管理示例，展示了如何在 Spring Boot 项目中搭建 Controller、Service、Mapper (MyBatis 注解风格) 三层架构，并实现基本的增删改查操作。每一步都力求清晰，模拟了使用 IDE (如 IntelliJ IDEA) 开发时，从上层到底层逐层定义接口和实现的过程。</p>
+<p><strong>前后端联调关键点:</strong></p>
+<ul>
+<li><strong>Controller 层是桥梁:</strong> 前端通过 HTTP 请求（如 GET, POST, PUT, DELETE）访问 Controller 中定义的 URL 路径。</li>
+<li><strong>数据格式:</strong> 前后端通常使用 JSON 格式交换数据。<code>@RequestBody</code> 用于接收前端发送的 JSON 数据，<code>@RestController</code> (或 <code>@ResponseBody</code>) 会自动将 Java 对象转换为 JSON 响应。</li>
+<li><strong>请求参数:</strong>
+<ul>
+<li><code>@PathVariable</code> 用于获取 URL 路径中的参数 (如 <code>/depts/{id}</code> 中的 <code>id</code>)。</li>
+<li><code>@RequestParam</code> 用于获取查询参数 (如 <code>/depts/search?name=研发部</code> 中的 <code>name</code>)。</li>
+<li><code>@RequestBody</code> 用于获取请求体中的数据 (通常是 POST, PUT 请求中的 JSON 对象)。</li>
+</ul>
+</li>
+<li><strong>响应结果:</strong> 后端通过 <code>Result</code> 对象封装操作结果（成功/失败信息、数据）返回给前端。前端根据 <code>Result</code> 中的 <code>code</code> 和 <code>msg</code> 判断操作状态，并使用 <code>data</code> 渲染页面或进行其他处理。</li>
+<li><strong>API 测试工具:</strong> 在没有前端页面的情况下，可以使用 Postman、Insomnia 等工具测试后端 API 接口的正确性。</li>
+</ul>
+<p>在实际项目中，还需要深入考虑：</p>
+<ul>
+<li>更完善的异常处理机制 (如全局异常处理器 <code>@ControllerAdvice</code>)。</li>
+<li>Spring 的事务管理 (<code>@Transactional</code>) 的精细化使用。</li>
+<li>输入参数校验 (如使用 <code>javax.validation</code> 或 Spring Validation)。</li>
+<li>安全性 (如 Spring Security 进行认证和授权)。</li>
+<li>更复杂的业务逻辑和数据库查询。</li>
+<li>日志记录。</li>
+<li>单元测试和集成测试。</li>
+</ul>
+<p>希望这份笔记对您有所帮助！</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/hugo-dev/tags/%E7%AC%94%E8%AE%B0/">笔记</a>
+        
+            <a href="/hugo-dev/tags/springboot/">Springboot</a>
+        
+            <a href="/hugo-dev/tags/java/">Java</a>
+        
+            <a href="/hugo-dev/tags/mybatis/">MyBatis</a>
+        
+    </section>
+
+
+    </footer>
+
+
+    
+</article>
+
+
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/spring-boot-%E9%A1%B9%E7%9B%AE%E6%90%AD%E5%BB%BA%E6%A1%86%E6%9E%B6%E5%92%8C%E6%B5%81%E7%A8%8B%E8%AF%A6%E8%A7%A3/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring Boot 项目搭建框架和流程详解</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/springboot-mybatis-%E7%99%BB%E5%BD%95%E8%AE%A4%E8%AF%81%E5%8A%9F%E8%83%BD%E5%AE%9E%E7%8E%B0/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">SpringBoot&#43;Mybatis 登录认证功能实现</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/hugo-dev/p/java-%E4%B8%AD-bean%E5%8D%95%E4%BE%8B%E5%8F%8A%E5%8D%95%E4%BE%8B-bean-%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="https://wp-cdn.4ce.cn/v2/hjEyjjL.png" loading="lazy" data-key="" data-hash="https://wp-cdn.4ce.cn/v2/hjEyjjL.png"/>
+                
+            </div>
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java 中 Bean、单例及单例 Bean 的学习笔记</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/hugo-dev/p/%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95%E7%9A%84%E5%91%98%E5%B7%A5%E5%88%A0%E9%99%A4%E5%8A%9F%E8%83%BD/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="https://wp-cdn.4ce.cn/v2/r6A3HJ2.png" loading="lazy" data-key="" data-hash="https://wp-cdn.4ce.cn/v2/r6A3HJ2.png"/>
+                
+            </div>
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">如何实现简单的员工删除功能</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/hugo-dev/p/mybatis%E7%AF%87-%E5%88%86%E9%A1%B5%E6%9F%A5%E8%AF%A2/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="https://wp-cdn.4ce.cn/v2/7GHIYWk.png" loading="lazy" data-key="" data-hash="https://wp-cdn.4ce.cn/v2/7GHIYWk.png"/>
+                
+            </div>
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">MyBatis篇-分页查询</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 歌未竟的个人博客
+    </section>
+
+     
+    <section class="icp-link">
+        <a href="https://icp.gov.moe/?keyword=20256333" target="_blank" >萌ICP备20256333号</a>
+        <a href="https://travel.moe/go.html" target="_blank"  height＝15px>
+    <img src="https://travel.moe/images/logo/pink.png" style="width:auto;height:13px" title="异次元之旅-跃迁-我们一起去萌站成员的星球旅行吧！">
+</a>
+    </section>
+
+
+    
+    <section class="powerby">
+        
+            如对内容有异议，请联系关邮箱2285786274@qq.com修改 <br/>
+        
+
+        
+        
+        
+    </section>
+</footer>
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/hugo-dev/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<style>
+  body {
+    background: url(https://gavin-gwj.github.io/hugo-dev/background/bg1.jpg) no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+    background-color: rgba(255, 255, 255, 0.75);
+    background-blend-mode: lighten;
+  }
+
+   
+  .main-content {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 2rem;
+    border-radius: 8px;
+    margin: 2rem auto;
+    max-width: 1200px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+   
+  [data-scheme="dark"] body {
+    background-color: rgba(0, 0, 0, 0.7);
+    background-blend-mode: darken;
+  }
+</style>
+
+
+<script defer src="https://cn.vercount.one/js"></script>
+
+<script>
+    function showHideView() {
+        
+        let viewCounts = document.querySelectorAll("#viewCount");
+        if (viewCounts) {
+            
+            let article =  document.querySelector(".article-page");
+            if (!article) {
+                viewCounts.forEach(ele => {
+                    ele.style.display = 'none';
+                });
+            }
+        }
+    }
+    
+    showHideView();
+</script>
+
+
+
+    </body>
+</html>

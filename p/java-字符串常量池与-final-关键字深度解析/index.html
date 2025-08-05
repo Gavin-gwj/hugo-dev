@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="一道面试题引发的思考">
+<title>Java 字符串常量池与 final 关键字深度解析</title>
+
+<link rel='canonical' href='https://gavin-gwj.github.io/hugo-dev/p/java-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B8%B8%E9%87%8F%E6%B1%A0%E4%B8%8E-final-%E5%85%B3%E9%94%AE%E5%AD%97%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90/'>
+
+<link rel="stylesheet" href="/hugo-dev/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="Java 字符串常量池与 final 关键字深度解析">
+<meta property='og:description' content="一道面试题引发的思考">
+<meta property='og:url' content='https://gavin-gwj.github.io/hugo-dev/p/java-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B8%B8%E9%87%8F%E6%B1%A0%E4%B8%8E-final-%E5%85%B3%E9%94%AE%E5%AD%97%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90/'>
+<meta property='og:site_name' content='Gavin-歌未竟'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-05-14T20:16:33&#43;08:00'/><meta property='article:modified_time' content='2025-05-14T20:16:33&#43;08:00'/>
+<meta name="twitter:title" content="Java 字符串常量池与 final 关键字深度解析">
+<meta name="twitter:description" content="一道面试题引发的思考">
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/hugo-dev/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/hugo-dev/img/avatar_hu_cf5ff899d804496e.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">😅</span>
+                
+            </figure>
+            
+        
+
+
+
+
+
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/hugo-dev">Gavin-歌未竟</a></h1>
+            <h2 class="site-description">探索技术的无限可能！</h2>
+        </div>
+    </header>
+
+    
+
+<div>
+    
+    <span style="color: #707070;">
+        <span id="busuanzi_container_page_pv">
+            总访问量: <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+    </span>
+</div>
+<ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/2123131391'
+                        target="_blank"
+                        title="Bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/Gavin-gwj'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/hugo-dev/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/hugo-dev/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#问题描述">问题描述</a></li>
+    <li><a href="#预期输出">预期输出</a></li>
+    <li><a href="#面试应对策略与详细解析">面试应对策略与详细解析</a>
+      <ol>
+        <li><a href="#1-确认问题并给出输出">1. 确认问题并给出输出</a></li>
+        <li><a href="#2-解释原因核心概念">2. 解释原因：核心概念</a></li>
+        <li><a href="#3-结合代码分步分析">3. 结合代码分步分析</a></li>
+        <li><a href="#4-解释--比较结果">4. 解释 <code>==</code> 比较结果</a></li>
+        <li><a href="#5-强调最佳实践">5. 强调最佳实践</a></li>
+      </ol>
+    </li>
+    <li><a href="#相似的-string-面试案例">相似的 String 面试案例</a>
+      <ol>
+        <li><a href="#案例-1-new-string-创建的对象">案例 1: <code>new String()</code> 创建的对象</a></li>
+        <li><a href="#案例-2-intern-方法的使用">案例 2: <code>intern()</code> 方法的使用</a></li>
+        <li><a href="#案例-3-字面量拼接的常量折叠">案例 3: 字面量拼接的常量折叠</a>
+          <ol>
+            <li><a href="#详细解析">详细解析</a></li>
+            <li><a href="#总结案例-3-的核心差异">总结案例 3 的核心差异</a></li>
+          </ol>
+        </li>
+        <li><a href="#案例-4-final-变量拼接的常量折叠-与原题核心原理相同">案例 4: <code>final</code> 变量拼接的常量折叠 (与原题核心原理相同)</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/hugo-dev/categories/%E7%AC%94%E8%AE%B0/" >
+                笔记
+            </a>
+        
+            <a href="/hugo-dev/categories/java/" >
+                Java
+            </a>
+        
+            <a href="/hugo-dev/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/" >
+                面试题
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/hugo-dev/p/java-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B8%B8%E9%87%8F%E6%B1%A0%E4%B8%8E-final-%E5%85%B3%E9%94%AE%E5%AD%97%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90/">Java 字符串常量池与 final 关键字深度解析</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            一道面试题引发的思考
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-05-14</time>
+            </div>
+        
+
+    
+    <div class="time-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+  <path d="M5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zM5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1H5z"/>
+  <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/>
+</svg>
+        <span class="article-wordcount">
+            3531字
+        </span>
+    </div>
+
+     
+
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 8 分钟
+                </time>
+            </div>
+        
+
+        
+
+
+        
+    </footer>
+    
+
+
+
+    
+
+  
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="java-string-相等性判断深入解析与面试攻略">Java String 相等性判断：深入解析与面试攻略
+</h1><hr>
+<p>这是一道经典的 Java String 面试题，旨在考察开发者对 String 对象在内存中的创建方式、String Constant Pool、<code>==</code> 操作符的行为以及编译器优化（特别是常量折叠）的理解。</p>
+<h2 id="问题描述">问题描述
+</h2><p>请分析下面这段 Java 代码的输出结果：</p>
+<p>Java</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">public class Main {
+</span></span><span class="line"><span class="cl">    public static void main(String[] args) {
+</span></span><span class="line"><span class="cl">        String a = &#34;xiaoming2&#34;;
+</span></span><span class="line"><span class="cl">        final String b = &#34;xiaoming&#34;;
+</span></span><span class="line"><span class="cl">        String d = &#34;xiaoming&#34;;
+</span></span><span class="line"><span class="cl">        String c = b + 2;
+</span></span><span class="line"><span class="cl">        String e = d + 2;
+</span></span><span class="line"><span class="cl">        System.out.println(a == c);
+</span></span><span class="line"><span class="cl">        System.out.println(a == e);
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="预期输出">预期输出
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">true
+</span></span><span class="line"><span class="cl">false
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="面试应对策略与详细解析">面试应对策略与详细解析
+</h2><p>在面试中遇到这类问题时，一个好的回答应该结构清晰，层层递进，不仅给出答案，更能深入解释背后的原理。</p>
+<h3 id="1-确认问题并给出输出">1. 确认问题并给出输出
+</h3><p>首先，清晰地向面试官确认理解了问题，并直接给出代码的运行结果。</p>
+<blockquote>
+<p>面试官，您好。这段代码的输出结果是：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">true
+</span></span><span class="line"><span class="cl">false
+</span></span></code></pre></td></tr></table>
+</div>
+</div></blockquote>
+<h3 id="2-解释原因核心概念">2. 解释原因：核心概念
+</h3><p>接下来，详细阐述导致这一结果的关键 Java 概念。这是回答中最核心的部分。</p>
+<ul>
+<li><strong>String Constant Pool (字符串常量池):</strong> 这是 Java 堆内存中的一块特殊区域，用于存储字符串字面量。当使用字面量（如 <code>&quot;abc&quot;</code>）创建 <code>String</code> 对象时，JVM 会优先在常量池中查找是否有内容相等的字符串。如果找到，则直接返回该对象的引用；如果找不到，则在常量池中创建新的 <code>String</code> 对象并返回引用。</li>
+<li><strong><code>==</code> 操作符:</strong> 对于对象类型，<code>==</code> 比较的是两个引用变量是否指向内存中的同一个对象（即比较对象的内存地址）。</li>
+<li><strong><code>equals()</code> 方法:</strong> <code>String</code> 类重写了 <code>Object</code> 类的 <code>equals()</code> 方法，用于比较两个字符串对象的<strong>内容</strong>是否相等。在实际开发中，比较字符串内容时务必使用 <code>equals()</code>。</li>
+<li><strong>String Concatenation (<code>+</code>):</strong> 字符串拼接操作。在 Java 中，使用 <code>+</code> 进行字符串拼接时，如果操作数不是编译时常量，通常会在运行时通过 <code>StringBuilder</code>（或 <code>StringBuffer</code>）来实现，生成新的 <code>String</code> 对象。</li>
+<li><strong>Constant Folding (常量折叠):</strong> 这是 Java 编译器的一项重要优化技术。如果一个表达式的结果在编译时就可以完全确定（即表达式只包含字面量或被 <code>final</code> 修饰且初始化为常量的变量），编译器会在编译阶段直接计算出结果，而不是等到运行时。对于字符串拼接，如果参与拼接的都是编译时常量，编译器会直接将拼接结果放入常量池。</li>
+</ul>
+<h3 id="3-结合代码分步分析">3. 结合代码分步分析
+</h3><p>将上述概念应用于具体的代码行，解释每个 <code>String</code> 变量是如何创建的，以及它们引用的是内存中的哪个位置。</p>
+<ul>
+<li><code>String a = &quot;xiaoming2&quot;;</code>: <code>a</code> 引用常量池中的字符串字面量 <code>&quot;xiaoming2&quot;</code>。</li>
+<li><code>final String b = &quot;xiaoming&quot;;</code>: <code>b</code> 引用常量池中的字符串字面量 <code>&quot;xiaoming&quot;</code>。由于 <code>b</code> 被 <code>final</code> 修饰且直接赋值为常量，<code>b</code> 的值在编译时是确定的常量。</li>
+<li><code>String d = &quot;xiaoming&quot;;</code>: <code>d</code> 引用常量池中的字符串字面量 <code>&quot;xiaoming&quot;</code>。它与 <code>b</code> 引用的是同一个对象。但 <code>d</code> 不是 <code>final</code> 的。</li>
+<li><code>String c = b + 2;</code>: 这是字符串拼接。因为 <code>b</code> 是一个 <strong><code>final</code></strong> 变量且其值是编译时常量，编译器会对其执行 <strong>常量折叠</strong>。它在编译时就将 <code>b + 2</code> 计算为 <code>&quot;xiaoming&quot; + &quot;2&quot;</code>，结果是 <code>&quot;xiaoming2&quot;</code>。这行代码编译后实际上等同于 <code>String c = &quot;xiaoming2&quot;;</code>。因此，<code>c</code> 也引用常量池中 <code>&quot;xiaoming2&quot;</code> 这个对象，与 <code>a</code> 引用的是同一个对象。</li>
+<li><code>String e = d + 2;</code>: 这也是字符串拼接。但 <code>d</code> <strong>不是 <code>final</code></strong> 变量。即使其值在此处看来是常量，编译器无法保证非 <code>final</code> 变量在运行时不变。因此，编译器 <strong>不会</strong> 对 <code>d + 2</code> 执行常量折叠。这个拼接操作会在运行时通过 <code>StringBuilder</code> 完成，生成一个新的 <code>&quot;xiaoming2&quot;</code> 字符串对象，这个新对象位于 <strong>堆内存</strong> 中，而不是常量池。<code>e</code> 引用这个新的堆对象。</li>
+</ul>
+<h3 id="4-解释--比较结果">4. 解释 <code>==</code> 比较结果
+</h3><p>基于前面的分析，解释 <code>==</code> 比较的结果。</p>
+<ul>
+<li>
+<p><code>System.out.println(a == c);</code></p>
+<ul>
+<li><code>a</code> 引用常量池中的 <code>&quot;xiaoming2&quot;</code> 对象。</li>
+<li><code>c</code> (经过常量折叠) 引用常量池中的 <code>&quot;xiaoming2&quot;</code> 对象。</li>
+<li>因为 <code>a</code> 和 <code>c</code> 指向内存中的同一个对象，所以 <code>a == c</code> 的结果是 <code>true</code>。</li>
+</ul>
+</li>
+<li>
+<p><code>System.out.println(a == e);</code></p>
+<ul>
+<li><code>a</code> 引用常量池中的 <code>&quot;xiaoming2&quot;</code> 对象。</li>
+<li><code>e</code> 引用运行时在堆中新创建的 <code>&quot;xiaoming2&quot;</code> 对象。</li>
+<li>因为 <code>a</code> 和 <code>e</code> 指向内存中的不同对象，所以 <code>a == e</code> 的结果是 <code>false</code>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="5-强调最佳实践">5. 强调最佳实践
+</h3><p>最后，简要说明在实际开发中比较字符串的最佳实践，体现良好的编程习惯。</p>
+<blockquote>
+<p>在实际开发中，我们通常只关心字符串的<strong>内容</strong>是否相等，而不是它们是否是内存中的同一个对象。因此，比较字符串内容时，应该始终使用 <code>equals()</code> 方法，例如 <code>a.equals(e)</code>。这会返回 <code>true</code>，因为它们的内容确实相同。</p></blockquote>
+<hr>
+<h2 id="相似的-string-面试案例">相似的 String 面试案例
+</h2><p>这类问题有很多变体，理解核心概念后，可以触类旁通。以下是一些常见的相似案例：</p>
+<h3 id="案例-1-new-string-创建的对象">案例 1: <code>new String()</code> 创建的对象
+</h3><p>Java</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">String s1 = &#34;hello&#34;;        // 常量池
+</span></span><span class="line"><span class="cl">String s2 = &#34;hello&#34;;        // 常量池 (与 s1 同一个)
+</span></span><span class="line"><span class="cl">String s3 = new String(&#34;hello&#34;); // 堆中新对象 (内容是 &#34;hello&#34;)
+</span></span><span class="line"><span class="cl">String s4 = new String(&#34;hello&#34;); // 堆中另一个新对象 (内容是 &#34;hello&#34;)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">System.out.println(s1 == s2);     // true (同是常量池对象)
+</span></span><span class="line"><span class="cl">System.out.println(s1 == s3);     // false (常量池 vs 堆对象)
+</span></span><span class="line"><span class="cl">System.out.println(s3 == s4);     // false (堆中不同对象)
+</span></span><span class="line"><span class="cl">System.out.println(s1.equals(s3)); // true (内容相同)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="案例-2-intern-方法的使用">案例 2: <code>intern()</code> 方法的使用
+</h3><p><code>intern()</code> 方法会检查字符串对象的内容是否已存在于常量池。如果存在，则返回常量池中该对象的引用；如果不存在，则将该对象的内容放入常量池，并返回常量池中的引用。</p>
+<p>Java</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">String s5 = new String(&#34;world&#34;).intern(); // 在堆中创建 &#34;world&#34;，然后将 &#34;world&#34; 放入/查找常量池，并返回常量池引用
+</span></span><span class="line"><span class="cl">String s6 = &#34;world&#34;;                      // 常量池
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">System.out.println(s5 == s6); // true (都引用常量池中的 &#34;world&#34;)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">String s7 = new String(&#34;java&#34;); // 堆中新对象
+</span></span><span class="line"><span class="cl">System.out.println(s7 == &#34;java&#34;); // false (堆 vs 常量池)
+</span></span><span class="line"><span class="cl">System.out.println(s7.intern() == &#34;java&#34;); // true (intern() 返回常量池引用，与 &#34;java&#34; 字面量相同)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="案例-3-字面量拼接的常量折叠">案例 3: 字面量拼接的常量折叠
+</h3><p>如果拼接操作的左右两边都是字符串字面量，编译器会直接进行常量折叠。</p>
+<p>Java</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">String partA = &#34;abc&#34;;
+</span></span><span class="line"><span class="cl">String partB = &#34;def&#34;;
+</span></span><span class="line"><span class="cl">String s8 = &#34;abcdef&#34;;      // 常量池
+</span></span><span class="line"><span class="cl">String s9 = &#34;abc&#34; + &#34;def&#34;; // 编译器直接计算为 &#34;abcdef&#34;，放入常量池 (与 s8 同一个)
+</span></span><span class="line"><span class="cl">String s10 = partA + partB; // partA, partB 不是 final，运行时拼接，生成堆对象
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">System.out.println(s8 == s9);  // true (都指向常量池的 &#34;abcdef&#34;)
+</span></span><span class="line"><span class="cl">System.out.println(s8 == s10); // false (常量池 vs 堆对象)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="详细解析">详细解析
+</h4><p>为了理解为什么 <code>s7 == s9</code> 的结果是 <code>false</code>，我们需要再次强调 <strong>常量折叠</strong> 这个概念，以及它在哪些情况下会发生。</p>
+<ol>
+<li>
+<p><strong><code>String s7 = &quot;abcdef&quot;;</code></strong></p>
+<ul>
+<li>这是一个简单的字符串字面量。</li>
+<li>JVM 会在 <strong>字符串常量池</strong> 中查找是否存在内容为 <code>&quot;abcdef&quot;</code> 的字符串。</li>
+<li>如果不存在，则在常量池中创建一个新的 <code>&quot;abcdef&quot;</code> 对象。</li>
+<li>如果存在（或者刚刚创建了），则 <code>s7</code> 变量将引用 <strong>常量池</strong> 中的这个 <code>&quot;abcdef&quot;</code> 对象。</li>
+</ul>
+</li>
+<li>
+<p><strong><code>String s8 = &quot;abc&quot; + &quot;def&quot;;</code></strong></p>
+<ul>
+<li>这是一个字符串拼接操作，但它的特别之处在于，参与拼接的 <code>&quot;abc&quot;</code> 和 <code>&quot;def&quot;</code> 都直接是 <strong>字符串字面量</strong>。</li>
+<li><strong>关键点：</strong> Java 编译器有一项优化叫做 <strong>常量折叠 (Constant Folding)</strong>。当编译器发现一个表达式完全由<strong>编译时常量</strong>组成时，它会在编译阶段就计算出表达式的结果。字符串字面量（如 <code>&quot;abc&quot;</code> 和 <code>&quot;def&quot;</code>）就是编译时常量。</li>
+<li>因此，对于 <code>&quot;abc&quot; + &quot;def&quot;</code> 这个表达式，编译器在编译时就直接将其计算为 <code>&quot;abcdef&quot;</code>。</li>
+<li>所以，<code>String s8 = &quot;abc&quot; + &quot;def&quot;;</code> 在编译后的字节码中，实际上就等同于 <code>String s8 = &quot;abcdef&quot;;</code>。</li>
+<li>这意味着 <code>s8</code> 也引用 <strong>字符串常量池</strong> 中的 <code>&quot;abcdef&quot;</code> 对象。</li>
+<li><strong>结论：</strong> <code>s7</code> 和 <code>s8</code> 都引用常量池中的同一个 <code>&quot;abcdef&quot;</code> 对象。因此，<code>s7 == s8</code> 的结果是 <code>true</code>。</li>
+</ul>
+</li>
+<li>
+<p><strong><code>String s9 = part1 + part2;</code></strong></p>
+<ul>
+<li>这也是一个字符串拼接操作，但参与拼接的是变量 <code>part1</code> 和 <code>part2</code>。</li>
+<li><code>part1</code> 引用常量池中的 <code>&quot;abc&quot;</code>。</li>
+<li><code>part2</code> 引用常量池中的 <code>&quot;def&quot;</code>。</li>
+<li><strong>关键点：</strong> 尽管在当前代码的上下文里，<code>part1</code> 和 <code>part2</code> 似乎看起来是“不变”的，但它们并没有被 <code>final</code> 关键字修饰。对于编译器来说，它 <strong>无法</strong> 确定 <code>part1</code> 和 <code>part2</code> 的值在程序运行时是否会改变。</li>
+<li>由于表达式 <code>part1 + part2</code> 包含了 <strong>非编译时常量</strong>（因为它使用了非 <code>final</code> 变量），编译器 <strong>不会</strong> 对其进行常量折叠。</li>
+<li>这个拼接操作会在 <strong>运行时</strong> 执行。在运行时，Java 通常使用 <code>StringBuilder</code>（或在旧版本中使用 <code>StringBuffer</code>）来执行字符串拼接。</li>
+<li>运行时会大概执行类似这样的逻辑：<code>new StringBuilder().append(part1).append(part2).toString();</code></li>
+<li><code>StringBuilder</code> 的 <code>toString()</code> 方法会创建一个 <strong>全新的</strong> <code>String</code> 对象，这个新对象位于 <strong>堆内存</strong> 中（而不是常量池），其内容是 <code>&quot;abcdef&quot;</code>。</li>
+<li><code>s9</code> 变量将引用这个 <strong>新创建的、位于堆内存中</strong> 的 <code>&quot;abcdef&quot;</code> 对象。</li>
+<li><strong>结论：</strong> <code>s9</code> 引用的是一个运行时在堆中创建的新对象，而 <code>s7</code> (和 <code>s8</code>) 引用的是常量池中的对象。它们是内存中的两个不同的对象。因此，<code>s7 == s9</code> 的结果是 <code>false</code>。</li>
+</ul>
+</li>
+</ol>
+<h4 id="总结案例-3-的核心差异">总结案例 3 的核心差异
+</h4><p>案例 3 的关键在于区分两种拼接方式：</p>
+<ul>
+<li><code>&quot;字面量A&quot; + &quot;字面量B&quot;</code>：编译器能确定结果，执行常量折叠，结果是常量池中的 <code>&quot;字面量A字面量B&quot;</code> 对象。</li>
+<li><code>变量A + 变量B</code> (变量 A 或 B 不是 <code>final</code> 或不是编译时常量)：编译器不能确定结果，留待运行时通过 <code>StringBuilder</code> 拼接，结果是在堆中创建的 <strong>新</strong> 对象。</li>
+</ul>
+<p>这就是为什么 <code>s8</code> (字面量拼接) 与 <code>s7</code> (直接字面量) 指向同一个常量池对象，而 <code>s9</code> (变量拼接) 指向堆中新对象的原因。</p>
+<h3 id="案例-4-final-变量拼接的常量折叠-与原题核心原理相同">案例 4: <code>final</code> 变量拼接的常量折叠 (与原题核心原理相同)
+</h3><p>Java</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">final String FINAL_PART_1 = &#34;compile&#34;;
+</span></span><span class="line"><span class="cl">final String FINAL_PART_2 = &#34;time&#34;;
+</span></span><span class="line"><span class="cl">String s11 = &#34;compilertime&#34;; // 常量池
+</span></span><span class="line"><span class="cl">String s12 = FINAL_PART_1 + FINAL_PART_2; // final 变量拼接，编译器常量折叠为 &#34;compilertime&#34;，放入常量池 (与 s11 同一个)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">System.out.println(s11 == s12); // true (都指向常量池的 &#34;compilertime&#34;)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><hr>
+<p>通过深入理解 String Constant Pool、<code>==</code> 与 <code>equals()</code> 的区别，以及编译器对 <code>final</code> 常量进行的优化（常量折叠），可以清晰地分析这类 String 相等性判断问题。记住：对于字符串内容的比较，永远优先使用 <code>equals()</code> 方法。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/java%E5%9F%BA%E7%A1%80/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java基础</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/jvm%E7%AF%87-%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6%E4%B8%8E%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%9C%BA%E5%88%B6/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">JVM篇-类加载机制与双亲委派机制</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/spring-boot-%E9%A1%B9%E7%9B%AE%E6%90%AD%E5%BB%BA%E6%A1%86%E6%9E%B6%E5%92%8C%E6%B5%81%E7%A8%8B%E8%AF%A6%E8%A7%A3/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring Boot 项目搭建框架和流程详解</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/java%E5%9F%BA%E7%A1%80%E7%AF%87-%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E5%BC%82%E5%B8%B8%E7%9A%84%E6%8A%9B%E5%87%BA%E4%B8%8E%E5%A4%84%E7%90%86/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java基础篇-深入理解异常的抛出与处理</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/hugo-dev/p/spirng%E7%AF%87-spring%E4%B8%AD%E4%BA%8B%E5%8A%A1%E5%A4%B1%E6%95%88%E7%9A%84%E5%9C%BA%E6%99%AF/">
+        
+        
+
+
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spirng篇-Spring中事务失效的场景</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 歌未竟的个人博客
+    </section>
+
+     
+    <section class="icp-link">
+        <a href="https://icp.gov.moe/?keyword=20256333" target="_blank" >萌ICP备20256333号</a>
+        <a href="https://travel.moe/go.html" target="_blank"  height＝15px>
+    <img src="https://travel.moe/images/logo/pink.png" style="width:auto;height:13px" title="异次元之旅-跃迁-我们一起去萌站成员的星球旅行吧！">
+</a>
+    </section>
+
+
+    
+    <section class="powerby">
+        
+            如对内容有异议，请联系关邮箱2285786274@qq.com修改 <br/>
+        
+
+        
+        
+        
+    </section>
+</footer>
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/hugo-dev/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<style>
+  body {
+    background: url(https://gavin-gwj.github.io/hugo-dev/background/bg1.jpg) no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+    background-color: rgba(255, 255, 255, 0.75);
+    background-blend-mode: lighten;
+  }
+
+   
+  .main-content {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 2rem;
+    border-radius: 8px;
+    margin: 2rem auto;
+    max-width: 1200px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+   
+  [data-scheme="dark"] body {
+    background-color: rgba(0, 0, 0, 0.7);
+    background-blend-mode: darken;
+  }
+</style>
+
+
+<script defer src="https://cn.vercount.one/js"></script>
+
+<script>
+    function showHideView() {
+        
+        let viewCounts = document.querySelectorAll("#viewCount");
+        if (viewCounts) {
+            
+            let article =  document.querySelector(".article-page");
+            if (!article) {
+                viewCounts.forEach(ele => {
+                    ele.style.display = 'none';
+                });
+            }
+        }
+    }
+    
+    showHideView();
+</script>
+
+
+
+    </body>
+</html>
